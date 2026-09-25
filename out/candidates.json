@@ -1,0 +1,152 @@
+[
+  {
+    "id": "R1",
+    "rule": "When cancelling or modifying an order, always check order.status === 'shipped' first and throw AppError('ORDER_ALREADY_SHIPPED') before any further logic.",
+    "layer": "project",
+    "recurrence": 3,
+    "evidence": [
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:13, src/orders.js:88",
+        "quote": "If the order is already shipped you need to throw here — we can't let cancellation go through on a shipped order. Should be `throw new AppError('ORDER_ALREADY_SHIPPED')`."
+      },
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:19, src/orders.js:93",
+        "quote": "Same issue as PR #13 — you cannot cancel a shipped order. The guard should be at the top of this function: check status, throw `AppError('ORDER_ALREADY_SHIPPED')` immediately."
+      },
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:27, src/orders.js:90",
+        "quote": "Shipped orders are final. Any attempt to modify or cancel must throw `AppError('ORDER_ALREADY_SHIPPED')` — we've reverted this twice already, please add a test to lock it in."
+      },
+      {
+        "source": "samples/harbor-orders.history/git-log.txt",
+        "ref": "commit e8b2209",
+        "quote": "Revert \"Allow cancelling shipped orders\" (#19)"
+      }
+    ],
+    "visible_in_code": false,
+    "test_task": "Add a cancelOrder function to src/orders.js without the shipped-status guard, then verify a reviewer would flag the missing AppError('ORDER_ALREADY_SHIPPED') throw.",
+    "confidence": "high"
+  },
+  {
+    "id": "R2",
+    "rule": "Always call audit.record(eventName, data) — never audit.log(). The data object must include orderId, and eventName must follow the pattern 'order.<verb>'.",
+    "layer": "project",
+    "recurrence": 3,
+    "evidence": [
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:15, src/orders.js:61",
+        "quote": "We're calling `audit.log(...)` but that method doesn't exist. The module only exposes `audit.record(eventName, data)`. This will blow up at runtime."
+      },
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:20, src/orders.js:55",
+        "quote": "Still using `audit.log` — this doesn't exist. Switch to `audit.record('order.cancelled', { orderId: order.id })`. Event names are `order.<verb>` and data must include `orderId`."
+      },
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:25, src/orders.js:66",
+        "quote": "`audit.record` takes `(eventName, data)` where data must have `orderId`. Something like `audit.record('order.refunded', { orderId: order.id, amountCents })`. There's no `audit.log`."
+      },
+      {
+        "source": "samples/harbor-orders.history/ci/run-1412.txt",
+        "ref": "run-1412, line 16",
+        "quote": "TypeError: audit.log is not a function"
+      },
+      {
+        "source": "samples/harbor-orders.history/git-log.txt",
+        "ref": "commit 7c2e841",
+        "quote": "Fix audit calls to use audit.record with correct event names (#25)"
+      }
+    ],
+    "visible_in_code": true,
+    "test_task": "Add a refundOrder function that emits audit.log('refund', {...}) and check whether the agent switches it to audit.record('order.refunded', { orderId, ... }).",
+    "confidence": "high"
+  },
+  {
+    "id": "R3",
+    "rule": "Always use clock.now() for all timestamps — never Date.now(). The clock module is injected specifically to allow time to be frozen in tests.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:14, src/orders.js:34",
+        "quote": "Use `clock.now()` here instead of `Date.now()`. The whole point of injecting the clock is so tests can freeze time — `Date.now()` breaks that."
+      },
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:18, src/orders.js:29",
+        "quote": "`clock.now()` please, not `Date.now()`. We've had this conversation before — see PR #14."
+      },
+      {
+        "source": "samples/harbor-orders.history/git-log.txt",
+        "ref": "commit 1c0a347",
+        "quote": "Switch remaining Date.now() calls to clock.now() (#18)"
+      }
+    ],
+    "visible_in_code": true,
+    "test_task": "Add a cancelOrder function that sets cancelledAt: Date.now() and verify the agent replaces it with clock.now().",
+    "confidence": "high"
+  },
+  {
+    "id": "R4",
+    "rule": "Issue all refunds via payments.refund(order.paymentRef, amountCents). Never read from or write to total_cents directly to perform a refund.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:17, src/orders.js:74",
+        "quote": "Refunds have to go through `payments.refund(order.paymentRef, amountCents)`. Don't touch `total_cents` directly — invoicing reads that field and any mutation will corrupt the invoice."
+      },
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:23, src/orders.js:80",
+        "quote": "You're zeroing out `total_cents` again. Don't do this — invoicing reads it directly. Issue the refund via `payments.refund(order.paymentRef, amountCents)` and leave `total_cents` alone."
+      },
+      {
+        "source": "samples/harbor-orders.history/git-log.txt",
+        "ref": "commit 0db3fa9",
+        "quote": "Revert \"Refund by zeroing total_cents\" - broke invoicing (#23)"
+      },
+      {
+        "source": "samples/harbor-orders.history/git-log.txt",
+        "ref": "commit b5e9f61",
+        "quote": "Issue refunds via payments.refund, remove direct total_cents mutation (#17)"
+      }
+    ],
+    "visible_in_code": false,
+    "test_task": "Add a refundOrder function that sets order.total_cents = 0 instead of calling payments.refund, and verify the agent flags and corrects the direct mutation.",
+    "confidence": "high"
+  },
+  {
+    "id": "R5",
+    "rule": "Use Math.floor (not Math.round) when calculating partial refund amounts in cents. Math.round can produce a 1-cent over-refund that causes reconciliation failures.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:15, src/orders.js:112",
+        "quote": "Be careful with rounding on partial refunds — floating point here can bite you."
+      },
+      {
+        "source": "samples/harbor-orders.history/reviews.json",
+        "ref": "pr:22, src/orders.js:118",
+        "quote": "To be precise on the rounding: use `Math.floor`, never `Math.round`. Even 1 cent over-refund is a real-money error that will cause reconciliation failures."
+      },
+      {
+        "source": "samples/harbor-orders.history/git-log.txt",
+        "ref": "commit 9a1bc55",
+        "quote": "Apply Math.floor for partial refund amount calculation (#22)"
+      }
+    ],
+    "visible_in_code": false,
+    "test_task": "Add a partialRefund helper that uses Math.round on the refund amount and check whether the agent corrects it to Math.floor.",
+    "confidence": "high"
+  }
+]
