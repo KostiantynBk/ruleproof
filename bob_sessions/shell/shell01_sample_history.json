@@ -1,0 +1,12 @@
+{
+  "name": "shell01_sample_history",
+  "date": "2026-09-25T16:25:17.771Z",
+  "tool": "Bob Shell 2.0.4 headless (bob run --mode agent)",
+  "team": "ibm-hackathon-lablab",
+  "status": "success",
+  "bobTaskId": "97afa0c7627bdaedf7f74c5aa96f1424",
+  "cost": 0.19687200000000002,
+  "toolCalls": 7,
+  "seconds": 50.228,
+  "lastMessage": "Three files created:\n\n---\n\n### [`samples/harbor-orders.history/reviews.json`](samples/harbor-orders.history/reviews.json)\n14 PR review comments across PRs 12–27, April–August 2026. Themes covered:\n\n| Theme | Comments | PRs |\n|---|---|---|\n| A — Shipped orders final / `AppError('ORDER_ALREADY_SHIPPED')` | 3 | #13, #19, #27 |\n| B — `audit.record` not `audit.log`; event names `order.<verb>` + `{ orderId }` | 3 | #15, #20, #25 |\n| C — Refunds via `payments.refund()`; never touch `total_cents` | 2 | #17, #23 |\n| D — `clock.now()` not `Date.now()` | 2 | #14, #18 |\n| E — Partial refund rounding (vague → precise `Math.floor`) | 2 | #15, #22 |\n| Distractors (typo fix, variable rename) | 2 | #12, #21 |\n\n---\n\n### [`samples/harbor-orders.history/git-log.txt`](samples/harbor-orders.history/git-log.txt)\n12 commits, newest-first. Includes the two required reverts:\n- `Revert \"Allow cancelling shipped orders\" (#19)` — theme A\n- `Revert \"Refund by zeroing total_cents\" - broke invoicing (#23)` — theme C\n\nRemaining commits are ordinary feature/fix work (`markShipped`, `markPaid`, `applyDiscount`, `changeAddress`, etc.).\n\n---\n\n### [`samples/harbor-orders.history/ci/run-1412.txt`](samples/harbor-orders.history/ci/run-1412.txt)\nFailing `node --test` run on branch `feature/refund-partial`. One test fails with:\n```\nTypeError: audit.log is not a function\n    at refundOrder (src/orders.js:66:12)\n    at Object.<anonymous> (test/orders.test.js:94:5)\n```\nThree tests pass, one fails — matches theme B exactly."
+}

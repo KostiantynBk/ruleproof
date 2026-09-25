@@ -1,0 +1,114 @@
+[
+  {
+    "pr": 12,
+    "file": "src/orders.js",
+    "line": 47,
+    "author": "maria",
+    "date": "2026-04-03",
+    "body": "Typo: 'recieved' should be 'received' in the comment above this block."
+  },
+  {
+    "pr": 13,
+    "file": "src/orders.js",
+    "line": 88,
+    "author": "dev-oskar",
+    "date": "2026-04-11",
+    "body": "If the order is already shipped you need to throw here — we can't let cancellation go through on a shipped order. Should be `throw new AppError('ORDER_ALREADY_SHIPPED')`."
+  },
+  {
+    "pr": 14,
+    "file": "src/orders.js",
+    "line": 34,
+    "author": "lena",
+    "date": "2026-04-18",
+    "body": "Use `clock.now()` here instead of `Date.now()`. The whole point of injecting the clock is so tests can freeze time — `Date.now()` breaks that."
+  },
+  {
+    "pr": 15,
+    "file": "src/orders.js",
+    "line": 61,
+    "author": "maria",
+    "date": "2026-05-02",
+    "body": "We're calling `audit.log(...)` but that method doesn't exist. The module only exposes `audit.record(eventName, data)`. This will blow up at runtime."
+  },
+  {
+    "pr": 15,
+    "file": "src/orders.js",
+    "line": 112,
+    "author": "dev-oskar",
+    "date": "2026-05-02",
+    "body": "Be careful with rounding on partial refunds — floating point here can bite you."
+  },
+  {
+    "pr": 17,
+    "file": "src/orders.js",
+    "line": 74,
+    "author": "lena",
+    "date": "2026-05-20",
+    "body": "Refunds have to go through `payments.refund(order.paymentRef, amountCents)`. Don't touch `total_cents` directly — invoicing reads that field and any mutation will corrupt the invoice."
+  },
+  {
+    "pr": 18,
+    "file": "src/orders.js",
+    "line": 29,
+    "author": "maria",
+    "date": "2026-06-04",
+    "body": "`clock.now()` please, not `Date.now()`. We've had this conversation before — see PR #14."
+  },
+  {
+    "pr": 19,
+    "file": "src/orders.js",
+    "line": 93,
+    "author": "dev-oskar",
+    "date": "2026-06-17",
+    "body": "Same issue as PR #13 — you cannot cancel a shipped order. The guard should be at the top of this function: check status, throw `AppError('ORDER_ALREADY_SHIPPED')` immediately."
+  },
+  {
+    "pr": 20,
+    "file": "src/orders.js",
+    "line": 55,
+    "author": "lena",
+    "date": "2026-06-25",
+    "body": "Still using `audit.log` — this doesn't exist. Switch to `audit.record('order.cancelled', { orderId: order.id })`. Event names are `order.<verb>` and data must include `orderId`."
+  },
+  {
+    "pr": 21,
+    "file": "src/orders.js",
+    "line": 140,
+    "author": "maria",
+    "date": "2026-07-08",
+    "body": "Rename `tmp` to `pendingItems` — `tmp` tells me nothing about what this holds."
+  },
+  {
+    "pr": 22,
+    "file": "src/orders.js",
+    "line": 118,
+    "author": "dev-oskar",
+    "date": "2026-07-14",
+    "body": "To be precise on the rounding: use `Math.floor`, never `Math.round`. Even 1 cent over-refund is a real-money error that will cause reconciliation failures."
+  },
+  {
+    "pr": 23,
+    "file": "src/orders.js",
+    "line": 80,
+    "author": "lena",
+    "date": "2026-07-29",
+    "body": "You're zeroing out `total_cents` again. Don't do this — invoicing reads it directly. Issue the refund via `payments.refund(order.paymentRef, amountCents)` and leave `total_cents` alone."
+  },
+  {
+    "pr": 25,
+    "file": "src/orders.js",
+    "line": 66,
+    "author": "maria",
+    "date": "2026-08-06",
+    "body": "`audit.record` takes `(eventName, data)` where data must have `orderId`. Something like `audit.record('order.refunded', { orderId: order.id, amountCents })`. There's no `audit.log`."
+  },
+  {
+    "pr": 27,
+    "file": "src/orders.js",
+    "line": 90,
+    "author": "dev-oskar",
+    "date": "2026-08-19",
+    "body": "Shipped orders are final. Any attempt to modify or cancel must throw `AppError('ORDER_ALREADY_SHIPPED')` — we've reverted this twice already, please add a test to lock it in."
+  }
+]

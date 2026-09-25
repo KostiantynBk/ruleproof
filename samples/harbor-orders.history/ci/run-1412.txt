@@ -1,0 +1,25 @@
+▶ harbor-orders CI  run-1412  branch: feature/refund-partial  2026-08-21T09:14:03Z
+
+$ node --test test/orders.test.js
+
+▶ orders
+  ▶ cancelOrder
+    ✔ cancels a pending order (3ms)
+    ✔ cancels a processing order (1ms)
+  ▶ refundOrder
+    ✔ full refund routes through payments.refund (2ms)
+    ✶ partial refund emits audit event (FAIL)
+
+FAIL test/orders.test.js
+---
+  AssertionError [ERR_ASSERTION]: Expected no error but got:
+    TypeError: audit.log is not a function
+        at refundOrder (src/orders.js:66:12)
+        at Object.<anonymous> (test/orders.test.js:94:5)
+---
+
+✔ tests 3
+✖ tests 1
+✖ duration_ms 312.44
+
+error: Tests failed
