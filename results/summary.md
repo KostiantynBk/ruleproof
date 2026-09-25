@@ -90,3 +90,21 @@ Verdict: **KEEP**  p_without=0%  p_with=100%
 | with | 0 | ✅ | 0.0597 coins |  |
 | with | 1 | ✅ | 0.0598 coins |  |
 | with | 2 | ✅ | 0.0597 coins |  |
+
+## Head-to-head
+
+| Condition | Pass rate | Avg cost / run | Rules size (chars) |
+|-----------|----------:|---------------:|-------------------:|
+| none | 20% | 0.0609 | 0 |
+| init | 33% | 0.1000 | 3510 |
+| ruleproof | 100% | 0.0705 | 481 |
+
+### Per-task pass rate
+
+| Task | none | init | ruleproof |
+|------|------:|------:|------:|
+| R1 | 0% | 67% | 100% |
+| R2 | 0% | 0% | 100% |
+| R3 | 100% | 100% | 100% |
+| R4 | 0% | 0% | 100% |
+| R5 | 0% | 0% | 100% |

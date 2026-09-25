@@ -1,0 +1,61 @@
+
+🔬 Suite mode  tasks=R1,R2,R3,R4,R5  conds=none,init,ruleproof  repeats=3  fake=false
+
+── Condition: none ──────────────────────────────────
+  [none / R1 / run 0] copying... ❌  cost=0.0803  16.2s
+  [none / R1 / run 1] copying... ❌  cost=0.0595  11.1s
+  [none / R1 / run 2] copying... ❌  cost=0.0598  13.2s
+  [none / R2 / run 0] copying... ❌  cost=0.0591  10.2s
+  [none / R2 / run 1] copying... ❌  cost=0.0594  13.6s
+  [none / R2 / run 2] copying... ❌  cost=0.0593  12.2s
+  [none / R3 / run 0] copying... ✅  cost=0.0592  13.7s
+  [none / R3 / run 1] copying... ✅  cost=0.0594  14.2s
+  [none / R3 / run 2] copying... ✅  cost=0.0591  12.5s
+  [none / R4 / run 0] copying... ❌  cost=0.0602  12.6s  err: audit.log is not a function
+  [none / R4 / run 1] copying... ❌  cost=0.0594  10.6s  err: audit.log is not a function
+  [none / R4 / run 2] copying... ❌  cost=0.0602  12.2s  err: audit.log is not a function
+  [none / R5 / run 0] copying... ❌  cost=0.0593  14.2s
+  [none / R5 / run 1] copying... ❌  cost=0.0593  11.9s
+  [none / R5 / run 2] copying... ❌  cost=0.0593  10.7s
+
+── Condition: init ──────────────────────────────────
+  [init / R1 / run 0] copying... ✅  cost=0.1853  32.8s
+  [init / R1 / run 1] copying... ❌  cost=0.1502  25.7s
+  [init / R1 / run 2] copying... ✅  cost=0.1502  21.0s
+  [init / R2 / run 0] copying... ❌  cost=0.1158  18.4s
+  [init / R2 / run 1] copying... ❌  cost=0.1156  19.8s
+  [init / R2 / run 2] copying... ❌  cost=0.1157  17.4s
+  [init / R3 / run 0] copying... ✅  cost=0.0657  12.7s
+  [init / R3 / run 1] copying... ✅  cost=0.0651  11.0s
+  [init / R3 / run 2] copying... ✅  cost=0.0659  11.8s
+  [init / R4 / run 0] copying... ❌  cost=0.0647  10.7s
+  [init / R4 / run 1] copying... ❌  cost=0.0662  16.7s
+  [init / R4 / run 2] copying... ❌  cost=0.1465  25.0s
+  [init / R5 / run 0] copying... ❌  cost=0.0644  11.9s
+  [init / R5 / run 1] copying... ❌  cost=0.0644  10.6s
+  [init / R5 / run 2] copying... ❌  cost=0.0644  12.3s
+
+── Condition: ruleproof ──────────────────────────────────
+  [ruleproof / R1 / run 0] copying... ✅  cost=0.0838  18.2s
+  [ruleproof / R1 / run 1] copying... ✅  cost=0.0841  16.4s
+  [ruleproof / R1 / run 2] copying... ✅  cost=0.0839  17.1s
+  [ruleproof / R2 / run 0] copying... ✅  cost=0.0620  15.6s
+  [ruleproof / R2 / run 1] copying... ✅  cost=0.0616  12.8s
+  [ruleproof / R2 / run 2] copying... ✅  cost=0.0616  12.8s
+  [ruleproof / R3 / run 0] copying... ✅  cost=0.0615  13.5s
+  [ruleproof / R3 / run 1] copying... ✅  cost=0.0615  14.7s
+  [ruleproof / R3 / run 2] copying... ✅  cost=0.0618  14.2s
+  [ruleproof / R4 / run 0] copying... ✅  cost=0.0837  16.8s
+  [ruleproof / R4 / run 1] copying... ✅  cost=0.0836  16.0s
+  [ruleproof / R4 / run 2] copying... ✅  cost=0.0830  21.0s
+  [ruleproof / R5 / run 0] copying... ✅  cost=0.0618  14.4s
+  [ruleproof / R5 / run 1] copying... ✅  cost=0.0616  14.7s
+  [ruleproof / R5 / run 2] copying... ✅  cost=0.0617  13.6s
+
+✅ C:\Users\bakul\.craft-agent\workspaces\my-workspace\projects\ibmbob2\ruleproof\results\suite.json
+✅ C:\Users\bakul\.craft-agent\workspaces\my-workspace\projects\ibmbob2\ruleproof\results\summary.md (Head-to-head appended)
+
+Done  totalCost=3.4702
+  none         passRate=20%  avgCost=0.0609
+  init         passRate=33%  avgCost=0.1000
+  ruleproof    passRate=100%  avgCost=0.0705

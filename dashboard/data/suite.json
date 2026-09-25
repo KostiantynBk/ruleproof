@@ -1,0 +1,772 @@
+{
+  "generatedAt": "2026-09-25T18:26:19.515Z",
+  "repeats": 3,
+  "maxCost": 0.3,
+  "totalCost": 3.4702100000000007,
+  "aggregates": {
+    "none": {
+      "passRate": 0.2,
+      "passRatePerTask": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 1,
+        "R4": 0,
+        "R5": 0
+      },
+      "totalCost": 0.9128259999999999,
+      "avgCostPerRun": 0.06085506666666666,
+      "rulesSize": 0
+    },
+    "init": {
+      "passRate": 0.3333333333333333,
+      "passRatePerTask": {
+        "R1": 0.6666666666666666,
+        "R2": 0,
+        "R3": 1,
+        "R4": 0,
+        "R5": 0
+      },
+      "totalCost": 1.5003039999999999,
+      "avgCostPerRun": 0.10002026666666666,
+      "rulesSize": 3510
+    },
+    "ruleproof": {
+      "passRate": 1,
+      "passRatePerTask": {
+        "R1": 1,
+        "R2": 1,
+        "R3": 1,
+        "R4": 1,
+        "R5": 1
+      },
+      "totalCost": 1.0570799999999998,
+      "avgCostPerRun": 0.07047199999999999,
+      "rulesSize": 481
+    }
+  },
+  "runs": [
+    {
+      "cond": "none",
+      "task": "R1",
+      "run": 0,
+      "pass": false,
+      "assertions": {
+        "shippedThrows": false,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.080328,
+      "toolCalls": 3,
+      "bobTaskId": "70cc635f4be00ae4f4913ac85726a273",
+      "seconds": 16.181,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,14 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+async function cancelOrder(order) {\n+  const cancelled = { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+  if (order.status === 'paid' || order.status === 'shipped') {\n+    await payments.refund(order.paymentRef, order.total_cents);\n+  }\n+  return cancelled;\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +32,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R1",
+      "run": 1,
+      "pass": false,
+      "assertions": {
+        "shippedThrows": false,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.059458000000000004,
+      "toolCalls": 2,
+      "bobTaskId": "e4842e48683e259f9728b62b24037582",
+      "seconds": 11.147,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,15 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function cancelOrder(order) {\n+  if (order.status === 'cancelled') {\n+    throw new AppError('ORDER_ALREADY_CANCELLED', 'Order is already cancelled');\n+  }\n+  if (order.status === 'paid') {\n+    payments.refund(order.paymentRef, order.total_cents);\n+  }\n+  return { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R1",
+      "run": 2,
+      "pass": false,
+      "assertions": {
+        "shippedThrows": false,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.059796,
+      "toolCalls": 2,
+      "bobTaskId": "7452b64b7a5f52af56a71a1c8806ca44",
+      "seconds": 13.212,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,17 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function cancelOrder(order) {\n+  if (order.status === 'cancelled') {\n+    throw new AppError('ORDER_ALREADY_CANCELLED', 'Order is already cancelled');\n+  }\n+  const cancelled = { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+  if (order.status === 'paid') {\n+    payments.refund(order.paymentRef, order.total_cents);\n+    audit.record('refund', { orderId: order.id, paymentRef: order.paymentRef });\n+  }\n+  return cancelled;\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R2",
+      "run": 0,
+      "pass": false,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": false
+      },
+      "error": null,
+      "cost": 0.059098,
+      "toolCalls": 2,
+      "bobTaskId": "e2f5d1ce68b5c6e3c45dbbb7c591a63e",
+      "seconds": 10.226,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  return { ...order, status: 'delivered', deliveredAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R2",
+      "run": 1,
+      "pass": false,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": false
+      },
+      "error": null,
+      "cost": 0.059373999999999996,
+      "toolCalls": 2,
+      "bobTaskId": "4da39b4efbf401fd9fbad5699fdbd7bb",
+      "seconds": 13.637,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  return { ...order, status: 'delivered', deliveredAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R2",
+      "run": 2,
+      "pass": false,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": false
+      },
+      "error": null,
+      "cost": 0.059331999999999996,
+      "toolCalls": 2,
+      "bobTaskId": "6a426ba3ebe77a8e8966a731c725d660",
+      "seconds": 12.205,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  return { ...order, status: 'delivered', deliveredAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R3",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.059166,
+      "toolCalls": 2,
+      "bobTaskId": "09bf17f3da8cfbbbf3b1bef3256ee4a3",
+      "seconds": 13.66,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markReturned(order) {\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  return { ...order, status: 'returned', returnedAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markReturned, applyDiscount };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R3",
+      "run": 1,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.05939,
+      "toolCalls": 2,
+      "bobTaskId": "f3ae05bedb5ee4f022c4ff7ba3286159",
+      "seconds": 14.168,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markReturned(order) {\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  return { ...order, status: 'returned', returnedAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markReturned, applyDiscount };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R3",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.059142,
+      "toolCalls": 2,
+      "bobTaskId": "55cd8a7e2cd64c026feb4041f157e595",
+      "seconds": 12.475,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markReturned(order) {\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  return { ...order, status: 'returned', returnedAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markReturned, applyDiscount };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R4",
+      "run": 0,
+      "pass": false,
+      "assertions": {},
+      "error": "audit.log is not a function",
+      "cost": 0.060226,
+      "toolCalls": 2,
+      "bobTaskId": "1ae058d34650f2165765d1dfbee472c5",
+      "seconds": 12.612,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,14 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function refundOrder(order, amountCents) {\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  const refundRef = payments.refund(order.paymentRef, amountCents);\n+  audit.log('refund', { orderId: order.id, amountCents, refundRef });\n+  return { ...order, status: 'refunded', refundRef, refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R4",
+      "run": 1,
+      "pass": false,
+      "assertions": {},
+      "error": "audit.log is not a function",
+      "cost": 0.05938,
+      "toolCalls": 2,
+      "bobTaskId": "61e2f21d5911536fea59a9c3f578274b",
+      "seconds": 10.568,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,14 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function refundOrder(order, amountCents) {\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  const refundRef = payments.refund(order.paymentRef, amountCents);\n+  audit.log('refund', { orderId: order.id, amountCents, refundRef });\n+  return { ...order, status: 'refunded', refundRef, refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R4",
+      "run": 2,
+      "pass": false,
+      "assertions": {},
+      "error": "audit.log is not a function",
+      "cost": 0.06022,
+      "toolCalls": 2,
+      "bobTaskId": "99ecd3b0fb7d924f5cb725fc2a680c3a",
+      "seconds": 12.187,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,14 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function refundOrder(order, amountCents) {\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  const refundRef = payments.refund(order.paymentRef, amountCents);\n+  audit.log('refund', { orderId: order.id, amountCents, refundRef });\n+  return { ...order, status: 'refunded', refundRef, refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R5",
+      "run": 0,
+      "pass": false,
+      "assertions": {
+        "refundAmountIsFloor": false,
+        "expectedAmount": 329,
+        "actualAmounts": [
+          330
+        ]
+      },
+      "error": null,
+      "cost": 0.05934199999999999,
+      "toolCalls": 2,
+      "bobTaskId": "c870463867da8a1803d3445519426c67",
+      "seconds": 14.189,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,14 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (percent <= 0 || percent > 100) {\n+    throw new AppError('INVALID_REFUND_PERCENT', 'Refund percent must be between 1 and 100');\n+  }\n+  const refundAmount = Math.round(order.total_cents * (percent / 100));\n+  payments.refund(order.paymentRef, refundAmount);\n+  return { ...order, refundedAmount: refundAmount };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R5",
+      "run": 1,
+      "pass": false,
+      "assertions": {
+        "refundAmountIsFloor": false,
+        "expectedAmount": 329,
+        "actualAmounts": [
+          330
+        ]
+      },
+      "error": null,
+      "cost": 0.059272,
+      "toolCalls": 2,
+      "bobTaskId": "d5f192ea284b012ce2ec10ac7f15903b",
+      "seconds": 11.916,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,14 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (percent <= 0 || percent > 100) {\n+    throw new AppError('INVALID_REFUND_PERCENT', 'Refund percent must be between 1 and 100');\n+  }\n+  const refundAmount = Math.round(order.total_cents * (percent / 100));\n+  payments.refund(order.paymentRef, refundAmount);\n+  return { ...order, refundedAmount: refundAmount };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "none",
+      "task": "R5",
+      "run": 2,
+      "pass": false,
+      "assertions": {
+        "refundAmountIsFloor": false,
+        "expectedAmount": 329,
+        "actualAmounts": [
+          330
+        ]
+      },
+      "error": null,
+      "cost": 0.059301999999999994,
+      "toolCalls": 2,
+      "bobTaskId": "74fdfed7b9dbc5759ba2e4b1dcccdb0e",
+      "seconds": 10.683,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,14 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (percent <= 0 || percent > 100) {\n+    throw new AppError('INVALID_REFUND_PERCENT', 'Refund percent must be between 1 and 100');\n+  }\n+  const refundAmount = Math.round(order.total_cents * (percent / 100));\n+  payments.refund(order.paymentRef, refundAmount);\n+  return { ...order, refundedAmount: refundAmount };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R1",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "shippedThrows": true,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.185258,
+      "toolCalls": 8,
+      "bobTaskId": "df60e2db01f3f5b34fb07b6694dc70c8",
+      "seconds": 32.779,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,19 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function cancelOrder(order) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Cannot cancel a shipped order');\n+  }\n+  if (order.status === 'cancelled') {\n+    throw new AppError('ORDER_ALREADY_CANCELLED', 'Order is already cancelled');\n+  }\n+  const cancelled = { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+  if (order.status === 'paid') {\n+    payments.refund(order.paymentRef, order.total_cents);\n+  }\n+  return cancelled;\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R1",
+      "run": 1,
+      "pass": false,
+      "assertions": {
+        "shippedThrows": false,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.150176,
+      "toolCalls": 8,
+      "bobTaskId": "e57f59d661492b9e534ed41948e24055",
+      "seconds": 25.686,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,16 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function cancelOrder(order) {\n+  if (order.status === 'cancelled') {\n+    throw new AppError('ORDER_ALREADY_CANCELLED', 'Order is already cancelled');\n+  }\n+  if (order.status === 'paid') {\n+    payments.refund(order.paymentRef, order.total_cents);\n+  }\n+  return { ...order, status: 'cancelled', cancelledAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +34,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R1",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "shippedThrows": true,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.150214,
+      "toolCalls": 8,
+      "bobTaskId": "29557c1fa36e85ecc8eb93076f6c2394",
+      "seconds": 21.035,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,18 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function cancelOrder(order) {\n+  if (order.status === 'cancelled') {\n+    throw new AppError('ORDER_ALREADY_CANCELLED', 'Order is already cancelled');\n+  }\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order cannot be cancelled after shipping');\n+  }\n+  if (order.status === 'paid') {\n+    payments.refund(order.paymentRef, order.total_cents);\n+  }\n+  return { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R2",
+      "run": 0,
+      "pass": false,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": false
+      },
+      "error": null,
+      "cost": 0.115798,
+      "toolCalls": 5,
+      "bobTaskId": "225e8f2e912d25356d81728d1938c333",
+      "seconds": 18.354,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  return { ...order, status: 'delivered', deliveredAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R2",
+      "run": 1,
+      "pass": false,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": false
+      },
+      "error": null,
+      "cost": 0.11564200000000001,
+      "toolCalls": 5,
+      "bobTaskId": "23f32c35bb4d9837bc05da70d859b6f8",
+      "seconds": 19.805,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  return { ...order, status: 'delivered', deliveredAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R2",
+      "run": 2,
+      "pass": false,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": false
+      },
+      "error": null,
+      "cost": 0.115742,
+      "toolCalls": 5,
+      "bobTaskId": "aac82b07a92ee9f49e5229eafda6bb85",
+      "seconds": 17.355,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  return { ...order, status: 'delivered', deliveredAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R3",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.065732,
+      "toolCalls": 4,
+      "bobTaskId": "3234cec1dd35b82a026d4dc8960b5330",
+      "seconds": 12.697,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markReturned(order) {\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  return { ...order, status: 'returned', returnedAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markReturned, applyDiscount };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R3",
+      "run": 1,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.06514,
+      "toolCalls": 3,
+      "bobTaskId": "00cc8ac2f57f88e8d03d18bb89ac711d",
+      "seconds": 11.04,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markReturned(order) {\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  return { ...order, status: 'returned', returnedAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markReturned, applyDiscount };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R3",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.065924,
+      "toolCalls": 4,
+      "bobTaskId": "6cdec9c41c00f0cee7582da359d4552b",
+      "seconds": 11.848,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,13 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markReturned(order) {\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  return { ...order, status: 'returned', returnedAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +31,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, applyDiscount, markReturned };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R4",
+      "run": 0,
+      "pass": false,
+      "assertions": {
+        "paymentsRefundCalled": false,
+        "totalCentsUnchanged": true
+      },
+      "error": null,
+      "cost": 0.064654,
+      "toolCalls": 2,
+      "bobTaskId": "f970f54b35ac579ee6b42ac3c3732b2c",
+      "seconds": 10.657,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,15 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function refundOrder(order, amountCents) {\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  if (amountCents <= 0 || amountCents > order.total_cents) {\n+    throw new AppError('INVALID_REFUND_AMOUNT', 'Refund amount must be between 1 and the order total');\n+  }\n+  return { ...order, status: 'refunded', refundedCents: amountCents, refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R4",
+      "run": 1,
+      "pass": false,
+      "assertions": {
+        "paymentsRefundCalled": false,
+        "totalCentsUnchanged": true
+      },
+      "error": null,
+      "cost": 0.066242,
+      "toolCalls": 3,
+      "bobTaskId": "04a07ef290547b973b45414af24ab25f",
+      "seconds": 16.738,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,15 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function refundOrder(order, amountCents) {\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  if (amountCents <= 0 || amountCents > order.total_cents) {\n+    throw new AppError('INVALID_REFUND_AMOUNT', 'Refund amount must be between 1 and the order total');\n+  }\n+  return { ...order, status: 'refunded', refundedAmountCents: amountCents, refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R4",
+      "run": 2,
+      "pass": false,
+      "assertions": {
+        "paymentsRefundCalled": false,
+        "totalCentsUnchanged": true
+      },
+      "error": null,
+      "cost": 0.14651599999999998,
+      "toolCalls": 5,
+      "bobTaskId": "71f92aa3fe7f33d4f08b79b91b9f2499",
+      "seconds": 24.961,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,15 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function refundOrder(order, amountCents) {\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  if (!Number.isInteger(amountCents) || amountCents <= 0 || amountCents > order.total_cents) {\n+    throw new AppError('INVALID_REFUND_AMOUNT', 'Refund amount must be a positive integer not exceeding the order total');\n+  }\n+  return { ...order, status: 'refunded', refundedAmountCents: amountCents, refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R5",
+      "run": 0,
+      "pass": false,
+      "assertions": {
+        "refundAmountIsFloor": false,
+        "expectedAmount": 329,
+        "actualAmounts": []
+      },
+      "error": null,
+      "cost": 0.06442,
+      "toolCalls": 2,
+      "bobTaskId": "2a27189295755788094de01fe397b84b",
+      "seconds": 11.935,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,13 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (percent <= 0 || percent > 100) {\n+    throw new AppError('INVALID_REFUND_PERCENT', 'Refund percent must be between 1 and 100');\n+  }\n+  const refund_cents = Math.round(order.total_cents * (percent / 100));\n+  return { ...order, refund_cents };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R5",
+      "run": 1,
+      "pass": false,
+      "assertions": {
+        "refundAmountIsFloor": false,
+        "expectedAmount": 329,
+        "actualAmounts": []
+      },
+      "error": null,
+      "cost": 0.06441,
+      "toolCalls": 2,
+      "bobTaskId": "8cf36835ca0930f5b023fb994e1ec43f",
+      "seconds": 10.614,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,12 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (percent <= 0 || percent > 100) {\n+    throw new AppError('INVALID_REFUND_PERCENT', 'Percent must be between 1 and 100');\n+  }\n+  return { ...order, refunded_cents: Math.round(order.total_cents * (percent / 100)) };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "init",
+      "task": "R5",
+      "run": 2,
+      "pass": false,
+      "assertions": {
+        "refundAmountIsFloor": false,
+        "expectedAmount": 329,
+        "actualAmounts": []
+      },
+      "error": null,
+      "cost": 0.064436,
+      "toolCalls": 2,
+      "bobTaskId": "450d33d20e0ff55ee98cbf1aee54450f",
+      "seconds": 12.287,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,13 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (percent <= 0 || percent > 100) {\n+    throw new AppError('INVALID_REFUND_PERCENT', 'Refund percent must be between 1 and 100');\n+  }\n+  const refund_cents = Math.round(order.total_cents * (percent / 100));\n+  return { ...order, total_cents: order.total_cents - refund_cents, refund_cents };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R1",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "shippedThrows": true,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.08379800000000001,
+      "toolCalls": 4,
+      "bobTaskId": "436db9673f9f42b9b085ba3a77b1bb98",
+      "seconds": 18.162,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,19 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+async function cancelOrder(order) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+  const cancelled = { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+  if (order.status === 'paid') {\n+    const refundCents = Math.floor(order.total_cents);\n+    await payments.refund(order.paymentRef, refundCents);\n+  }\n+  audit.record('order.cancelled', { orderId: order.id });\n+  return cancelled;\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +37,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R1",
+      "run": 1,
+      "pass": true,
+      "assertions": {
+        "shippedThrows": true,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.084086,
+      "toolCalls": 4,
+      "bobTaskId": "a6dc619d451691662d7fafcab46ace0a",
+      "seconds": 16.359,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,22 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+async function cancelOrder(order) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+\n+  const cancelled = { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+\n+  if (order.status === 'paid') {\n+    const refundAmount = Math.floor(order.total_cents);\n+    await payments.refund(order.paymentRef, refundAmount);\n+  }\n+\n+  audit.record('order.cancelled', { orderId: order.id });\n+\n+  return cancelled;\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R1",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "shippedThrows": true,
+        "paidReturnsCancelled": true
+      },
+      "error": null,
+      "cost": 0.08385999999999999,
+      "toolCalls": 4,
+      "bobTaskId": "4f93457d6c3829b944bc76b36ec90f84",
+      "seconds": 17.086,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,19 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+async function cancelOrder(order) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+  const wasPaid = order.status === 'paid';\n+  const cancelled = { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+  if (wasPaid) {\n+    await payments.refund(order.paymentRef, Math.floor(order.total_cents));\n+  }\n+  audit.record('order.cancelled', { orderId: order.id });\n+  return cancelled;\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +37,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R2",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": true
+      },
+      "error": null,
+      "cost": 0.061958,
+      "toolCalls": 2,
+      "bobTaskId": "6187b42249ccbee2fdae66f02b6a91f5",
+      "seconds": 15.641,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,15 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  const delivered = { ...order, status: 'delivered', deliveredAt: clock.now() };\n+  audit.record('order.delivered', { orderId: order.id });\n+  return delivered;\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +33,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R2",
+      "run": 1,
+      "pass": true,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": true
+      },
+      "error": null,
+      "cost": 0.06159,
+      "toolCalls": 2,
+      "bobTaskId": "ace2d2d1cc99f4ea8a561429284876c0",
+      "seconds": 12.798,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,15 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  const updated = { ...order, status: 'delivered', deliveredAt: clock.now() };\n+  audit.record('order.delivered', { orderId: order.id });\n+  return updated;\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +33,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R2",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "statusDelivered": true,
+        "auditRecordCalled": true
+      },
+      "error": null,
+      "cost": 0.061556,
+      "toolCalls": 2,
+      "bobTaskId": "20ab3c9cf4f63e48cda448050d676d90",
+      "seconds": 12.823,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,15 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markDelivered(order) {\n+  if (order.status !== 'shipped') {\n+    throw new AppError('ORDER_NOT_SHIPPED', 'Order is not shipped');\n+  }\n+  const updated = { ...order, status: 'delivered', deliveredAt: clock.now() };\n+  audit.record('order.delivered', { orderId: order.id });\n+  return updated;\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +33,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, markDelivered, applyDiscount };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R3",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.061454,
+      "toolCalls": 2,
+      "bobTaskId": "1821048114ccc01c35e86e6d0b1d1544",
+      "seconds": 13.501,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,17 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function markReturned(order) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED');\n+  }\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  const updated = { ...order, status: 'returned', returnedAt: clock.now() };\n+  audit.record('order.returned', { orderId: order.id });\n+  return updated;\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, markReturned };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R3",
+      "run": 1,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.061528,
+      "toolCalls": 2,
+      "bobTaskId": "52e54102704f4ffd31dbee9e03cca97b",
+      "seconds": 14.691,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,14 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function markReturned(order) {\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  const updated = { ...order, status: 'returned', returnedAt: clock.now() };\n+  audit.record('order.returned', { orderId: order.id });\n+  return updated;\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, markReturned };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R3",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "hasClockTimestamp": true
+      },
+      "error": null,
+      "cost": 0.061821999999999995,
+      "toolCalls": 2,
+      "bobTaskId": "6eeea4c046d91edf25bf137f95f717f5",
+      "seconds": 14.229,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,18 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+function markReturned(order) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED');\n+  }\n+  if (order.status !== 'delivered') {\n+    throw new AppError('ORDER_NOT_DELIVERED', 'Order is not delivered');\n+  }\n+  const updated = { ...order, status: 'returned', returnedAt: clock.now() };\n+  audit.record('order.returned', { orderId: order.id });\n+  return updated;\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +36,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, applyDiscount, markReturned };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R4",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "paymentsRefundCalled": true,
+        "totalCentsUnchanged": true
+      },
+      "error": null,
+      "cost": 0.08373,
+      "toolCalls": 4,
+      "bobTaskId": "f3ecd8bd14b4d246c2a8b1541eb06b7e",
+      "seconds": 16.846,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,18 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+async function refundOrder(order, amountCents) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  const refundAmount = Math.floor(amountCents);\n+  await payments.refund(order.paymentRef, refundAmount);\n+  audit.record('order.refunded', { orderId: order.id, amountCents: refundAmount });\n+  return { ...order, status: 'refunded', refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R4",
+      "run": 1,
+      "pass": true,
+      "assertions": {
+        "paymentsRefundCalled": true,
+        "totalCentsUnchanged": true
+      },
+      "error": null,
+      "cost": 0.083602,
+      "toolCalls": 4,
+      "bobTaskId": "a8c0ad3aa9c3d0ad24247a5c122165b9",
+      "seconds": 16.022,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,18 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+async function refundOrder(order, amountCents) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  const refundCents = Math.floor(amountCents);\n+  await payments.refund(order.paymentRef, refundCents);\n+  audit.record('order.refunded', { orderId: order.id, amountCents: refundCents });\n+  return { ...order, status: 'refunded', refundedCents: refundCents, refundedAt: clock.now() };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R4",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "paymentsRefundCalled": true,
+        "totalCentsUnchanged": true
+      },
+      "error": null,
+      "cost": 0.08296200000000001,
+      "toolCalls": 3,
+      "bobTaskId": "02021a343dc242d116812b1250efb0b6",
+      "seconds": 20.958,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,18 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+async function refundOrder(order, amountCents) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+  if (order.status !== 'paid') {\n+    throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n+  }\n+  const refundAmount = Math.floor(amountCents);\n+  await payments.refund(order.paymentRef, refundAmount);\n+  audit.record('order.refunded', { orderId: order.id, amountCents: refundAmount });\n+  return { ...order, status: 'refunded', refundedAmountCents: refundAmount };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, refundOrder };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R5",
+      "run": 0,
+      "pass": true,
+      "assertions": {
+        "refundAmountIsFloor": true,
+        "expectedAmount": 329,
+        "actualAmounts": [
+          329
+        ]
+      },
+      "error": null,
+      "cost": 0.061814,
+      "toolCalls": 2,
+      "bobTaskId": "05919604e589567aff7952445ea4d575",
+      "seconds": 14.394,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,15 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+  const refundAmount = Math.floor(order.total_cents * (percent / 100));\n+  payments.refund(order.paymentRef, refundAmount);\n+  audit.record('order.refunded', { orderId: order.id, percent, refundAmount });\n+  return { ...order, total_cents: order.total_cents - refundAmount };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R5",
+      "run": 1,
+      "pass": true,
+      "assertions": {
+        "refundAmountIsFloor": true,
+        "expectedAmount": 329,
+        "actualAmounts": [
+          329
+        ]
+      },
+      "error": null,
+      "cost": 0.061626,
+      "toolCalls": 2,
+      "bobTaskId": "23ef81e48e80bdfeb3d89c08e0d970b4",
+      "seconds": 14.694,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,15 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED');\n+  }\n+  const refundAmount = Math.floor(order.total_cents * (percent / 100));\n+  payments.refund(order.paymentRef, refundAmount);\n+  audit.record('order.refunded', { orderId: order.id, percent, refundAmount });\n+  return { ...order, total_cents: order.total_cents - refundAmount };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    },
+    {
+      "cond": "ruleproof",
+      "task": "R5",
+      "run": 2,
+      "pass": true,
+      "assertions": {
+        "refundAmountIsFloor": true,
+        "expectedAmount": 329,
+        "actualAmounts": [
+          329
+        ]
+      },
+      "error": null,
+      "cost": 0.061694,
+      "toolCalls": 2,
+      "bobTaskId": "359603506d2db9499aa7793f6e13711c",
+      "seconds": 13.642,
+      "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,15 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+function partialRefund(order, percent) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED');\n+  }\n+  const refundAmount = Math.floor(order.total_cents * (percent / 100));\n+  payments.refund(order.paymentRef, refundAmount);\n+  audit.record('order.refunded', { orderId: order.id, percent, refundAmount });\n+  return { ...order, total_cents: order.total_cents - refundAmount };\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, partialRefund };\n \n"
+    }
+  ]
+}
