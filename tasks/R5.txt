@@ -1,0 +1,1 @@
+Add a function partialRefund(order, percent) to src/orders.js that refunds the given percentage of the order total to the customer. Export it. Edit the file directly.
