@@ -1,0 +1,73 @@
+{
+  "generatedAt": "2026-09-25T17:44:55.271Z",
+  "bobVersion": "2.0.4",
+  "maxCost": 0.3,
+  "repeats": 1,
+  "totalCost": 0.161736,
+  "rules": [
+    {
+      "id": "R1",
+      "rule": "When cancelling or modifying an order, always check order.status === 'shipped' first and throw AppError('ORDER_ALREADY_SHIPPED') before any further logic.",
+      "layer": "project",
+      "evidence": [
+        {
+          "source": "samples/harbor-orders.history/reviews.json",
+          "ref": "pr:13, src/orders.js:88",
+          "quote": "If the order is already shipped you need to throw here — we can't let cancellation go through on a shipped order. Should be `throw new AppError('ORDER_ALREADY_SHIPPED')`."
+        },
+        {
+          "source": "samples/harbor-orders.history/reviews.json",
+          "ref": "pr:19, src/orders.js:93",
+          "quote": "Same issue as PR #13 — you cannot cancel a shipped order. The guard should be at the top of this function: check status, throw `AppError('ORDER_ALREADY_SHIPPED')` immediately."
+        },
+        {
+          "source": "samples/harbor-orders.history/reviews.json",
+          "ref": "pr:27, src/orders.js:90",
+          "quote": "Shipped orders are final. Any attempt to modify or cancel must throw `AppError('ORDER_ALREADY_SHIPPED')` — we've reverted this twice already, please add a test to lock it in."
+        },
+        {
+          "source": "samples/harbor-orders.history/git-log.txt",
+          "ref": "commit e8b2209",
+          "quote": "Revert \"Allow cancelling shipped orders\" (#19)"
+        }
+      ],
+      "verdict": "KEEP",
+      "p_without": 0,
+      "p_with": 1,
+      "runs": [
+        {
+          "rule": "R1",
+          "cond": "without",
+          "run": 0,
+          "pass": false,
+          "assertions": {
+            "shippedThrows": false,
+            "paidReturnsCancelled": true
+          },
+          "error": null,
+          "cost": 0.080404,
+          "toolCalls": 3,
+          "bobTaskId": "eef0bf4e1505cbaa9cccfa6279f6379d",
+          "seconds": 15.593,
+          "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -24,5 +24,16 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+async function cancelOrder(order) {\n+  if (order.status === 'cancelled') {\n+    throw new AppError('ORDER_ALREADY_CANCELLED', 'Order is already cancelled');\n+  }\n+  const cancelled = { ...order, status: 'cancelled', cancelledAt: clock.now() };\n+  if (order.status === 'paid') {\n+    await payments.refund(order.paymentRef, order.total_cents);\n+  }\n+  return cancelled;\n+}\n+\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+        },
+        {
+          "rule": "R1",
+          "cond": "with",
+          "run": 0,
+          "pass": true,
+          "assertions": {
+            "shippedThrows": true,
+            "paidReturnsCancelled": true
+          },
+          "error": null,
+          "cost": 0.081332,
+          "toolCalls": 3,
+          "bobTaskId": "42fa274114bbfdbe898e2afbbf8717e5",
+          "seconds": 18.904,
+          "diff": "--- a/src/orders.js\n+++ b/src/orders.js\n@@ -15,6 +15,16 @@\n     throw new AppError('ORDER_NOT_PAID', 'Order is not paid');\n   }\n   return { ...order, status: 'shipped', trackingNumber, shippedAt: clock.now() };\n+}\n+\n+async function cancelOrder(order) {\n+  if (order.status === 'shipped') {\n+    throw new AppError('ORDER_ALREADY_SHIPPED', 'Order has already been shipped');\n+  }\n+  if (order.status === 'paid') {\n+    await payments.refund(order.paymentRef, order.total_cents);\n+  }\n+  return { ...order, status: 'cancelled', cancelledAt: clock.now() };\n }\n \n function applyDiscount(order, percent) {\n@@ -24,5 +34,5 @@\n   return { ...order, total_cents: Math.round(order.total_cents * (1 - percent / 100)) };\n }\n \n-module.exports = { markPaid, markShipped, applyDiscount };\n+module.exports = { markPaid, markShipped, applyDiscount, cancelOrder };\n \n"
+        }
+      ]
+    }
+  ]
+}

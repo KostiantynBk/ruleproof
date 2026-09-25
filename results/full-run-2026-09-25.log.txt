@@ -1,0 +1,54 @@
+[R1] Evidence verified ✓
+[R2] Evidence verified ✓
+[R3] Evidence verified ✓
+[R4] Evidence verified ✓
+[R5] Evidence verified ✓
+
+[R1] A/B test  repeats=3  fake=false
+  [without 0] copying... ❌  cost=0.0595 coins  13.1s
+  [without 1] copying... ❌  cost=0.0805 coins  17.7s
+  [without 2] copying... ❌  cost=0.0799 coins  14.1s
+  [with 0] copying... ✅  cost=0.0603 coins  12.3s
+  [with 1] copying... ✅  cost=0.0605 coins  12.0s
+  [with 2] copying... ✅  cost=0.0606 coins  15.5s
+  → p_without=0%  p_with=100%  verdict=KEEP
+
+[R2] A/B test  repeats=3  fake=false
+  [without 0] copying... ❌  cost=0.0591 coins  10.4s
+  [without 1] copying... ❌  cost=0.0591 coins  11.5s
+  [without 2] copying... ❌  cost=0.0592 coins  12.0s
+  [with 0] copying... ✅  cost=0.0606 coins  12.1s
+  [with 1] copying... ✅  cost=0.0605 coins  13.6s
+  [with 2] copying... ✅  cost=0.0606 coins  12.6s
+  → p_without=0%  p_with=100%  verdict=KEEP
+
+[R3] A/B test  repeats=3  fake=false
+  [without 0] copying... ✅  cost=0.0601 coins  13.8s
+  [without 1] copying... ✅  cost=0.0594 coins  11.8s
+  [without 2] copying... ✅  cost=0.0599 coins  12.4s
+  [with 0] copying... ✅  cost=0.0603 coins  12.5s
+  [with 1] copying... ✅  cost=0.0603 coins  11.9s
+  [with 2] copying... ✅  cost=0.0603 coins  11.2s
+  → p_without=100%  p_with=100%  verdict=REDUNDANT
+
+[R4] A/B test  repeats=3  fake=false
+  [without 0] copying... ✅  cost=0.0807 coins  17.9s
+  [without 1] copying... ✅  cost=0.0806 coins  14.4s
+  [without 2] copying... ❌  cost=0.0593 coins  10.9s  err: audit.log is not a function
+  [with 0] copying... ✅  cost=0.0599 coins  10.2s
+  [with 1] copying... ✅  cost=0.0598 coins  10.8s
+  [with 2] copying... ✅  cost=0.0609 coins  15.1s
+  → p_without=67%  p_with=100%  verdict=REDUNDANT
+
+[R5] A/B test  repeats=3  fake=false
+  [without 0] copying... ❌  cost=0.0592 coins  11.9s
+  [without 1] copying... ❌  cost=0.0591 coins  10.5s
+  [without 2] copying... ❌  cost=0.0590 coins  10.2s
+  [with 0] copying... ✅  cost=0.0597 coins  10.9s
+  [with 1] copying... ✅  cost=0.0598 coins  10.1s
+  [with 2] copying... ✅  cost=0.0597 coins  9.6s
+  → p_without=0%  p_with=100%  verdict=KEEP
+
+✅ C:\Users\bakul\.craft-agent\workspaces\my-workspace\projects\ibmbob2\ruleproof\results\results.json
+✅ C:\Users\bakul\.craft-agent\workspaces\my-workspace\projects\ibmbob2\ruleproof\results\summary.md
+Done in 374.9s  totalCost=1.8782 coins
