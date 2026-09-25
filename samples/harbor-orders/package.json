@@ -1,0 +1,7 @@
+{
+  "name": "harbor-orders",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}
