@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RuleProof Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <header>
+    <div class="header-inner">
+      <div class="header-text">
+        <h1>RuleProof</h1>
+        <p class="subtitle">Rules for AI coding agents, measured not guessed</p>
+      </div>
+      <button id="btn-download" class="btn-download" title="Download KEEP rules as Markdown">
+        ⬇ Download rules
+      </button>
+    </div>
+    <p class="download-note" id="download-note" hidden>
+      Put <code>ruleproof-rules.md</code> in <code>.bob/rules/</code> of your project.
+    </p>
+
+    <!-- Summary tiles -->
+    <div class="summary-tiles" id="summary-tiles">
+      <div class="tile" id="tile-rules">
+        <span class="tile-value" id="val-rules">—</span>
+        <span class="tile-label">Rules tested</span>
+      </div>
+      <div class="tile tile-keep" id="tile-keep">
+        <span class="tile-value" id="val-keep">—</span>
+        <span class="tile-label">KEEP</span>
+      </div>
+      <div class="tile tile-redundant" id="tile-redundant">
+        <span class="tile-value" id="val-redundant">—</span>
+        <span class="tile-label">REDUNDANT</span>
+      </div>
+      <div class="tile tile-ineffective" id="tile-ineffective">
+        <span class="tile-value" id="val-ineffective">—</span>
+        <span class="tile-label">INEFFECTIVE</span>
+      </div>
+      <div class="tile tile-harmful" id="tile-harmful">
+        <span class="tile-value" id="val-harmful">—</span>
+        <span class="tile-label">HARMFUL</span>
+      </div>
+      <div class="tile">
+        <span class="tile-value" id="val-runs">—</span>
+        <span class="tile-label">Bob runs</span>
+      </div>
+      <div class="tile tile-cost">
+        <span class="tile-value" id="val-cost">—</span>
+        <span class="tile-label">Total cost (Bobcoins)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ────────────────────────────────────────────────────── -->
+  <main>
+    <!-- Rules table -->
+    <section class="table-section">
+      <table id="rules-table">
+        <thead>
+          <tr>
+            <th class="col-id">ID</th>
+            <th class="col-rule">Rule</th>
+            <th class="col-verdict">Verdict</th>
+            <th class="col-pass">Pass rate (without / with)</th>
+            <th class="col-cost">Avg cost / run</th>
+          </tr>
+        </thead>
+        <tbody id="rules-tbody">
+          <tr><td colspan="5" class="loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Detail panel -->
+    <section id="detail-panel" class="detail-panel" hidden>
+      <div class="detail-header">
+        <span class="detail-id" id="detail-id"></span>
+        <button class="btn-close" id="btn-close" title="Close">✕</button>
+      </div>
+      <p class="detail-rule-text" id="detail-rule-text"></p>
+
+      <!-- Evidence -->
+      <h3 class="section-heading">Evidence</h3>
+      <ul class="evidence-list" id="evidence-list"></ul>
+
+      <!-- Side-by-side diff -->
+      <h3 class="section-heading">Code comparison</h3>
+      <div class="diff-controls">
+        <label>Without run:
+          <select id="sel-without"></select>
+        </label>
+        <label>With run:
+          <select id="sel-with"></select>
+        </label>
+      </div>
+      <div class="diff-columns">
+        <div class="diff-col" id="diff-col-without">
+          <div class="diff-col-header" id="diff-label-without"></div>
+          <pre class="diff-pre" id="diff-code-without"></pre>
+          <div class="assertions-box" id="assert-without"></div>
+        </div>
+        <div class="diff-col" id="diff-col-with">
+          <div class="diff-col-header" id="diff-label-with"></div>
+          <pre class="diff-pre" id="diff-code-with"></pre>
+          <div class="assertions-box" id="assert-with"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── Footer ──────────────────────────────────────────────────── -->
+  <footer>
+    <a href="https://github.com/KostiantynBk/ruleproof" target="_blank" rel="noopener noreferrer">github.com/KostiantynBk/ruleproof</a>
+    &nbsp;·&nbsp;
+    Built with IBM Bob
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

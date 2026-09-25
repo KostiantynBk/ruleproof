@@ -18,9 +18,8 @@
     scripts\with-bob-key.ps1 -KeyFile C:\keys\my-key.xml node runner.mjs --rules R1 --fake
 #>
 
-[CmdletBinding()]
 param(
-    [Parameter()]
+    [Parameter(ParameterSetName = 'named')]
     [string]$KeyFile = (Join-Path $env:LOCALAPPDATA 'CraftAgentBobBridge\bob-key-event.xml'),
 
     [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
