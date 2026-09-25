@@ -2,7 +2,11 @@
 /**
  * ruleproof/runner.mjs – A/B engine for rule validation
  *
- * CLI: node runner.mjs --rules R1,R2 --repeats 3 --max-cost 0.3 [--fake] [--out results/results.json]
+ * Per-rule mode:
+ *   node runner.mjs --rules R1,R2 --repeats 3 --max-cost 0.3 [--fake] [--out results/results.json]
+ *
+ * Suite mode:
+ *   node runner.mjs --suite --repeats 3 --max-cost 0.3 [--fake]
  */
 
 import fs from 'node:fs';
@@ -32,6 +36,7 @@ function parseArgs(argv) {
     repeats: 3,
     maxCost: 0.3,
     fake:    false,
+    suite:   false,
     out:     path.join(REPO_ROOT, 'results', 'results.json'),
   };
 
@@ -41,13 +46,14 @@ function parseArgs(argv) {
       case '--repeats':  opts.repeats = parseInt(args[++i], 10);                 break;
       case '--max-cost': opts.maxCost = parseFloat(args[++i]);                   break;
       case '--fake':     opts.fake    = true;                                    break;
+      case '--suite':    opts.suite   = true;                                    break;
       case '--out':      opts.out     = args[++i];                               break;
       default: console.error(`Unknown argument: ${args[i]}`); process.exit(1);
     }
   }
 
-  if (opts.rules.length === 0) {
-    console.error('Error: --rules is required');
+  if (!opts.suite && opts.rules.length === 0) {
+    console.error('Error: --rules is required (or use --suite)');
     process.exit(1);
   }
   return opts;
@@ -361,6 +367,249 @@ function buildSummary(report) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// Suite mode helpers
+// ──────────────────────────────────────────────────────────────────────────────
+
+/** Build the ruleproof.md content from results/results.json (KEEP rules only). */
+function buildRuleproofMd() {
+  const resultsPath = path.join(REPO_ROOT, 'results', 'results.json');
+  if (!fs.existsSync(resultsPath)) return '';
+  try {
+    const data = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+    const kept = (data.rules || []).filter(r => r.verdict === 'KEEP');
+    return kept.map(r => `- ${r.rule}`).join('\n') + (kept.length ? '\n' : '');
+  } catch { return ''; }
+}
+
+/** Measure the rules text size given to Bob for each condition. */
+function rulesSize(cond, ruleproofMd) {
+  if (cond === 'none') return 0;
+  if (cond === 'ruleproof') return Buffer.byteLength(ruleproofMd, 'utf8');
+
+  // 'init': sum of all AGENTS.md / .bob files in baseline-init
+  const initDir = path.join(REPO_ROOT, 'baseline-init');
+  let total = 0;
+  function walkSize(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walkSize(full);
+      else total += fs.statSync(full).size;
+    }
+  }
+  if (fs.existsSync(initDir)) walkSize(initDir);
+  return total;
+}
+
+/** Prepare a temp workspace copy and inject the condition's rules. */
+function prepareSuiteCopy(condName, taskId, runIndex, ruleproofMd) {
+  const SAMPLE_DIR = path.join(REPO_ROOT, 'samples', 'harbor-orders');
+  const tmpName  = `ruleproof_suite_${condName}_${taskId}_${runIndex}`;
+  const copyDir  = path.join(os.tmpdir(), tmpName);
+
+  if (fs.existsSync(copyDir)) fs.rmSync(copyDir, { recursive: true, force: true });
+  copyDirSync(SAMPLE_DIR, copyDir);
+
+  if (condName === 'init') {
+    const initDir = path.join(REPO_ROOT, 'baseline-init');
+    // Copy AGENTS.md to workspace root
+    const agentsFile = path.join(initDir, 'AGENTS.md');
+    if (fs.existsSync(agentsFile)) {
+      fs.copyFileSync(agentsFile, path.join(copyDir, 'AGENTS.md'));
+    }
+    // Copy .bob/ subtree
+    const initBobDir = path.join(initDir, '.bob');
+    if (fs.existsSync(initBobDir)) {
+      copyDirSync(initBobDir, path.join(copyDir, '.bob'));
+    }
+  } else if (condName === 'ruleproof') {
+    const rulesDir = path.join(copyDir, '.bob', 'rules');
+    fs.mkdirSync(rulesDir, { recursive: true });
+    fs.writeFileSync(path.join(rulesDir, 'ruleproof.md'), ruleproofMd, 'utf8');
+  }
+
+  return copyDir;
+}
+
+/** Build the "Head-to-head" section to append to summary.md. */
+function buildSuiteSection(suiteReport) {
+  const conds  = ['none', 'init', 'ruleproof'];
+  const tasks  = ['R1', 'R2', 'R3', 'R4', 'R5'];
+  const lines  = [
+    '',
+    '## Head-to-head',
+    '',
+    '| Condition | Pass rate | Avg cost / run | Rules size (chars) |',
+    '|-----------|----------:|---------------:|-------------------:|',
+  ];
+
+  for (const c of conds) {
+    const agg = suiteReport.aggregates[c];
+    if (!agg) continue;
+    lines.push(
+      `| ${c} | ${(agg.passRate * 100).toFixed(0)}% | ` +
+      `${agg.avgCostPerRun.toFixed(4)} | ${agg.rulesSize} |`
+    );
+  }
+
+  lines.push('');
+  lines.push('### Per-task pass rate');
+  lines.push('');
+
+  // Header
+  const header = '| Task | ' + conds.join(' | ') + ' |';
+  const sep    = '|------|' + conds.map(() => '------:').join('|') + '|';
+  lines.push(header);
+  lines.push(sep);
+
+  for (const t of tasks) {
+    const cells = conds.map(c => {
+      const agg = suiteReport.aggregates[c];
+      const rate = agg?.passRatePerTask?.[t];
+      return rate === undefined ? '—' : (rate * 100).toFixed(0) + '%';
+    });
+    lines.push(`| ${t} | ${cells.join(' | ')} |`);
+  }
+
+  lines.push('');
+  return lines.join('\n');
+}
+
+/** Main suite runner. */
+async function runSuite(opts) {
+  const SAMPLE_DIR     = path.join(REPO_ROOT, 'samples', 'harbor-orders');
+  const ORDERS_JS_PATH = path.join(SAMPLE_DIR, 'src', 'orders.js');
+  const originalOrdersJs = fs.readFileSync(ORDERS_JS_PATH, 'utf8');
+
+  const ruleproofMd = buildRuleproofMd();
+  const tasks = ['R1', 'R2', 'R3', 'R4', 'R5'];
+  const conds = ['none', 'init', 'ruleproof'];
+
+  const allRuns = [];
+  let totalCost = 0;
+
+  console.log(`\n🔬 Suite mode  tasks=${tasks.join(',')}  conds=${conds.join(',')}  repeats=${opts.repeats}  fake=${opts.fake}`);
+
+  for (const cond of conds) {
+    console.log(`\n── Condition: ${cond} ──────────────────────────────────`);
+
+    for (const taskId of tasks) {
+      const taskFile = path.join(REPO_ROOT, 'tasks', `${taskId}.txt`);
+      if (!fs.existsSync(taskFile)) {
+        console.warn(`  [${cond}/${taskId}] task file not found, skipping`);
+        continue;
+      }
+      const prompt = fs.readFileSync(taskFile, 'utf8');
+
+      for (let i = 0; i < opts.repeats; i++) {
+        process.stdout.write(`  [${cond} / ${taskId} / run ${i}] copying... `);
+
+        const copyDir = prepareSuiteCopy(cond, taskId, i, ruleproofMd);
+
+        const runStart = Date.now();
+        let bobResult;
+        let runError = null;
+
+        try {
+          bobResult = opts.fake
+            ? await runBobFake(copyDir)
+            : await runBob(copyDir, prompt, opts.maxCost);
+        } catch (e) {
+          bobResult = { status: 'error', cost: 0, toolCalls: 0, bobTaskId: null };
+          runError  = e.message;
+        }
+
+        const seconds = (Date.now() - runStart) / 1000;
+        const checkResult = await runCheck(taskId, copyDir);
+
+        const afterPath = path.join(copyDir, 'src', 'orders.js');
+        const afterText = fs.existsSync(afterPath) ? fs.readFileSync(afterPath, 'utf8') : '';
+        const diff = unifiedDiff(originalOrdersJs, afterText);
+
+        const runRecord = {
+          cond,
+          task:       taskId,
+          run:        i,
+          pass:       checkResult.pass,
+          assertions: checkResult.assertions,
+          error:      runError ?? checkResult.error,
+          cost:       bobResult.cost,
+          toolCalls:  bobResult.toolCalls,
+          bobTaskId:  bobResult.bobTaskId,
+          seconds,
+          diff,
+        };
+
+        allRuns.push(runRecord);
+        totalCost += bobResult.cost;
+
+        const mark = checkResult.pass ? '✅' : '❌';
+        console.log(`${mark}  cost=${bobResult.cost.toFixed(4)}  ${seconds.toFixed(1)}s${checkResult.error ? `  err: ${checkResult.error}` : ''}`);
+      }
+    }
+  }
+
+  // Aggregate
+  const aggregates = {};
+  for (const cond of conds) {
+    const condRuns = allRuns.filter(r => r.cond === cond);
+    const passRate = condRuns.length > 0
+      ? condRuns.filter(r => r.pass).length / condRuns.length : 0;
+    const totalCondCost = condRuns.reduce((s, r) => s + (r.cost || 0), 0);
+    const avgCostPerRun = condRuns.length > 0 ? totalCondCost / condRuns.length : 0;
+
+    const passRatePerTask = {};
+    for (const taskId of tasks) {
+      const taskRuns = condRuns.filter(r => r.task === taskId);
+      passRatePerTask[taskId] = taskRuns.length > 0
+        ? taskRuns.filter(r => r.pass).length / taskRuns.length : 0;
+    }
+
+    aggregates[cond] = {
+      passRate,
+      passRatePerTask,
+      totalCost: totalCondCost,
+      avgCostPerRun,
+      rulesSize: rulesSize(cond, ruleproofMd),
+    };
+  }
+
+  const suiteReport = {
+    generatedAt: new Date().toISOString(),
+    repeats:     opts.repeats,
+    maxCost:     opts.maxCost,
+    totalCost,
+    aggregates,
+    runs:        allRuns,
+  };
+
+  // Write suite.json
+  const suiteOut = path.join(REPO_ROOT, 'results', 'suite.json');
+  fs.mkdirSync(path.dirname(suiteOut), { recursive: true });
+  fs.writeFileSync(suiteOut, JSON.stringify(suiteReport, null, 2), 'utf8');
+  console.log(`\n✅ ${suiteOut}`);
+
+  // Append to summary.md
+  const summaryPath = path.join(REPO_ROOT, 'results', 'summary.md');
+  const suiteSection = buildSuiteSection(suiteReport);
+  if (fs.existsSync(summaryPath)) {
+    // Remove any existing Head-to-head section before appending
+    let existing = fs.readFileSync(summaryPath, 'utf8');
+    const hhIdx = existing.indexOf('\n## Head-to-head');
+    if (hhIdx !== -1) existing = existing.slice(0, hhIdx);
+    fs.writeFileSync(summaryPath, existing + suiteSection, 'utf8');
+  } else {
+    fs.writeFileSync(summaryPath, suiteSection.trimStart(), 'utf8');
+  }
+  console.log(`✅ ${summaryPath} (Head-to-head appended)`);
+
+  console.log(`\nDone  totalCost=${totalCost.toFixed(4)}`);
+  for (const cond of conds) {
+    const agg = aggregates[cond];
+    console.log(`  ${cond.padEnd(12)} passRate=${(agg.passRate * 100).toFixed(0)}%  avgCost=${agg.avgCostPerRun.toFixed(4)}`);
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // Main
 // ──────────────────────────────────────────────────────────────────────────────
 async function main() {
@@ -373,6 +622,11 @@ async function main() {
       'Set it before running, or use --fake to test the pipeline without Bob.'
     );
     process.exit(1);
+  }
+
+  // ── Suite mode ────────────────────────────────────────────────────
+  if (opts.suite) {
+    return runSuite(opts);
   }
 
   // Load candidates

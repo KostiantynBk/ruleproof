@@ -403,6 +403,111 @@ td {
 .assertion-pass { color: var(--keep-text); }
 .assertion-fail { color: var(--harmful-text); }
 
+/* ── Suite head-to-head ─────────────────────────────────────────── */
+.section-h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: .75rem;
+}
+
+#suite-section {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+}
+
+.suite-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+}
+
+.suite-card {
+  flex: 1 1 11rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+.suite-card-label {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  margin-bottom: .1rem;
+}
+.suite-card-pass {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.suite-card-meta {
+  font-size: .7rem;
+  color: var(--muted);
+  margin-bottom: .35rem;
+}
+.suite-card-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: .78rem;
+  gap: .5rem;
+}
+.suite-meta-key { color: var(--muted); }
+.suite-meta-val { font-family: var(--mono); color: var(--text); }
+
+/* Accent colours per condition */
+.suite-card-none      .suite-card-pass { color: var(--muted); }
+.suite-card-init      .suite-card-pass { color: var(--accent); }
+.suite-card-ruleproof .suite-card-pass { color: var(--keep-text); }
+
+.suite-grid-wrap { margin-top: .25rem; }
+.suite-grid-title {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  margin-bottom: .5rem;
+}
+
+.suite-table {
+  border-collapse: collapse;
+  font-size: .8125rem;
+  width: auto;
+}
+.suite-table th,
+.suite-table td {
+  border: 1px solid var(--border);
+  padding: .3rem .7rem;
+  text-align: center;
+}
+.suite-table th {
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.suite-task-id {
+  font-family: var(--mono);
+  font-size: .8rem;
+  color: var(--muted);
+  text-align: left !important;
+}
+.suite-cell       { font-family: var(--mono); font-size: .8rem; }
+.suite-cell-good  { color: var(--keep-text);       background: rgba(35,134,54,.1); }
+.suite-cell-mid   { color: var(--ineffective-text); background: rgba(154,103,0,.08); }
+.suite-cell-bad   { color: var(--harmful-text);     background: rgba(182,35,36,.08); }
+
 /* ── Footer ─────────────────────────────────────────────────────── */
 footer {
   text-align: center;

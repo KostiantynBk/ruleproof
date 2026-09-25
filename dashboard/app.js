@@ -25,6 +25,12 @@
         '<tr><td colspan="5" class="loading">Failed to load data: ' + esc(err.message) + '</td></tr>';
     });
 
+  // Load suite data opportunistically
+  fetch('data/suite.json')
+    .then(r => { if (!r.ok) throw new Error('no suite'); return r.json(); })
+    .then(suite => renderSuite(suite))
+    .catch(() => { /* suite.json absent — silently skip */ });
+
   // ── Summary tiles ────────────────────────────────────────────────
   function renderSummary(data) {
     const rules = data.rules;
@@ -106,6 +112,53 @@
     return total / rule.runs.length;
   }
 
+  // ── Suite head-to-head ───────────────────────────────────────────
+  function renderSuite(suite) {
+    const conds = ['none', 'init', 'ruleproof'];
+    const labels = { none: 'No rules', init: 'Bob /init', ruleproof: 'RuleProof' };
+    const tasks  = ['R1', 'R2', 'R3', 'R4', 'R5'];
+
+    // Cards
+    const cardsEl = document.getElementById('suite-cards');
+    cardsEl.innerHTML = conds.map(c => {
+      const agg = suite.aggregates?.[c];
+      if (!agg) return '';
+      const pass  = Math.round((agg.passRate || 0) * 100) + '%';
+      const cost  = (agg.avgCostPerRun || 0).toFixed(4);
+      const size  = agg.rulesSize != null ? agg.rulesSize.toLocaleString() + ' chars' : '—';
+      return `
+        <div class="suite-card suite-card-${esc(c)}">
+          <div class="suite-card-label">${esc(labels[c] || c)}</div>
+          <div class="suite-card-pass">${esc(pass)}</div>
+          <div class="suite-card-meta">Pass rate</div>
+          <div class="suite-card-row"><span class="suite-meta-key">Avg cost</span><span class="suite-meta-val">${esc(cost)}</span></div>
+          <div class="suite-card-row"><span class="suite-meta-key">Rules size</span><span class="suite-meta-val">${esc(size)}</span></div>
+        </div>`;
+    }).join('');
+
+    // Per-task grid
+    const gridEl = document.getElementById('suite-grid');
+    let html = '<table class="suite-table"><thead><tr><th>Task</th>';
+    for (const c of conds) html += `<th>${esc(labels[c] || c)}</th>`;
+    html += '</tr></thead><tbody>';
+
+    for (const t of tasks) {
+      html += `<tr><td class="suite-task-id">${esc(t)}</td>`;
+      for (const c of conds) {
+        const agg  = suite.aggregates?.[c];
+        const rate = agg?.passRatePerTask?.[t];
+        const pct  = rate === undefined ? '—' : Math.round(rate * 100) + '%';
+        const cls  = rate === undefined ? '' : rate >= 0.67 ? 'suite-cell-good' : rate > 0 ? 'suite-cell-mid' : 'suite-cell-bad';
+        html += `<td class="suite-cell ${esc(cls)}">${esc(pct)}</td>`;
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    gridEl.innerHTML = html;
+
+    document.getElementById('suite-section').hidden = false;
+  }
+
   // ── Detail panel ─────────────────────────────────────────────────
   function openDetail(rule, tr) {
     // Deactivate previous active row
@@ -123,7 +176,8 @@
     renderDiffSelectors(rule);
 
     panel.hidden = false;
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Smoothly scroll the detail panel into view
+    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   }
 
   function renderEvidence(evidence) {
