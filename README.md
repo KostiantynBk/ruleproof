@@ -189,6 +189,15 @@ Bob Shell (`runner.mjs`) drives the agent headlessly: it spawns one Bob task per
 
 ---
 
+## Related work
+
+- **Review bots that learn from feedback** (e.g. Cursor Bugbot learned rules, Qodo, Greptile, CodeRabbit learnings) mine review comments to steer *their own* reviewer; RuleProof produces rules for the *coding agent* and measures whether each one changes its behaviour.
+- **[agentsmd-cli](https://github.com/rudrakshkarpe/agentsmd-cli)** proposes AGENTS.md rules from the agent's own sessions and gates them with with/without runs; RuleProof learns from the *team's* history (reviews, reverts, CI), targets Bob's rule layers and compares against Bob's `/init`.
+- **ETH Zurich AGENTbench** ([arXiv 2602.11988](https://arxiv.org/abs/2602.11988)) measured that generated context files don't help on average — the motivation for testing every rule.
+- Other IBM Bob 2.0 hackathon entries in the same "make Bob safer/smarter" space — e.g. [never-twice](https://github.com/Rusheekg/never-twice) (postmortems → bug hunts and guardrails) and [ControlProof](https://github.com/daschwan/IBM-Bob-hackathon) (verifies that Bob hooks actually enforce) — address different objects (code bugs, hooks); RuleProof is about which *rules* Bob should be given.
+
+---
+
 ## Data Sources
 
 See [`DATA_SOURCES.md`](DATA_SOURCES.md) for full provenance of all inputs (synthetic history, real GitHub reviews, external research references).
