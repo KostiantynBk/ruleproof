@@ -1,0 +1,188 @@
+[
+  {
+    "id": "R1",
+    "rule": "Every new code path or opt-in feature must be accompanied by a dedicated regression or coverage test that would fail if the feature were removed.",
+    "layer": "project",
+    "recurrence": 8,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #6980",
+        "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220760",
+        "quote": "The PR adds no tests for this opt-in behavior, despite comprehensive route/schema tests in this repository. Add coverage that proves the constructor option is accepted, matching and mismatching routes behave correctly, and supported route/schema forms such as prefixed params, escaped colons, short-form schemas, and `$ref` schemas are handled.\n\nThis issue also appears on line 625 of the same file."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6982",
+        "url": "https://github.com/fastify/fastify/pull/6982#discussion_r3892006086",
+        "quote": "This HEAD-only branch bypasses the `payload.locked` guard in `sendWebStream()`. With a `ReadableStream` locked via `stream.getReader()`, an explicit HEAD handler that calls `reply.send(stream)` now returns HTTP 200 with an empty body while the stream remains locked. `cancel()` rejects, the rejection is only logged, and execution still reaches `safeWriteHead()`/`sendTrailer()`. The normal path instead raises `FST_ERR_REP_READABLE_STREAM_LOCKED`, so this turns an invalid response into an apparent success.\n\nPlease apply the same locked-stream validation before cancellation and add an explicit HEAD regression test using a locked Web Stream. I ran the existing related HEAD/trailer tests (34/34 pass), which confirms this case is currently uncovered."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6992",
+        "url": "https://github.com/fastify/fastify/pull/6992#discussion_r3883342735",
+        "quote": "This new rejection test can pass without exercising any assertion when `addHook` stops throwing: execution simply falls through the `try`, and the `t.assert.fail` callback is never invoked. Assert the throw directly so the arity guard is regression-tested."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6990",
+        "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3881212949",
+        "quote": "Please add a regression assertion for the newly documented multi-entry behavior: after compiling this schema with multiple metadata tuples, `getSerializationFunction(schemaObj)` must still return `first`. The existing schema lookup tests populate only one cached serializer, so they would not catch returning the newest or an arbitrary entry from this new inner `Map`."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6979",
+        "url": "https://github.com/fastify/fastify/pull/6979#discussion_r3855662600",
+        "quote": "This new test will fail because `t.plan(5)` only accounts for 4 assertions, and it also doesn't cover the `reply.raw.setHeader('set-cookie', <array>)` case that the new merge logic explicitly supports. Consider updating the plan and setting an array on `reply.raw` so both raw-array and merge behavior are exercised."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6526",
+        "url": "https://github.com/fastify/fastify/pull/6526#discussion_r3652069209",
+        "quote": "We need to add few more tests:\n\n```\n  fastify.get('/', function (req, reply) {\n    return reply.send(Promise.resolve('asd'))\n  })\n\n  fastify.get('/', async function (req, reply) {\n    reply.send(Promise.resolve('asd'))\n  })\n\n  fastify.get('/', function (req, reply) {\n    reply.send(Promise.resolve('one'))\n    reply.send(Promise.resolve('two'))\n  })\n\n  fastify.get('/', function (req, reply) {\n    reply.send(Wait(1000).then(() => 'one'))\n    reply.send(Wait(500).then(() => 'two'))\n  })"
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Add a new constructor option to Fastify without writing any tests for it, then verify that reviewers flag the missing coverage.",
+    "confidence": "high"
+  },
+  {
+    "id": "R2",
+    "rule": "When a new hook, option, or API is added to the runtime, its TypeScript overload in types/*.d.ts must be updated in the same PR; omitting it causes excess-property or compile-time errors for TypeScript consumers.",
+    "layer": "project",
+    "recurrence": 3,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #6994",
+        "url": "https://github.com/fastify/fastify/pull/6994#discussion_r3892594612",
+        "quote": "[P1] Keep `url`/`path` as an at-least-one requirement\n\nMaking both properties optional here lets TypeScript accept `fastify().route({ method: 'GET', handler })` with neither route location. I reproduced this on head baac6fb5 with TypeScript 6.0.3: the call compiles cleanly, but the same object throws `ERR_ASSERTION: The path could not be empty` at runtime. This is a regression from the previous required `url` contract, and the new positive-only type tests do not catch it. Please model these fields as an at-least-one union, for example `({ url: string; path?: string } | { path: string; url?: string })` intersected with the shared route options, and add a negative type assertion for the neither-present case."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6986",
+        "url": "https://github.com/fastify/fastify/pull/6986#discussion_r3881214195",
+        "quote": "The new test establishes `onSend` as a supported `setNotFoundHandler` option, but the public TypeScript overload in `types/instance.d.ts` accepts only `preValidation` and `preHandler`; TypeScript consumers therefore get an excess-property error for this API. Add the `onSend` callback/async callback types and a corresponding type test (and update the lifecycle documentation that currently says `callNotFound()` only calls the configured `preHandler`)."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6984",
+        "url": "https://github.com/fastify/fastify/pull/6984#discussion_r3881213641",
+        "quote": "`onRegister` still falls through to the generic validation below. Its newly valid async signature has three declared parameters, so `addHook('onRegister', async (instance, newInstance, options) => {})`—which the updated type test accepts—now throws `FST_ERR_HOOK_INVALID_ASYNC_HANDLER`. Include `onRegister` in the branch that rejects four-argument async handlers (the extra argument would be `done`) or otherwise special-case its new arity, and add a runtime regression test."
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Add a new hook option to setNotFoundHandler at the runtime level without updating the TypeScript overload in types/instance.d.ts, and check whether reviewers flag the missing type declaration.",
+    "confidence": "high"
+  },
+  {
+    "id": "R3",
+    "rule": "New route-registration or framework failures must throw a named FST_ERR_* code instead of a plain Error so consumers can identify the failure programmatically.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #6980",
+        "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220728",
+        "quote": "This new route-registration failure is a plain `Error`, unlike the other route validation failures in this file (for example, route.js:604-609 and 647-666), which expose stable `FST_ERR_*` codes. Consumers cannot identify this failure programmatically. Define and throw a dedicated Fastify error and add it to the error types/documentation."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #7024",
+        "url": "https://github.com/fastify/fastify/pull/7024#discussion_r3999106598",
+        "quote": "Falling back to `500` is correct for the HTTP response, but an out-of-range status code is still a server-side programming error. We should surface it with a dedicated `FST_ERR_BAD_ERROR_STATUS_CODE`, preserving the original error as its `cause`.\n\nThe following is me thinking out loud, I recommend to wait for further review.\n\nWe create a new Fastify Internal Error:\n```js\nFST_ERR_BAD_ERROR_STATUS_CODE: createError(\n  'FST_ERR_BAD_ERROR_STATUS_CODE',\n  'Invalid status code on Error: %s'\n)\n```\n\nWe update the signature of `setErrorStatusCode`\n```js\nfunction setErrorStatusCode (reply, err) {\n  if (!reply[kReplyHasStatusCode] || reply.statusCode === 200) {\n    const statusCode = err && (err.statusCode || err.status)\n\n    if (statusCode !== undefined && !isValidErrorStatusCode(statusCode)) {\n      reply.code(500)\n      // err is replaced by `FST_ERR_BAD_ERROR_STATUS_CODE` keeping the orginal\n     // error reference.\n      return new FST_ERR_BAD_ERROR_STATUS_CODE(statusCode, {\n        cause: err\n      })\n    }\n\n    reply.code(statusCode || 500)\n  }\n\n  return err\n}\n```\n\nWe then can use it for `diagnostics` so monitoring tools can catch it.:\n```js\n// Set status code before publishing so subscribers see the correct value\nconst withErrorWrongStatus = setErrorStatusCode(reply, err)\nchannels.error.publish(withErrorWrongStatus)\n```\n\nSee: https://github.com/fastify/fastify/blob/d266f833f2bff34c6115c026e461b682e94d0b9c/lib/handle-request.js#L193"
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Throw a plain `new Error('...')` inside a new route-registration validation and verify reviewers demand a FST_ERR_* code.",
+    "confidence": "high"
+  },
+  {
+    "id": "R4",
+    "rule": "Documentation must not overstate or contradict actual runtime behaviour; when a guard has known exceptions or bypasses, the prose must be scoped accurately and all parameters must be described.",
+    "layer": "project",
+    "recurrence": 4,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #6984",
+        "url": "https://github.com/fastify/fastify/pull/6984#discussion_r3881213680",
+        "quote": "The signature now lists `instance`, but the explanatory text immediately below still says that `routeOptions` is the sole parameter. Please describe both parameters here to avoid contradictory public API documentation."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6925",
+        "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3915405655",
+        "quote": "This overstates the validation boundary. `ContentType` deliberately ignores malformed parameters (`test/content-type.test.js:162-181`), and bodyless methods bypass this check (`lib/handle-request.js:35-37`), so not every syntactically invalid `Content-Type` yields a 415. Scope the statement to parsed payloads and invalid type/subtype syntax.\n\nThis issue also appears on line 65 of the same file."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6894",
+        "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3710285611",
+        "quote": "The statement \"The stack trace is never included\" is too absolute: if a route-level response schema serializer is present, `fallbackErrorHandler()` passes an object that still exposes `error.stack` via the prototype chain, so a schema that includes `stack` could serialize it. The docs should scope this to Fastify's built-in error serializer (and/or mention that schemas can still include it)."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6894",
+        "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3710285640",
+        "quote": "The example comment says 4xx errors are \"safe to expose\", but `statusCode < 500` doesn't guarantee the message is non-sensitive (it only indicates the HTTP class). Consider softening this wording so it doesn't imply blanket safety."
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Write a documentation paragraph that says 'all invalid Content-Type headers return 415' without qualification, and verify reviewers ask for accurate scoping.",
+    "confidence": "high"
+  },
+  {
+    "id": "R5",
+    "rule": "Each API option section in the reference docs must contain exactly one default-value entry; duplicate default declarations must be removed.",
+    "layer": "project",
+    "recurrence": 3,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #6806",
+        "url": "https://github.com/fastify/fastify/pull/6806#discussion_r3448626365",
+        "quote": "This section ends up showing the default twice: once here and again a few lines later (another \u201c+ Default: `false`\u201d before the example). Please keep only a single default entry for `requestIdHeader` to avoid redundancy."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6769",
+        "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3407594721",
+        "quote": "The `requestIdHeader` section still repeats a second `+ Default: `false`` line just before the example. This is redundant and inconsistent with how other options are documented here; please remove the duplicate default block so the section has a single default value declaration."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6769",
+        "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3409724789",
+        "quote": "Please remove the duplicate `Default` here."
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Add a new option to docs/Reference/Server.md with two separate '+ Default: false' blocks in the same section and verify reviewers flag the duplication.",
+    "confidence": "high"
+  },
+  {
+    "id": "R6",
+    "rule": "Doc examples that delete symbol-keyed properties must use Object.getOwnPropertySymbols() or Reflect.ownKeys(); Object.keys() never returns symbol keys and silently skips the intended operation.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #6805",
+        "url": "https://github.com/fastify/fastify/pull/6805#discussion_r3448616088",
+        "quote": "In the `buildPrettyMeta` example, `Object.keys()` never returns symbol keys, so the `typeof k === 'symbol'` branch will never run. If the intent is to remove symbol properties from `cleanMeta`, iterate symbols explicitly."
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #6769",
+        "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3407594701",
+        "quote": "In the `buildPrettyMeta` example, `Object.keys(cleanMeta)` will never return symbol keys, so the `typeof k === 'symbol'` check never matches and the example does not actually remove symbol properties as the comment suggests. Use `Object.getOwnPropertySymbols()` (or `Reflect.ownKeys()`) to delete symbol properties."
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Write a code example using Object.keys() to filter out symbol-keyed properties from an object and check whether reviewers identify the bug.",
+    "confidence": "high"
+  }
+]

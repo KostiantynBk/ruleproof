@@ -1,0 +1,233 @@
+[
+  {
+    "id": "R1",
+    "rule": "Tests must assert the actual observable behaviour (concrete values, structures, or emitted events), not merely exercise a code path; tautological assertions that pass regardless of the change under test are rejected.",
+    "evidence": [
+      {
+        "quote": "How are you checking here for a deprecation warning? I don't see any code that would verify if there is a warning. These tests would also pass without #6405.",
+        "ref": "PR #7105",
+        "url": "https://github.com/expressjs/express/pull/7105#discussion_r2936615681",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Just \"covering\" some lines without checking if they do what they are supposed to do does not make sense in my opinion.\n\nThe tests are named \"should deprecate\", so I consider not checking this behaviour a problem.",
+        "ref": "PR #7105",
+        "url": "https://github.com/expressjs/express/pull/7105#discussion_r2944873054",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "This test doesn't adequately verify that the `arrayLimit` option is working correctly. It only checks that `res.body.ids` exists, but doesn't verify the actual structure of the result.",
+        "ref": "PR #6908",
+        "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645755",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "This test doesn't adequately verify the depth limit behavior. The comment on line 146 states \"should only parse a[b]\" and \"Further nesting should be flattened or ignored\", but the test doesn't verify this.",
+        "ref": "PR #6908",
+        "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645693",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "This test doesn't actually verify that prototype pollution is allowed with `allowPrototypes:true`. It just expects a 200 response, which doesn't prove anything about whether the prototype was actually polluted.",
+        "ref": "PR #6908",
+        "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645706",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "This assertion is a self fulfilling test. If you want to test this properly you would need to hard code the expected path here, not use `view.path` since no matter what we changed `view.path` to this would pass. right?",
+        "ref": "PR #6306",
+        "url": "https://github.com/expressjs/express/pull/6306#discussion_r1950015265",
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 6,
+    "total": 6
+  },
+  {
+    "id": "R2",
+    "rule": "Do not include changes unrelated to the PR's stated goal; every modified file must trace directly to the PR's purpose.",
+    "evidence": [
+      {
+        "quote": "This is an unrelated change",
+        "ref": "PR #7089",
+        "url": "https://github.com/expressjs/express/pull/7089#discussion_r2899367197",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Please keep the PR focused, this change is unnecessary",
+        "ref": "PR #6604",
+        "url": "https://github.com/expressjs/express/pull/6604#discussion_r2173874361",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "@user This change is still here. Please remove the changes you made here, they don't belong in this PR",
+        "ref": "PR #6604",
+        "url": "https://github.com/expressjs/express/pull/6604#discussion_r2203489433",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "@user please create a separate PR for this doc change :+1:",
+        "ref": "PR #6588",
+        "url": "https://github.com/expressjs/express/pull/6588#discussion_r2288131967",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Is this somehow related to the updates? If so, please document why.",
+        "ref": "PR #6113",
+        "url": "https://github.com/expressjs/express/pull/6113#discussion_r1917423945",
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 5,
+    "total": 5
+  },
+  {
+    "id": "R3",
+    "rule": "Do not add verbose or redundant inline comments; if the JSDoc already documents intent, omit the inline comment. Comments that no longer apply to the surrounding code block must be removed or relocated.",
+    "evidence": [
+      {
+        "quote": "I don't think that expanding this comment is necessary. I know that LLMs love comments, but not every line of code needs 3 lines of comments to explain what it does.",
+        "ref": "PR #7467",
+        "url": "https://github.com/expressjs/express/pull/7467#discussion_r3996787531",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "This inline comment is redundant and deviates from the codebase conventions. The function already has a comprehensive JSDoc comment immediately above (lines 112-123) that describes its purpose: \"Send a response.\" Throughout this file, inline comments appear only within function bodies to explain specific logic... Not between JSDoc and function declarations. No other function in this file follows this pattern.",
+        "ref": "PR #6979",
+        "url": "https://github.com/expressjs/express/pull/6979#discussion_r2669651125",
+        "verified": false,
+        "reason": "quote not found in any source after normalisation"
+      },
+      {
+        "quote": "This comment should be moved below (above the new `if`), since it no longer applies to this section of code.",
+        "ref": "PR #7459",
+        "url": "https://github.com/expressjs/express/pull/7459#discussion_r3952110404",
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 2,
+    "total": 3
+  },
+  {
+    "id": "R4",
+    "rule": "Use `after(n, done)` (or equivalent latch) when a Mocha test waits for multiple async callbacks to complete; never hand-roll a counter with a shared `done` variable.",
+    "evidence": [
+      {
+        "quote": "This is just `after(2, done)`, but worse.\n\nSee also [`after`](https://github.com/[redacted])",
+        "ref": "PR #7447",
+        "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916192639",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "`after(2, done)`, but worse - can call `done()` multiple times",
+        "ref": "PR #7447",
+        "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916246339",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "When the assertions throw, they prevent cleanup (`server.close`) so the suite hangs forever with an open server.\r\n\r\nThey're also throwing in callbacks, so mocha only sees them due to its global uncaught exception handler. \r\nThey'd need to be try/catch'd, otherwise we can never clean up or reliaby associate the failure w/ the test.",
+        "ref": "PR #6856",
+        "url": "https://github.com/expressjs/express/pull/6856#discussion_r2476157979",
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 3,
+    "total": 3
+  },
+  {
+    "id": "R5",
+    "rule": "Use `^` (caret) version ranges for dependencies in package.json instead of exact pins; exact pins must be justified explicitly and agreed by the team.",
+    "evidence": [
+      {
+        "quote": "Overly strict version pinning (especially in libraries) tends to cause more problems than it solves [in my experience](https://github.com/[redacted]).\r\n\r\nAs long as your dependencies are properly adhering to semver ([which sometimes they don't :roll_eyes:](https://github.com/[redacted])), there should be no downsides to allowing backwards compatible updates with a fuzzy lock ([`^` in npm](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#dependencies)).",
+        "ref": "PR #6017",
+        "url": "https://github.com/expressjs/express/pull/6017#discussion_r1790742653",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "For all dep updates we are moving to `^` prefixes. This will need to be updated as well, but we prefer doing this in individual commits, so it is unlikely this PR would merge.",
+        "ref": "PR #6113",
+        "url": "https://github.com/expressjs/express/pull/6113#discussion_r1917425076",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Can we just unpin this (`^`)? I thought we agreed to just unpin all these as we touched them?",
+        "ref": "PR #6112",
+        "url": "https://github.com/expressjs/express/pull/6112#discussion_r1907848611",
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 3,
+    "total": 3
+  },
+  {
+    "id": "R6",
+    "rule": "Never use `pull_request_target` in GitHub Actions workflows that check out or execute PR contributor code; use `pull_request` instead to prevent privilege escalation via script injection.",
+    "evidence": [
+      {
+        "quote": "Avoid using pull_request_target , use pull_request instead. This provides workflows with write permission to the repo when it runs to checkout PR code. Attacker's code runs WITH the base repo's privileges\r\nPlease refer to : https://securitylab.github.com/[redacted]",
+        "ref": "PR #6805",
+        "url": "https://github.com/expressjs/express/pull/6805#discussion_r2414357581",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "This script is vulnerable to actions injection :(\r\n\r\n<https://docs.github.com/[redacted]",
+        "ref": "PR #6810",
+        "url": "https://github.com/expressjs/express/pull/6810#discussion_r2411614883",
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 2,
+    "total": 2
+  },
+  {
+    "id": "R7",
+    "rule": "New TypeError/error messages must match the existing codebase format (e.g. start with 'Invalid status code') and guard against falsy-but-provided values using explicit null/undefined checks, not bare `if (!arg)`.",
+    "evidence": [
+      {
+        "quote": "The new redirect TypeError messages use a different format (e.g. capitalized \"The \\\"url\\\" argument…\") than other argument validation errors in this file (e.g. `path must be a string to res.sendFile`). Aligning the wording/format makes errors more consistent and easier to search/maintain across the codebase.",
+        "ref": "PR #7103",
+        "url": "https://github.com/expressjs/express/pull/7103#discussion_r2926730138",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "`if (!address)` will treat empty strings and other falsy-but-provided values (e.g. `0` when called as `res.redirect(301, 0)`) as \"missing url\" and throw the wrong TypeError message. Consider checking explicitly for missing values (e.g. `arguments.length === 0` / `address == null`)",
+        "ref": "PR #7103",
+        "url": "https://github.com/expressjs/express/pull/7103#discussion_r2926730104",
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Tests expect the error message to start with \"Invalid status code\"",
+        "ref": "PR #6470",
+        "url": "https://github.com/expressjs/express/pull/6470#discussion_r2051440070",
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 3,
+    "total": 3
+  }
+]
