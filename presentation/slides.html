@@ -150,12 +150,16 @@
 
 <!-- 7. Real repository -->
 <section class="slide">
-  <h2>Works on a real repository: <span class="blue">sindresorhus/ky</span></h2>
-  <p style="margin-top:-12px">256 anonymized public PR review comments (60 PRs) → <b>10 project-specific rules</b>, each raised in 2–6 PRs, <b>36/36 quotes verified</b>.</p>
-  <div class="quote">Keep TypeScript JSDoc comments and the README in sync.<small>7 comments across 6 PRs — e.g. "Readme and TS docs should be in sync." (PR #417)</small></div>
-  <div class="quote">Never hit external URLs like example.com in tests; use the local test server.<small>2 PRs — e.g. "These tests reach out to `example.com` but they should probably use a local echo server instead." (PR #858)</small></div>
-  <div class="quote">Use <code>t.plan()</code> in AVA tests with async callbacks or hooks.<small>3 comments across 2 PRs (#671, #772)</small></div>
-  <p class="muted">Mined and verified; not A/B-tested (that repo has no behavioural checks yet).</p>
+  <h2>Real repositories: what Bob's <code>/init</code> misses</h2>
+  <table style="font-size:20px">
+    <tr><th>Repository</th><th>Review comments</th><th>Rules mined</th><th>Quotes verified</th><th>/init covers · partial · missing</th></tr>
+    <tr><td>sindresorhus/ky</td><td>256 (60 PRs)</td><td>10</td><td>36/36</td><td>0 · 1 · <span class="red"><b>9</b></span></td></tr>
+    <tr><td>expressjs/express</td><td>224 (79 PRs)</td><td>7</td><td>24/25</td><td>0 · 1 · <span class="red"><b>6</b></span></td></tr>
+    <tr><td>fastify/fastify</td><td>247 (72 PRs)</td><td>6</td><td>20/20</td><td>1 · 1 · <span class="red"><b>4</b></span></td></tr>
+  </table>
+  <p class="blue" style="margin-top:22px;font-size:26px">23 rules reviewers enforced in ≥2 PRs — Bob's <code>/init</code> (18 KB) fully captured <b>1</b> and missed <b>19</b>.</p>
+  <div class="quote">fastify: "throw a named <code>FST_ERR_*</code> code, not a plain Error" — <span class="accent">covered by /init</span><small>express: "never use <code>pull_request_target</code> for workflows that run PR code" — <span class="red">missing from /init</span></small></div>
+  <p class="muted" style="font-size:18px">Mined + verified + compared with /init; not A/B-tested (needs per-repo behavioural checks). Try it: ruleproof.vercel.app</p>
   <div class="foot"><span>RuleProof · data sources in DATA_SOURCES.md</span><span>7</span></div>
 </section>
 

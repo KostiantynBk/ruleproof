@@ -66,13 +66,20 @@ Five tasks × three repeats per condition. RuleProof reaches a **100 %** pass ra
 
 ---
 
-## Real Repository: `sindresorhus/ky`
+## Real repositories: what Bob's `/init` misses
 
-RuleProof was also run against the public [ky](https://github.com/sindresorhus/ky) HTTP library to demonstrate mining on a real open-source project.
+RuleProof mined three popular MIT-licensed projects' public PR review history (reviewers anonymized), verified every quote, and compared the mined rules with what Bob's `/init` writes for the same repository (run in Bob IDE on a clone of each repo). Try it in the dashboard's **"Try it on real repositories"** gallery.
 
-**Mining results (`out/real-ky/candidates.json`):** 10 candidate rules from **256 anonymized review comments (60 PRs)**. Each rule was raised in 2–6 different PRs (25 PRs in total) and is backed by 2–7 quotes; **all 36 quotes verified verbatim** (`out/real-ky/verification.json`).
+| Repository | Review comments (PRs) | Rules mined | Quotes verified | `/init` size | `/init` covers: fully / partially / **missing** |
+|---|---|---|---|---|---|
+| [sindresorhus/ky](https://github.com/sindresorhus/ky) | 256 (60) | 10 | 36/36 | 5,606 chars | 0 / 1 / **9** |
+| [expressjs/express](https://github.com/expressjs/express) | 224 (79) | 7 | 24/25 ¹ | 4,900 chars | 0 / 1 / **6** |
+| [fastify/fastify](https://github.com/fastify/fastify) | 247 (72) | 6 | 20/20 | 7,604 chars | 1 / 1 / **4** |
+| **Total** | **727 (211)** | **23** | **80/81** | **18,110 chars** | **1 / 3 / 19** |
 
-Two examples:
+**Of 23 conventions that reviewers enforced in at least two different PRs, Bob's `/init` fully captured one and missed nineteen** — even though it wrote 18 KB of rules. Every "covered"/"partial" judgment cites a verbatim `/init` excerpt (`scripts/verify-coverage.mjs`). ¹ One Express quote was shortened by Bob with "…"; the verifier rejects it and the dashboard flags it as not verbatim.
+
+These real-repo rules are mined and verified, not A/B-tested (that needs behavioural checks per repo — see [Limitations](#limitations)). Two examples from ky:
 
 > **R1 — Docs sync:** *"Keep TypeScript JSDoc comments and the README in sync: every option, parameter, or behaviour documented in one must be mirrored in the other."*
 > 7 review comments across 6 PRs (#417, #454, #459, #611, #632, #840).
@@ -80,7 +87,7 @@ Two examples:
 > **R2 — AVA `t.plan()`:** *"Use `t.plan()` in every AVA test that contains async callbacks or hooks so that missing or skipped assertions are caught as test failures."*
 > 3 review comments across 2 PRs (#671, #772).
 
-The real-repo rules have not been A/B-tested (see [Limitations](#limitations)), but the mining pipeline ran end-to-end and evidence is traceable to real GitHub review comments.
+Details: `out/real-<repo>/candidates.json`, `verification.json`, `coverage.json`; `/init` outputs in `baseline-init-real/<repo>/` (ky's `/init` also absorbed the maintainer's own one-rule `AGENTS.md`, kept as `MAINTAINER_AGENTS.md`).
 
 ---
 
@@ -135,7 +142,8 @@ ruleproof/
 │   ├── fetch-reviews.mjs   # Fetches + anonymizes public PR review comments
 │   └── with-bob-key.ps1    # DPAPI key loader (Windows)
 ├── dashboard/              # Web dashboard source
-├── bob_sessions/           # Bob IDE task-summary screenshots (tasks 01–13)
+├── baseline-init-real/     # Bob /init output for ky, express, fastify
+├── bob_sessions/           # Bob IDE task-summary screenshots (tasks 01–20)
 │   └── shell/              # Bob Shell session logs
 └── DATA_SOURCES.md         # Full provenance for all data
 ```
@@ -160,7 +168,11 @@ All code in this repository was written with Bob IDE, and every A/B run was exec
 | `bob_sessions/constantin_task10` | Fetching real ky reviews | Bob IDE (Agent) |
 | `bob_sessions/constantin_task11` | Mining `sindresorhus/ky` | Bob IDE (rule-miner) |
 | `bob_sessions/constantin_task12` | Evidence verifier + dashboard update | Bob IDE (Agent) |
-| `bob_sessions/constantin_task13` | This README | Bob IDE (Agent) |
+| `bob_sessions/constantin_task13` | README | Bob IDE (Agent) |
+| `bob_sessions/constantin_task14–16` | `/init` on clones of ky, express, fastify (baselines) | Bob IDE (Agent) |
+| `bob_sessions/constantin_task17–18` | Mining express and fastify | Bob IDE (rule-miner) |
+| `bob_sessions/constantin_task19` | `/init` coverage comparison + `verify-coverage.mjs` | Bob IDE (Agent) |
+| `bob_sessions/constantin_task20` | Real-repository gallery in the dashboard | Bob IDE (Agent) |
 | [`bob_sessions/shell/shell01`](bob_sessions/shell/shell01_sample_history.json) | Synthetic review / git / CI history for the sample | **Bob Shell** (headless) |
 | [`results/*.log.txt`](results/) | 75 A/B runs (30 per-rule + 45 head-to-head), each with its Bob task id in `results/*.json` | **Bob Shell** (headless, via `runner.mjs`) |
 
@@ -172,7 +184,7 @@ Bob Shell (`runner.mjs`) drives the agent headlessly: it spawns one Bob task per
 
 - **Synthetic A/B sample.** The A/B results come from `samples/harbor-orders.history`, a purpose-built synthetic repository. Real-world numbers may differ.
 - **3 repeats per condition.** Statistical noise is non-trivial at n = 3. Borderline rules (e.g. R4 at 67 % baseline) could change verdict with more runs.
-- **Real repo not A/B-tested.** The `ky` rules were mined and their evidence verified, but no automated A/B pass was run against the real repository.
+- **Real repos not A/B-tested.** The ky, express and fastify rules were mined, their evidence verified and compared with `/init`, but not A/B-tested — that requires behavioural checks written for each repository. The `/init` coverage judgments were made by Bob and are backed by verified quotes, but remain judgments.
 - **One Bob version, one day.** All runs used Bob Shell 2.0.4 on 25 Sep 2026. Bob routes requests to its own models, which cannot be pinned, so results may shift with future Bob releases — rerun `runner.mjs` to re-measure.
 
 ---
