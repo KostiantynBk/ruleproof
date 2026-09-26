@@ -599,7 +599,7 @@
     "line": 24,
     "date": "2025-06-05",
     "reviewer": "reviewer_1",
-    "body": "This is flawed in multiple ways.\r\n\r\n1. Missing a `break`\r\n2. https://gist.github.com/CNSeniorious000/9fc1a72e45358dd7c9e2f16e5d26df5c https://github.com/zloirock/core-js/issues/445#issuecomment-1817361034",
+    "body": "This is flawed in multiple ways.\r\n\r\n1. Missing a `break`\r\n2. https://gist.github.com/[redacted] https://github.com/[redacted]",
     "url": "https://github.com/sindresorhus/ky/pull/701#discussion_r2128680260"
   },
   {
@@ -923,7 +923,7 @@
     "line": 222,
     "date": "2024-08-12",
     "reviewer": "reviewer_2",
-    "body": "I found this very useful thread regarding header names and semantics:\r\nhttps://github.com/ietf-wg-httpapi/ratelimit-headers/issues/25\r\n\r\nI'll leave it to others to add some of the more obscure formats, if the need arises.",
+    "body": "I found this very useful thread regarding header names and semantics:\r\nhttps://github.com/[redacted]\r\n\r\nI'll leave it to others to add some of the more obscure formats, if the need arises.",
     "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1714389859"
   },
   {
@@ -941,7 +941,7 @@
     "line": 222,
     "date": "2024-08-12",
     "reviewer": "reviewer_18",
-    "body": "I don’t think this correct. On mdn I see two formats for `Retry-After` an ISO date or a number of seconds to wait\n\n```\nRetry-After: Wed, 21 Oct 2015 07:28:00 GMT\nRetry-After: 120\n``` \n\nWhile [GitHub's docs](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api?apiVersion=2022-11-28#handle-rate-limit-errors-appropriately) say:\n\n> should not make another request until after the time specified by the x-ratelimit-reset header. The x-ratelimit-reset header is in UTC epoch seconds.\n\nSo this introduces a third type: UTC epoch. I think this is easy to detect though: `if t is number and t > 1700000000`",
+    "body": "I don’t think this correct. On mdn I see two formats for `Retry-After` an ISO date or a number of seconds to wait\n\n```\nRetry-After: Wed, 21 Oct 2015 07:28:00 GMT\nRetry-After: 120\n``` \n\nWhile [GitHub's docs](https://docs.github.com/[redacted]) say:\n\n> should not make another request until after the time specified by the x-ratelimit-reset header. The x-ratelimit-reset header is in UTC epoch seconds.\n\nSo this introduces a third type: UTC epoch. I think this is easy to detect though: `if t is number and t > 1700000000`",
     "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1713150598"
   },
   {
@@ -1040,7 +1040,7 @@
     "line": 23,
     "date": "2024-06-13",
     "reviewer": "reviewer_21",
-    "body": "Based on my understanding, this code is supposed to determine whether the runtime supports streaming requests. However, the [code](https://github.com/edram/issue-ky-581/blob/main/src/main.ts#L14) above throws `Error: unsupported BodyInit type` in the QQ app or QQ browser on iOS. This indicates that these two runtimes do not support streaming requests. The check for support should not throw an error. Given the large number of QQ users, the latest version of ky in my project can use is version 0.31.1.\r\n\r\n![image](https://github.com/sindresorhus/ky/assets/14024542/b42ab36c-f7b9-4d8c-b620-4d5c8a679853)\r\n\r\n",
+    "body": "Based on my understanding, this code is supposed to determine whether the runtime supports streaming requests. However, the [code](https://github.com/[redacted]) above throws `Error: unsupported BodyInit type` in the QQ app or QQ browser on iOS. This indicates that these two runtimes do not support streaming requests. The check for support should not throw an error. Given the large number of QQ users, the latest version of ky in my project can use is version 0.31.1.\r\n\r\n![image](https://github.com/sindresorhus/ky/assets/14024542/b42ab36c-f7b9-4d8c-b620-4d5c8a679853)\r\n\r\n",
     "url": "https://github.com/sindresorhus/ky/pull/582#discussion_r1637373565"
   },
   {
@@ -1148,7 +1148,7 @@
     "line": 180,
     "date": "2023-11-12",
     "reviewer": "reviewer_25",
-    "body": "This is breaking, but actually both [`@user/node`](https://github.com/nodejs/undici/blob/91ca13ccd065d50c47279e9fdac0c152464baee9/types/fetch.d.ts#L12) and [`lib.dom.d.ts`](https://github.com/microsoft/TypeScript/blob/ca7a3af5e607a6c8589f5f600d6c4960a8bc07d4/src/lib/dom.generated.d.ts#L25921) define it this way.",
+    "body": "This is breaking, but actually both [`@user/node`](https://github.com/nodejs/undici/blob/91ca13ccd065d50c47279e9fdac0c152464baee9/types/fetch.d.ts#L12) and [`lib.dom.d.ts`](https://github.com/[redacted]) define it this way.",
     "url": "https://github.com/sindresorhus/ky/pull/543#discussion_r1390424682"
   },
   {
@@ -1388,7 +1388,7 @@
   {
     "pr": 429,
     "file": "source/core/Ky.ts",
-    "line": 1,
+    "line": 304,
     "date": "2022-03-02",
     "reviewer": "reviewer_2",
     "body": "I'm unclear on whether we should keep these. ESLint was complaining about them before I even made any changes.",
@@ -1598,7 +1598,7 @@
     "line": 6,
     "date": "2021-05-14",
     "reviewer": "reviewer_34",
-    "body": "Haven't found it: https://github.com/microsoft/TypeScript/blob/master/lib/lib.dom.d.ts#L16108",
+    "body": "Haven't found it: https://github.com/[redacted]",
     "url": "https://github.com/sindresorhus/ky/pull/344#discussion_r632453909"
   },
   {
@@ -1625,7 +1625,7 @@
     "line": 280,
     "date": "2021-05-07",
     "reviewer": "reviewer_30",
-    "body": "Do you think MR with Generic type in https://github.com/Beraliv/ky/pull/1 will be too much?",
+    "body": "Do you think MR with Generic type in https://github.com/[redacted] will be too much?",
     "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r628001450"
   },
   {
@@ -1661,7 +1661,7 @@
     "line": 280,
     "date": "2021-05-05",
     "reviewer": "reviewer_30",
-    "body": "@user I can suggest these changes regarding more stricter mapping of `Json` and the types in hooks and `json`\r\n\r\nYou can have a look at the changes (I didn't finish it, but you can already see the possible way) – https://github.com/Beraliv/ky/pull/1\r\n\r\nwdyt?",
+    "body": "@user I can suggest these changes regarding more stricter mapping of `Json` and the types in hooks and `json`\r\n\r\nYou can have a look at the changes (I didn't finish it, but you can already see the possible way) – https://github.com/[redacted]\r\n\r\nwdyt?",
     "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626904481"
   },
   {

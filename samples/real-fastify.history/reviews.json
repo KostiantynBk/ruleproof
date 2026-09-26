@@ -1,0 +1,2225 @@
+[
+  {
+    "pr": 7054,
+    "file": "lib/reply.js",
+    "line": 98,
+    "date": "2026-09-26",
+    "reviewer": "reviewer_1",
+    "body": "We should prioritize headers set via `reply.type('text')` instead of `reply.raw...`\n\n\n```suggestion\n      const contentTypeHeader = this[kReplyHeaders]['content-type'] || this.getHeader('content-type')\n```\n\nThe order depends if `this[kReplyHeaders]` overwrite the `reply.raw` headers on send (I think so)",
+    "url": "https://github.com/fastify/fastify/pull/7054#discussion_r4110695889"
+  },
+  {
+    "pr": 6990,
+    "file": "test/internals/reply-serialize.test.js",
+    "line": 205,
+    "date": "2026-09-24",
+    "reviewer": "reviewer_2",
+    "body": "You are right about the default compiler, and I fixed it in 557f3934. fast-json-stringify ignores `httpStatus` and `contentType`, but the PR compiled the schema again for each pair. Now the default compiler compiles each schema once, and all status and content-type pairs get the same function. A new test checks this.\n\nA custom compiler gets `httpStatus` and `contentType`, and the docs say it can use them. So with a custom compiler I still keep one function for each pair. I also changed the existing test: its compiler now writes the metadata into the output, and the test checks that the `201` serializer writes `201`. On `main` this test fails, because the second call gets the `200` serializer.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4091878060"
+  },
+  {
+    "pr": 6990,
+    "file": "package.json",
+    "line": 13,
+    "date": "2026-09-24",
+    "reviewer": "reviewer_2",
+    "body": "I removed both benchmark scripts in d7bd3992.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4091877766"
+  },
+  {
+    "pr": 6990,
+    "file": "examples/benchmark/serialization.js",
+    "line": 1,
+    "date": "2026-09-24",
+    "reviewer": "reviewer_2",
+    "body": "I removed both benchmark files in d7bd3992.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4091877463"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 361,
+    "date": "2026-09-24",
+    "reviewer": "reviewer_2",
+    "body": "I switched to toad-cache in 557f3934. The cache for each schema is now a `FifoMap(100)`, the same setup as `content-type-parser.js`, so the custom class is gone. `getSerializationFunction(schema)` reads `first.value` from it.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4091877187"
+  },
+  {
+    "pr": 6990,
+    "file": "test/internals/reply-serialize.test.js",
+    "line": 205,
+    "date": "2026-09-24",
+    "reviewer": "reviewer_1",
+    "body": "I think this test does not assert this statement:\n\n> compileSerializationSchema forwards httpStatus and contentType to the serializer compiler, but the cache was keyed on the schema object alone, so a second call with the same schema and different metadata returned the serializer built for the first call.\n\nGiven a schema object, the compiled function is the same independently of being it used for 201, 200 etc...\n\nSo, I think we should not store 3 times the same function, but we need it once.\nTo fix the \"getter\", we need to track that, the same function, can be assigned to multiple `cacheKey`s",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4091787457"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 361,
+    "date": "2026-09-24",
+    "reviewer": "reviewer_1",
+    "body": "we have already a cache module here: toad-cache\n",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4091739087"
+  },
+  {
+    "pr": 6975,
+    "file": "types/route.d.ts",
+    "line": 51,
+    "date": "2026-09-24",
+    "reviewer": "reviewer_2",
+    "body": "Yes, it works. I applied it in cb0c5b9. The type tests and lint pass, and `this` is still `FastifyInstance` in every shorthand hook.",
+    "url": "https://github.com/fastify/fastify/pull/6975#discussion_r4088893594"
+  },
+  {
+    "pr": 6975,
+    "file": "types/route.d.ts",
+    "line": 51,
+    "date": "2026-09-23",
+    "reviewer": "reviewer_3",
+    "body": "```suggestion\ntype RouteShorthandHook<T extends (this: any, ...args: any) => any> =\n  (this: ThisParameterType<T>, ...args: Parameters<T>) => void | Promise<unknown>\n```\n\nDoes this work?",
+    "url": "https://github.com/fastify/fastify/pull/6975#discussion_r4085892799"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 386,
+    "date": "2026-09-23",
+    "reviewer": "reviewer_2",
+    "body": "I benchmarked both versions: the current `cachedFns != null` check and your `?? noopCache` idea with a shared no-op cache instance. Whichever one I ran first in the loop came out faster, and the result flipped when I reversed the order. That is JIT warm-up noise, not a real cost difference. So per your own note, it does not represent an overhead, and I am keeping the current check as is.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4080804409"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 386,
+    "date": "2026-09-23",
+    "reviewer": "reviewer_4",
+    "body": "I’ve wonder if we can set a `noop` function to it. Might not be needed if it doesn’t represent an overhead.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4080767851"
+  },
+  {
+    "pr": 7039,
+    "file": "test/internals/request.test.js",
+    "line": 433,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_5",
+    "body": "applied here too @user, same shape, the protocol test now plans 2 with the single read assert only",
+    "url": "https://github.com/fastify/fastify/pull/7039#discussion_r4072618940"
+  },
+  {
+    "pr": 7039,
+    "file": "test/internals/request.test.js",
+    "line": 406,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_5",
+    "body": "applied @user, i dropped the second assert pair so the host test now plans 2 and only proves the single headers read per access, full file runs 16/16 green locally",
+    "url": "https://github.com/fastify/fastify/pull/7039#discussion_r4072618260"
+  },
+  {
+    "pr": 7034,
+    "file": "lib/reply.js",
+    "line": 745,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_3",
+    "body": "Why TE is not removed from HTTP/2 responses as well?",
+    "url": "https://github.com/fastify/fastify/pull/7034#discussion_r4071696724"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 375,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_2",
+    "body": "Agreed, two caches with their own rules fit better than one shared one. Nothing to change on the serialization side then.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069780595"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 361,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_2",
+    "body": "Reverted the rename in a0f89aae, the class is `SerializeFnCache` again and stays in `lib/reply.js`.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069777564"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 361,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_3",
+    "body": "> moving a shared class into lib/validation.js from here would collide with that branch.\r\n\r\nThat's generally not an issue, an other branch can be refactored.\r\n\r\nBut we can keep it there with `SerializeFnCache` name for now, following my comment: https://github.com/fastify/fastify/pull/6990#discussion_r4069723427",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069746396"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 375,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_3",
+    "body": "> The keys you list are the validation httpPart values from #7032. \n\nYes, my bad, it was a comment for the validation-side PR originally.\n\nSo I think we can have two different caches with different rules for validation and serialization.\nLet's see the review of other maintainers.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069723427"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 375,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_2",
+    "body": "I left this one without a guard. The keys you list are the validation `httpPart` values from #7032. On the serialization side there is no fixed set: `httpStatus` and `contentType` are free-form arguments of the public `reply.compileSerializationSchema(schema, httpStatus, contentType)`, and the docs show `200`, `'3xx' plus an arbitrary content type. A whitelist would reject documented calls.\n\nNothing inside fastify feeds request data into those arguments. The only internal caller is `serializeInput`, and it only reaches the compile path with `httpStatus == null`. So an entry is added only when application code compiles a schema itself, and the outer `WeakMap` is still keyed by the schema object, so the per-schema cache dies with the schema.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069648792"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 361,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_2",
+    "body": "Renamed in d97e30c1. I kept the class in `lib/reply.js` for now. #7032 adds its own `ValidateFnCache` in `lib/request.js`, and you want to merge that one first, so moving a shared class into `lib/validation.js` from here would collide with that branch. I can send a follow-up that extracts the single class once #7032 lands.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069648063"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 382,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_2",
+    "body": "Done in 10065524. I read the entry once and check the value now. Cached entries are always compiled functions, so the null check on the value covers the same cases as `has`.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069647515"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 361,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_3",
+    "body": "```suggestion\nclass CompiledFnCache {\n```\n\nWe have the same issue for validation, let's reuse the same class with more general name.\nWe can probably put that in lib/validation.js",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069576623"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 382,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_3",
+    "body": "i think `has` should be used when we care only about the existence but not using the found item.\nHere, we're using it if does exists.\n\nSo I would do:\n```js\n  let cachedFns = this[kRouteContext][kReplyCacheSerializeFns]?.get(schema)\n  if (cachedFns != null) {\n    const schema = cachedFns.get(cacheKey)\n    if (schema != null) {\n      return schema\n    }\n```",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069537407"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 375,
+    "date": "2026-09-22",
+    "reviewer": "reviewer_3",
+    "body": "I think we should have a guard for cacheKey there no?\n```js\n'body' | 'query' | 'querystring' | 'params' | 'headers' 'default'\n```\n\nWe shouldn't allow the Map to grow indefinitely.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r4069513593"
+  },
+  {
+    "pr": 6977,
+    "file": "lib/validation.js",
+    "line": 508,
+    "date": "2026-09-17",
+    "reviewer": "reviewer_6",
+    "body": "Added a test for this in 44a59ddc: 50 requests to the same lazy route, held in a `preValidation` hook until all of them are in flight, and the compilers run once per schema (4 validators, 1 serializer), the same counts as a single request. With the slot-clearing lines removed, the test fails with 200 validator compiles, so it would catch duplicated work.\n\nThis holds because the compilers are synchronous and `runLazyBuild` takes the pending build out of the slot before calling it: the first request that reaches the validation step compiles, and the requests behind it find nothing pending. Under HTTP load the counts stay the same: 1000 lazy routes hit by 100 concurrent connections compile exactly 4000 validators and 1000 serializers, over 10 runs.\n",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r4035401950"
+  },
+  {
+    "pr": 6977,
+    "file": "lib/validation.js",
+    "line": 510,
+    "date": "2026-09-17",
+    "reviewer": "reviewer_6",
+    "body": "Applied in 4325c67a: the slot starts with `null` now, and the checks on its fields compare against `null`. The slot itself is still dropped from the route context once both builds succeed, so compiled routes keep the single `undefined` check.\n\nI also benchmarked the cold window with it: 1000 lazy routes, 100 connections, each connection walking every route once, 10 interleaved rounds per variant on Node 24. Throughput and latency match the previous version within noise (median +0.1 %, ranges overlap). An eager run of the same app is about 1 s faster over that pass, so the benchmark does spend its time in the on-demand builds.\n",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r4035401821"
+  },
+  {
+    "pr": 6977,
+    "file": "lib/validation.js",
+    "line": 508,
+    "date": "2026-09-17",
+    "reviewer": "reviewer_4",
+    "body": "This needs to account if two concurrent requests enters to the same path and one is already generating the schema validation/serializers; otherwise will duplicate the work",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r4035229567"
+  },
+  {
+    "pr": 6977,
+    "file": "lib/validation.js",
+    "line": 510,
+    "date": "2026-09-17",
+    "reviewer": "reviewer_4",
+    "body": "```suggestion\n    context[lazySchema] = { validation: null, serialization: null, error: null }\n```\n\nHidden class optimization. This will become important when on-demand and requests start pilling up",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r4035200468"
+  },
+  {
+    "pr": 7024,
+    "file": "lib/error-status.js",
+    "line": 8,
+    "date": "2026-09-17",
+    "reviewer": "reviewer_4",
+    "body": "Although I agree with this, the HTTP status code are extensible and custom implementations can extend the range without being compliant with the standard (see [RFC-2616](https://www.rfc-editor.org/info/rfc2616/#section-6.1.1:~:text=HTTP%20status%20codes,the%20unusual%20status.)).\n\nThe last being said, I believe we should keep this implementation but add a lenient flag to it so it can be disabled if implementations have custom extensions",
+    "url": "https://github.com/fastify/fastify/pull/7024#discussion_r4035150857"
+  },
+  {
+    "pr": 7023,
+    "file": "lib/content-type-parser.js",
+    "line": 176,
+    "date": "2026-09-14",
+    "reviewer": "reviewer_7",
+    "body": "Done in 43effa8. `hasParser` and `remove` both go through `toParserKey` now, and `existingParser` returns false for `'*'`, so adding it twice still replaces the old one. That also means `hasContentTypeParser('*')` returns true after one is added, and I added a test for it.\n\nI didn't use it in `add`. `add` needs `isValid` from the parsed `ContentType` before storing, and going through the helper there would parse it twice.",
+    "url": "https://github.com/fastify/fastify/pull/7023#discussion_r4002461843"
+  },
+  {
+    "pr": 7027,
+    "file": "lib/reply.js",
+    "line": 670,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_8",
+    "body": "Interesting that one didn't go through, as there are status codes where no body _is_ enforced",
+    "url": "https://github.com/fastify/fastify/pull/7027#discussion_r4000381515"
+  },
+  {
+    "pr": 7023,
+    "file": "lib/content-type-parser.js",
+    "line": 176,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_9",
+    "body": "I'm not reviewing bot spam. ",
+    "url": "https://github.com/fastify/fastify/pull/7023#discussion_r4000178642"
+  },
+  {
+    "pr": 6900,
+    "file": "docs/Reference/Validation-and-Serialization.md",
+    "line": 887,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_10",
+    "body": "@user any feedback on my last comment?",
+    "url": "https://github.com/fastify/fastify/pull/6900#discussion_r4000038456"
+  },
+  {
+    "pr": 7027,
+    "file": "lib/reply.js",
+    "line": 670,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_3",
+    "body": "We could open a new issue, or reopen https://github.com/nodejs/node/issues/3096, to see whether their view on this has changed since then.\r\n\r\nWe can anyway enforce HTTP spec-compliance more rigorously at the framework level, you and Matteo know better then me what we can expect from Node core.\r\n",
+    "url": "https://github.com/fastify/fastify/pull/7027#discussion_r4000034800"
+  },
+  {
+    "pr": 7027,
+    "file": "lib/reply.js",
+    "line": 670,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_8",
+    "body": "Shouldn't we fix this in Node?",
+    "url": "https://github.com/fastify/fastify/pull/7027#discussion_r3999997951"
+  },
+  {
+    "pr": 7027,
+    "file": "test/reply-code.test.js",
+    "line": 120,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_3",
+    "body": "I would generate both from an array:\n```js\nfor (const [statusCode, expectedContentLength] of [\n  [205, '0'],\n  [304, undefined]\n]) {\n  test(`code should handle ${statusCode}`, (t, done) => {\n    t.plan(13)\n\n    const fastify = Fastify()\n\n    fastify.get(`/${statusCode}`, function (request, reply) {\n      reply.status(statusCode)\n      return null\n    })\n\n    fastify.get(`/undefined/${statusCode}`, function (request, reply) {\n      reply.status(statusCode).send({ message: 'hello' })\n    })\n\n    fastify.get(`/stream/${statusCode}`, function (request, reply) {\n      const stream = new Readable({\n        read () {\n          this.push(null)\n        }\n      })\n\n      stream.on('end', () => {\n        t.assert.ok('stream ended')\n      })\n\n      reply.status(statusCode).send(stream)\n    })\n\n    fastify.inject({\n      method: 'GET',\n      url: `/${statusCode}`\n    }, (error, res) => {\n      t.assert.ifError(error)\n      t.assert.strictEqual(res.statusCode, statusCode)\n      t.assert.strictEqual(res.payload, '')\n      t.assert.strictEqual(res.headers['content-length'], expectedContentLength)\n    })\n\n    fastify.inject({\n      method: 'GET',\n      url: `/undefined/${statusCode}`\n    }, (error, res) => {\n      t.assert.ifError(error)\n      t.assert.strictEqual(res.statusCode, statusCode)\n      t.assert.strictEqual(res.payload, '')\n      t.assert.strictEqual(res.headers['content-length'], expectedContentLength)\n    })\n\n    fastify.inject({\n      method: 'GET',\n      url: `/stream/${statusCode}`\n    }, (error, res) => {\n      t.assert.ifError(error)\n      t.assert.strictEqual(res.statusCode, statusCode)\n      t.assert.strictEqual(res.payload, '')\n      t.assert.strictEqual(res.headers['content-length'], expectedContentLength)\n      done()\n    })\n  })\n}\n```",
+    "url": "https://github.com/fastify/fastify/pull/7027#discussion_r3999911248"
+  },
+  {
+    "pr": 7023,
+    "file": "lib/content-type-parser.js",
+    "line": 176,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_3",
+    "body": "I would centralize the conversion to the internal parser key, and reuse it in `add`, `hasParser` and `remove`.\n\nFor example:\n\n```js\nfunction toParserKey (contentType) {\n  if (contentType === '*') {\n    return ''\n  }\n\n  return new ContentType(contentType).toString()\n}\n```\n\nFor the current behavior where adding `'*'` twice replaces the previous catch-all parser, I would keep this exception in `existingParser()`:\n\n```js\nif (contentType === '*') {\n  return false\n}\n```\n\nWait for @user review plz.",
+    "url": "https://github.com/fastify/fastify/pull/7023#discussion_r3999827303"
+  },
+  {
+    "pr": 6855,
+    "file": "test/types/generic-propagation.tst.ts",
+    "line": 20,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_3",
+    "body": "Will do just after this is merged.\nI decided to fix some generic propagation issues, but don't want to update the existing tests so the PR is safer to review.",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3999712290"
+  },
+  {
+    "pr": 7024,
+    "file": "lib/error-status.js",
+    "line": 14,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_3",
+    "body": "Falling back to `500` is correct for the HTTP response, but an out-of-range status code is still a server-side programming error. We should surface it with a dedicated `FST_ERR_BAD_ERROR_STATUS_CODE`, preserving the original error as its `cause`.\n\nThe following is me thinking out loud, I recommend to wait for further review.\n\nWe create a new Fastify Internal Error:\n```js\nFST_ERR_BAD_ERROR_STATUS_CODE: createError(\n  'FST_ERR_BAD_ERROR_STATUS_CODE',\n  'Invalid status code on Error: %s'\n)\n```\n\nWe update the signature of `setErrorStatusCode`\n```js\nfunction setErrorStatusCode (reply, err) {\n  if (!reply[kReplyHasStatusCode] || reply.statusCode === 200) {\n    const statusCode = err && (err.statusCode || err.status)\n\n    if (statusCode !== undefined && !isValidErrorStatusCode(statusCode)) {\n      reply.code(500)\n      // err is replaced by `FST_ERR_BAD_ERROR_STATUS_CODE` keeping the orginal\n     // error reference.\n      return new FST_ERR_BAD_ERROR_STATUS_CODE(statusCode, {\n        cause: err\n      })\n    }\n\n    reply.code(statusCode || 500)\n  }\n\n  return err\n}\n```\n\nWe then can use it for `diagnostics` so monitoring tools can catch it.:\n```js\n// Set status code before publishing so subscribers see the correct value\nconst withErrorWrongStatus = setErrorStatusCode(reply, err)\nchannels.error.publish(withErrorWrongStatus)\n```\n\nSee: https://github.com/fastify/fastify/blob/d266f833f2bff34c6115c026e461b682e94d0b9c/lib/handle-request.js#L193\n",
+    "url": "https://github.com/fastify/fastify/pull/7024#discussion_r3999106598"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/21-congratulations.md",
+    "line": 36,
+    "date": "2026-09-10",
+    "reviewer": "reviewer_3",
+    "body": "@user/leads \nIf you know other useful resources.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3982573934"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/08-logging.md",
+    "line": 1,
+    "date": "2026-09-10",
+    "reviewer": "reviewer_3",
+    "body": "There is a new chapter if someone want to take a look.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3980126980"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 364,
+    "date": "2026-09-08",
+    "reviewer": "reviewer_2",
+    "body": "Applied verbatim, commit 886fd72f. `.first` is only read in `getSerializationFunction`, and it only ever holds a function or that initial value, so no call site changes. `null` also matches the `httpStatus`/`contentType` defaults right below.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3963024926"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 364,
+    "date": "2026-09-08",
+    "reviewer": "reviewer_4",
+    "body": "```suggestion\n    this.first = null\n```\n\nTo preserve same hidden class",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3961931430"
+  },
+  {
+    "pr": 7012,
+    "file": "lib/content-type-parser.js",
+    "line": 143,
+    "date": "2026-09-08",
+    "reviewer": "reviewer_8",
+    "body": "no here it will be cached once",
+    "url": "https://github.com/fastify/fastify/pull/7012#discussion_r3960631845"
+  },
+  {
+    "pr": 7012,
+    "file": "lib/content-type-parser.js",
+    "line": 143,
+    "date": "2026-09-08",
+    "reviewer": "reviewer_11",
+    "body": "so we have it twice cached?",
+    "url": "https://github.com/fastify/fastify/pull/7012#discussion_r3956613749"
+  },
+  {
+    "pr": 6725,
+    "file": "lib/route.js",
+    "line": 548,
+    "date": "2026-09-05",
+    "reviewer": "reviewer_12",
+    "body": "This check fixes the early abort, but once the body is fully read, request `close` has already fired. A later disconnect during the response won’t reach this handler. Should we also watch response `close` so `request.signal` aborts when the client leaves?",
+    "url": "https://github.com/fastify/fastify/pull/6725#discussion_r3942122003"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 367,
+    "date": "2026-09-05",
+    "reviewer": "reviewer_2",
+    "body": "Done in 4f8d0d88. Added a small `SerializeFnCache` wrapper around the per-schema Map, with a `.first` property set on the first insert. `getSerializationFunction` now reads `.first` directly and no longer calls `.values().next().value`.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3941010162"
+  },
+  {
+    "pr": 7010,
+    "file": "types/type-provider.d.ts",
+    "line": 144,
+    "date": "2026-09-05",
+    "reviewer": "reviewer_8",
+    "body": "Why not something like:\n\n\n```suggestion\nexport type FastifyReplyPreSerializedPayload =\n  | ArrayBufferView\n  | NodeJS.ReadableStream\n  | ReadableStream\n```",
+    "url": "https://github.com/fastify/fastify/pull/7010#discussion_r3940458776"
+  },
+  {
+    "pr": 6900,
+    "file": "docs/Reference/Validation-and-Serialization.md",
+    "line": 887,
+    "date": "2026-09-05",
+    "reviewer": "reviewer_10",
+    "body": "Good point to raise, but I think this callout already follows the repo's convention. It uses the same `> ⚠ Warning:` blockquote style as the other callouts, including two in this same file at lines 18 and 260, plus others in `Routes.md` (387, 674, 786) and `Server.md`. Every callout in `docs/` uses this emoji-blockquote form: 59 `ℹ️ Note:`, 16 `⚠ Warning:`, and a handful of `Security` / `Important` ones. There's no `:::admonition`, no `> [!WARNING]` GitHub alert, and no MDX callout component anywhere in the docs, and nothing in `Style-Guide.md` prescribes one.\r\n\r\nI also checked the website side: `fastify/website` is Astro-based and its `astro.config.mjs` registers no remark/rehype plugin that turns any syntax into a styled box, so the existing `⚠ Warning:` blockquotes render as plain blockquotes on fastify.dev today (I confirmed one on the live Server page). Switching this one to `> [!WARNING]` would render as literal text there and diverge from the other 16.\r\n\r\nDid you have a specific syntax in mind that renders as a proper callout on the site? If the goal is just cleaner rendering, I'm happy to drop the callout and fold it into a normal sentence instead. Let me know which you'd prefer",
+    "url": "https://github.com/fastify/fastify/pull/6900#discussion_r3940280126"
+  },
+  {
+    "pr": 6900,
+    "file": "test/schema-serialization.test.js",
+    "line": 1034,
+    "date": "2026-09-05",
+    "reviewer": "reviewer_13",
+    "body": "Do we really need these kinds of comments?\nThese are helpful in the doc, but I'm not so sure they are helpful in the tests",
+    "url": "https://github.com/fastify/fastify/pull/6900#discussion_r3940126129"
+  },
+  {
+    "pr": 6900,
+    "file": "docs/Reference/Validation-and-Serialization.md",
+    "line": 887,
+    "date": "2026-09-05",
+    "reviewer": "reviewer_13",
+    "body": "We should use proper call outs instead so that they are correctly rendered on the website",
+    "url": "https://github.com/fastify/fastify/pull/6900#discussion_r3940123386"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 382,
+    "date": "2026-09-03",
+    "reviewer": "reviewer_2",
+    "body": "Applied in 44f3e1f6. `cachedFns` is only ever a Map or undefined here, because the WeakMap holds nothing else, so both forms behave the same.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3923794543"
+  },
+  {
+    "pr": 6936,
+    "file": "lib/reply.js",
+    "line": 166,
+    "date": "2026-09-03",
+    "reviewer": "reviewer_4",
+    "body": "`nit`: \n\n```suggestion\n    if (payload != null && typeof payload.then === 'function') {\n```",
+    "url": "https://github.com/fastify/fastify/pull/6936#discussion_r3923008013"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 367,
+    "date": "2026-09-03",
+    "reviewer": "reviewer_4",
+    "body": "Thanks for adding the test!\n\nI believe that the _caller_ should not be aware that the returned value is an iterator, but rather just get the value.\nIf adding this, is better that the cached functions abstractions returns the value directly instead of the iterator",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3922973432"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 382,
+    "date": "2026-09-03",
+    "reviewer": "reviewer_4",
+    "body": "This can hurt performance as it sits on the hot path, can you just verify against `nullish` values instead?\n\n\n```suggestion\n  let cachedFns = this[kRouteContext][kReplyCacheSerializeFns]?.get(schema)\n  if (cachedFns != null && cachedFns.has(cacheKey)) {\n    return cachedFns.get(cacheKey)\n```",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3922963170"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 11,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_14",
+    "body": "This overstates the validation boundary. `ContentType` deliberately ignores malformed parameters (`test/content-type.test.js:162-181`), and bodyless methods bypass this check (`lib/handle-request.js:35-37`), so not every syntactically invalid `Content-Type` yields a 415. Scope the statement to parsed payloads and invalid type/subtype syntax.\n\nThis issue also appears on line 65 of the same file.",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3915405655"
+  },
+  {
+    "pr": 6926,
+    "file": "docs/Reference/Server.md",
+    "line": 313,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_4",
+    "body": "This needs an example to disambiguate how to handle invalid `content-types` ",
+    "url": "https://github.com/fastify/fastify/pull/6926#discussion_r3913372573"
+  },
+  {
+    "pr": 6926,
+    "file": "test/content-parser.test.js",
+    "line": 1,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_4",
+    "body": "can you add tests per route?",
+    "url": "https://github.com/fastify/fastify/pull/6926#discussion_r3913345286"
+  },
+  {
+    "pr": 6994,
+    "file": "types/route.d.ts",
+    "line": 212,
+    "date": "2026-08-31",
+    "reviewer": "reviewer_15",
+    "body": "[P1] Keep `url`/`path` as an at-least-one requirement\n\nMaking both properties optional here lets TypeScript accept `fastify().route({ method: 'GET', handler })` with neither route location. I reproduced this on head baac6fb5 with TypeScript 6.0.3: the call compiles cleanly, but the same object throws `ERR_ASSERTION: The path could not be empty` at runtime. This is a regression from the previous required `url` contract, and the new positive-only type tests do not catch it. Please model these fields as an at-least-one union, for example `({ url: string; path?: string } | { path: string; url?: string })` intersected with the shared route options, and add a negative type assertion for the neither-present case.",
+    "url": "https://github.com/fastify/fastify/pull/6994#discussion_r3892594612"
+  },
+  {
+    "pr": 6982,
+    "file": "lib/reply.js",
+    "line": 694,
+    "date": "2026-08-31",
+    "reviewer": "reviewer_15",
+    "body": "This HEAD-only branch bypasses the `payload.locked` guard in `sendWebStream()`. With a `ReadableStream` locked via `stream.getReader()`, an explicit HEAD handler that calls `reply.send(stream)` now returns HTTP 200 with an empty body while the stream remains locked. `cancel()` rejects, the rejection is only logged, and execution still reaches `safeWriteHead()`/`sendTrailer()`. The normal path instead raises `FST_ERR_REP_READABLE_STREAM_LOCKED`, so this turns an invalid response into an apparent success.\n\nPlease apply the same locked-stream validation before cancellation and add an explicit HEAD regression test using a locked Web Stream. I ran the existing related HEAD/trailer tests (34/34 pass), which confirms this case is currently uncovered.",
+    "url": "https://github.com/fastify/fastify/pull/6982#discussion_r3892006086"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 367,
+    "date": "2026-08-30",
+    "reviewer": "reviewer_2",
+    "body": "Added a regression test in commit acb695fe. The test compiles the schema with three metadata tuples. Then it checks that `getSerializationFunction(schemaObj)` still returns the first compiled function. The test fails on the old single-value cache and passes with this PR's fix.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3889201054"
+  },
+  {
+    "pr": 6992,
+    "file": "test/hooks-async.test.js",
+    "line": 835,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "This new rejection test can pass without exercising any assertion when `addHook` stops throwing: execution simply falls through the `try`, and the `t.assert.fail` callback is never invoked. Assert the throw directly so the arity guard is regression-tested.",
+    "url": "https://github.com/fastify/fastify/pull/6992#discussion_r3883342735"
+  },
+  {
+    "pr": 6993,
+    "file": "docs/Guides/Database.md",
+    "line": 113,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "`fastify.redis` is not available when this options object is evaluated; the plugin creates that decoration only when registration executes. This therefore passes `undefined` and creates a new default client, while trying this after a completed registration fails because the non-namespaced plugin is already registered. The `client` option must receive an independently created Redis client; also clarify that `closeClient` is needed only for such externally supplied clients.",
+    "url": "https://github.com/fastify/fastify/pull/6993#discussion_r3882027006"
+  },
+  {
+    "pr": 6977,
+    "file": "fastify.js",
+    "line": 908,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_6",
+    "body": "Fixed in 700c0dd: the option is now assigned from `initialConfig` right after `exposeHeadRoutes`, so the coerced boolean reaches the route code. Added a test with `\"true\"` and `1` that checks `initialConfig` reports `true` and that `ready()` no longer compiles eagerly (it fails on the previous commit).",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r3881411188"
+  },
+  {
+    "pr": 6977,
+    "file": "lib/validation.js",
+    "line": 329,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_6",
+    "body": "Good catch, fixed in 700c0dd: `runLazyBuild` now throws the cached `lazy.error` before it looks at the pending build key, so the serializer lookup of an error reply (a second malformed request that never reaches validation) and the public `getSerializationFunction` / `getValidationFunction` helpers all report the same terminal error. Added a test covering both paths, which fails on the previous commit (400 parse error instead of the 500 build error).",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r3881411065"
+  },
+  {
+    "pr": 6977,
+    "file": "fastify.js",
+    "line": 908,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "This keeps the unvalidated value in the internal options while `getSecuredInitialConfig()` validates and coerces only a clone. The generated validator accepts coercible values such as `'true'` and `1`, so `initialConfig.lazySchemaCompilation` becomes `true`, but the route code's `lazy === true` check receives the original value and leaves compilation eager. Assign the internal option from the validated `initialConfig`, as is already done for `exposeHeadRoutes`.",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r3881222720"
+  },
+  {
+    "pr": 6977,
+    "file": "lib/validation.js",
+    "line": 329,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "A cached terminal build failure is ignored when a later code path resolves only one schema kind. For example, after the malformed-JSON request in the new test caches a serialization build error, a second malformed request reaches `getSchemaSerializer()` before validation; `lazy.serialization` is already `undefined`, so this returns normally and the route responds with the parse error instead of the promised cached build error. Check and throw `lazy.error` before testing the pending build key (this also prevents the public request/reply lookup helpers from exposing partially compiled state after a terminal failure).",
+    "url": "https://github.com/fastify/fastify/pull/6977#discussion_r3881222675"
+  },
+  {
+    "pr": 6980,
+    "file": "lib/route.js",
+    "line": 620,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "This commented-out copy of the function is dead code and will drift from the live implementation immediately below. Remove it rather than retaining the previous implementation as comments.",
+    "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220804"
+  },
+  {
+    "pr": 6980,
+    "file": "lib/route.js",
+    "line": 626,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "The PR adds no tests for this opt-in behavior, despite comprehensive route/schema tests in this repository. Add coverage that proves the constructor option is accepted, matching and mismatching routes behave correctly, and supported route/schema forms such as prefixed params, escaped colons, short-form schemas, and `$ref` schemas are handled.\n\nThis issue also appears on line 625 of the same file.",
+    "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220760"
+  },
+  {
+    "pr": 6980,
+    "file": "lib/route.js",
+    "line": 640,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "This new route-registration failure is a plain `Error`, unlike the other route validation failures in this file (for example, route.js:604-609 and 647-666), which expose stable `FST_ERR_*` codes. Consumers cannot identify this failure programmatically. Define and throw a dedicated Fastify error and add it to the error types/documentation.",
+    "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220728"
+  },
+  {
+    "pr": 6980,
+    "file": "lib/route.js",
+    "line": 626,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "The new constructor option cannot be enabled through Fastify's public API. Initialization validates options against an `additionalProperties: false` schema, and `alignRouteParams` is absent from that schema and from `FastifyServerOptions`, so `Fastify({ alignRouteParams: true })` throws `FST_ERR_INIT_OPTS_INVALID` before this branch can run. Add the option to the generated configuration source/defaults and public types (and regenerate `lib/config-validator.js`).\n\nThis issue also appears in the following locations of the same file:\n- line 627\n- line 635\n- line 638",
+    "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220686"
+  },
+  {
+    "pr": 6986,
+    "file": "test/404s.test.js",
+    "line": 1633,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "This comment still describes a snapshot, but `setContext()` now keeps a live prototype link. Please describe the registration-order condition without implying that the context is detached.",
+    "url": "https://github.com/fastify/fastify/pull/6986#discussion_r3881214248"
+  },
+  {
+    "pr": 6986,
+    "file": "test/404s.test.js",
+    "line": 1605,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "The new test establishes `onSend` as a supported `setNotFoundHandler` option, but the public TypeScript overload in `types/instance.d.ts` accepts only `preValidation` and `preHandler`; TypeScript consumers therefore get an excess-property error for this API. Add the `onSend` callback/async callback types and a corresponding type test (and update the lifecycle documentation that currently says `callNotFound()` only calls the configured `preHandler`).",
+    "url": "https://github.com/fastify/fastify/pull/6986#discussion_r3881214195"
+  },
+  {
+    "pr": 6986,
+    "file": "lib/four-oh-four.js",
+    "line": 84,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "This drops every `onSend` hook from the calling route (including encapsulated plugin and route-level hooks), because `reply.callNotFound()` switches `request[kRouteContext]` to this object and `reply.send()` then reads `onSend` only from that context. Preserving the caller's `onSend` was explicit in #6965 and protects established cleanup/response behavior; the implementation needs to compose the caller and not-found `onSend` chains (with defined ordering and without duplicating shared hooks), plus a regression test where both are present.",
+    "url": "https://github.com/fastify/fastify/pull/6986#discussion_r3881214084"
+  },
+  {
+    "pr": 6981,
+    "file": "test/find-route.test.js",
+    "line": 222,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "This mutation only exercises a scalar property, so a shallow-copy implementation would pass despite the new API promising a deep clone. Mutate `nested.foo` as well and assert the complete config from the second lookup, so the test protects nested immutability.",
+    "url": "https://github.com/fastify/fastify/pull/6981#discussion_r3881213908"
+  },
+  {
+    "pr": 6981,
+    "file": "lib/route.js",
+    "line": 4,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "Route configs can contain self-references, but this cloner is configured with `circles: false`. Calling `findRoute({ cloneRouteConfig: true })` for such a valid config will recurse until it throws a `RangeError`. Since cloning is opt-in, enable circular-reference handling and add a regression test.",
+    "url": "https://github.com/fastify/fastify/pull/6981#discussion_r3881213837"
+  },
+  {
+    "pr": 6984,
+    "file": "docs/Reference/TypeScript.md",
+    "line": 1621,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "The signature now lists `instance`, but the explanatory text immediately below still says that `routeOptions` is the sole parameter. Please describe both parameters here to avoid contradictory public API documentation.",
+    "url": "https://github.com/fastify/fastify/pull/6984#discussion_r3881213680"
+  },
+  {
+    "pr": 6984,
+    "file": "fastify.js",
+    "line": 588,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "`onRegister` still falls through to the generic validation below. Its newly valid async signature has three declared parameters, so `addHook('onRegister', async (instance, newInstance, options) => {})`—which the updated type test accepts—now throws `FST_ERR_HOOK_INVALID_ASYNC_HANDLER`. Include `onRegister` in the branch that rejects four-argument async handlers (the extra argument would be `done`) or otherwise special-case its new arity, and add a runtime regression test.",
+    "url": "https://github.com/fastify/fastify/pull/6984#discussion_r3881213641"
+  },
+  {
+    "pr": 6990,
+    "file": "lib/reply.js",
+    "line": 367,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "Please add a regression assertion for the newly documented multi-entry behavior: after compiling this schema with multiple metadata tuples, `getSerializationFunction(schemaObj)` must still return `first`. The existing schema lookup tests populate only one cached serializer, so they would not catch returning the newest or an arbitrary entry from this new inner `Map`.",
+    "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3881212949"
+  },
+  {
+    "pr": 6982,
+    "file": "lib/reply.js",
+    "line": 678,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "Errors raised while draining a Node stream from an explicit HEAD route are now silently discarded. This regresses the previous `sendStream` error handling and differs from the auto GET→HEAD path, which logs the same failure in `lib/head-route.js:12-14` (with coverage in `test/route.7.test.js:10-48`). Preserve that observability while discarding the body.\n\nThis issue also appears on line 691 of the same file.",
+    "url": "https://github.com/fastify/fastify/pull/6982#discussion_r3881212222"
+  },
+  {
+    "pr": 6978,
+    "file": "lib/head-route.js",
+    "line": 5,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "Including `null` in this unconditional branch makes the new documented 304 path emit `content-length: 0`. The equivalent GET path leaves that header unset, and `onSendEnd` explicitly suppresses it for 304/204/1xx responses, so the synthesized HEAD response no longer reports the GET response's headers. Gate this assignment using the same status rules and assert that the conditional test has no content-length header.",
+    "url": "https://github.com/fastify/fastify/pull/6978#discussion_r3881209109"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/reply.js",
+    "line": 370,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_14",
+    "body": "The lookup key uses the literal string `undefined`, but `compileSerializationSchema` stores an omitted status as an empty segment (`undefined ?? ''`), e.g. `__application/json`. Consequently, once this schema has multiple cached serializers, `getSerializationFunction(schema, contentType)` misses the requested entry and returns the first cached serializer, which may have different metadata. Build the key using the same representation as the compiler cache.",
+    "url": "https://github.com/fastify/fastify/pull/6991#discussion_r3881204412"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 70,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_12",
+    "body": "Ok, with the current iteration, I think this will help humans and agents figure out how to handle this situation purely through the docs. Prior to adding this my agent actually had to read the source code. Maybe this will save some tokens in the future, and clarify intention for humans. \r\n\r\nResolving since I don't think there is anything actionable left.",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3876814097"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 51,
+    "date": "2026-08-28",
+    "reviewer": "reviewer_12",
+    "body": "Ok I think I addressed this concern? Unresolve or start a new thread if there is anything left.",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3876801952"
+  },
+  {
+    "pr": 6849,
+    "file": ".github/dependabot.yml",
+    "line": 67,
+    "date": "2026-08-27",
+    "reviewer": "reviewer_16",
+    "body": "Completely missed that, durr.",
+    "url": "https://github.com/fastify/fastify/pull/6849#discussion_r3874363947"
+  },
+  {
+    "pr": 6849,
+    "file": ".github/dependabot.yml",
+    "line": 67,
+    "date": "2026-08-27",
+    "reviewer": "reviewer_17",
+    "body": "Not sure what you means, TypeScript on different groups. It should not be included in this group.",
+    "url": "https://github.com/fastify/fastify/pull/6849#discussion_r3874346813"
+  },
+  {
+    "pr": 6849,
+    "file": ".github/dependabot.yml",
+    "line": 67,
+    "date": "2026-08-27",
+    "reviewer": "reviewer_16",
+    "body": "Unsure on grouping all dev dependencies @user.\nAs an example, a typescript update that causes CI to fail would block other dev deps in the same group from being merged.",
+    "url": "https://github.com/fastify/fastify/pull/6849#discussion_r3870239265"
+  },
+  {
+    "pr": 6979,
+    "file": "test/internals/reply.test.js",
+    "line": 1449,
+    "date": "2026-08-25",
+    "reviewer": "reviewer_18",
+    "body": "Updated the test plan assertions and added a test case covering array `set-cookie` on `reply.raw` to verify array-and-merge behavior.",
+    "url": "https://github.com/fastify/fastify/pull/6979#discussion_r3857932139"
+  },
+  {
+    "pr": 6979,
+    "file": "test/internals/reply.test.js",
+    "line": 1449,
+    "date": "2026-08-25",
+    "reviewer": "reviewer_14",
+    "body": "This new test will fail because `t.plan(5)` only accounts for 4 assertions, and it also doesn't cover the `reply.raw.setHeader('set-cookie', <array>)` case that the new merge logic explicitly supports. Consider updating the plan and setting an array on `reply.raw` so both raw-array and merge behavior are exercised.",
+    "url": "https://github.com/fastify/fastify/pull/6979#discussion_r3855662600"
+  },
+  {
+    "pr": 6937,
+    "file": "docs/Reference/Server.md",
+    "line": 1349,
+    "date": "2026-08-20",
+    "reviewer": "reviewer_19",
+    "body": "> This does not make sense in this location. We never mention \"handle\" before this and it isn't explained.\r\n\r\nFair point — I'll rewrite that paragraph without `handle`. Holding off on the\r\nexact wording until your ordering question is resolved, since it changes what\r\nthe paragraph should say.",
+    "url": "https://github.com/fastify/fastify/pull/6937#discussion_r3817840526"
+  },
+  {
+    "pr": 6937,
+    "file": "docs/Reference/Server.md",
+    "line": 1349,
+    "date": "2026-08-14",
+    "reviewer": "reviewer_17",
+    "body": "> I don't think we need to try and maintain parity with upstream's ordering.\r\n\r\nI do agree we don't need to follow `Node.js` ordering, but we should define the order for us.\r\nFollowing the same ordering is the easiest option, and predictable by user.\r\nThe main problem is whether take `path` or `port` first.\r\n\r\n> We never mention \"handle\" before this and it isn't explained.\r\n\r\nWe never mention before but it is something supported currently.\r\n\r\nActually, I expect it to be matching the core behavior with secure default.\r\nFor example, default with `localhost` rather than `0.0.0.0`.",
+    "url": "https://github.com/fastify/fastify/pull/6937#discussion_r3783586456"
+  },
+  {
+    "pr": 6937,
+    "file": "docs/Reference/Server.md",
+    "line": 1349,
+    "date": "2026-08-14",
+    "reviewer": "reviewer_9",
+    "body": "This does not make sense in this location. We never mention \"handle\" before this and it isn't explained. ",
+    "url": "https://github.com/fastify/fastify/pull/6937#discussion_r3783505117"
+  },
+  {
+    "pr": 6875,
+    "file": "test/types/logger.tst.ts",
+    "line": 277,
+    "date": "2026-08-13",
+    "reviewer": "reviewer_3",
+    "body": "I would remove these comments.",
+    "url": "https://github.com/fastify/fastify/pull/6875#discussion_r3774184988"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 58,
+    "date": "2026-08-11",
+    "reviewer": "reviewer_12",
+    "body": "Will do. Sorry I'm traveling and need to find a window this evening to follow up.",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3759436789"
+  },
+  {
+    "pr": 6849,
+    "file": ".github/dependabot.yml",
+    "line": 65,
+    "date": "2026-08-11",
+    "reviewer": "reviewer_16",
+    "body": "@user Can't tell what the diff is doing in the suggested change. Are you able to make the change directly on the branch please?",
+    "url": "https://github.com/fastify/fastify/pull/6849#discussion_r3759081401"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 58,
+    "date": "2026-08-11",
+    "reviewer": "reviewer_16",
+    "body": "Please rewrite to remove use of `you`. See https://github.com/fastify/fastify/blob/main/docs/Guides/Style-Guide.md#when-to-use-the-second-person-you-as-the-pronoun",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3759013250"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 217,
+    "date": "2026-08-11",
+    "reviewer": "reviewer_1",
+    "body": "TBH, the user is not getting a brainless code that \"it just works\"",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3756285031"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 204,
+    "date": "2026-08-11",
+    "reviewer": "reviewer_1",
+    "body": "Same: schema validation gone here",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3756223298"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 76,
+    "date": "2026-08-11",
+    "reviewer": "reviewer_1",
+    "body": "This blocks any schema validation",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3756215940"
+  },
+  {
+    "pr": 6929,
+    "file": "lib/handle-request.js",
+    "line": 56,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_17",
+    "body": "Can you inline the `function` here? since it no longer re-used.",
+    "url": "https://github.com/fastify/fastify/pull/6929#discussion_r3745422260"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 70,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_3",
+    "body": "Both, this PR and the [factory](https://github.com/fastify/fastify/pull/6927) are fine to me.\r\n\r\n> Using a custom hander also seems like a valid solution, and it was, until recently. Because there are multiple places where it seems like you would solve this, adding clarity helps communicate intention.\r\n\r\nI see. To access or mutate request data before Fastify does most of its processing, `onRequest` is generally the first place I would look. I was confident AI-assisted developers would find this fairly easily.",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744935984"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 70,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_3",
+    "body": "I am taking a look to your other PR with the factory first.",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744841809"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 51,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_3",
+    "body": "> I cant change what they are doing and rejecting their requests is off the table. In an ideal world they would fix but we don't live in that world sadly.\r\n\r\nI understand, I don't want to force people to live by the spec.\r\n\r\n",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744804903"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 70,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_12",
+    "body": "OK, factoring in your critique, I will rewrite this as more of a hazard callout consistent with the others than its own separate subsection. ",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744427189"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 51,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_12",
+    "body": "Wrt edge case few users are running into: I'm running into this issue on multiple integrations in production now. The offenders are big brands. I cant change what they are doing and rejecting their requests is off the table. In an ideal world they would fix but we don't live in that world sadly. ",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744397067"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 70,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_12",
+    "body": "Using a custom hander also seems like a valid solution, and it was, until recently. Because there are multiple places where it seems like you would solve this, adding clarity helps communicate intention. \n\nTry to think from the perspective of a disinterested user, or someone who's brand new to the framework. They shouldn't have to hop issues or discord to get clarity on this common issue. \n\nI will take another pass to tighten it up. ",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744387122"
+  },
+  {
+    "pr": 6930,
+    "file": "fastify.js",
+    "line": 607,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_20",
+    "body": "Fair enough. I went for core because mcollina suggested it there in #5669, but it's ~10 lines and no deps. Happy to close if you'd rather it be a plugin.",
+    "url": "https://github.com/fastify/fastify/pull/6930#discussion_r3744340065"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/17-authentication.md",
+    "line": 508,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_3",
+    "body": "> What do you think about abstracting this into the plugin? Just to make the plugin decorate the instance with fastify.authenticate so it can be use only when required.\r\n\r\nOk.\r\n",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3744276749"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 70,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_3",
+    "body": "TBH, I think most people can figure out this solution, so a bit skeptical to add it to the doc.\n",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744099871"
+  },
+  {
+    "pr": 6925,
+    "file": "docs/Reference/ContentTypeParser.md",
+    "line": 51,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_3",
+    "body": "Title could be more specific?\nI would try to shorten this section because it's a edge-case few people have to deal with.\nWould even format it as a note:\n> ℹ️ Note:\n> Your text...",
+    "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3744069156"
+  },
+  {
+    "pr": 6930,
+    "file": "fastify.js",
+    "line": 607,
+    "date": "2026-08-09",
+    "reviewer": "reviewer_1",
+    "body": "I think this should call the `done` callback or the close pipeline won't work",
+    "url": "https://github.com/fastify/fastify/pull/6930#discussion_r3743521631"
+  },
+  {
+    "pr": 6919,
+    "file": "test/content-type.test.js",
+    "line": 100,
+    "date": "2026-08-07",
+    "reviewer": "reviewer_17",
+    "body": "Instead of relying human fixed value, I would battle test the result between `node:util`.\n\n```js\nconst { MIMEType } = require('node:util')\n\ntest('application/json; charset=utf-8,application/json', (t) => {\n      t.plan(4)\n      const ct = new ContentType('application/json; charset=utf-8,application/json')\n      const mt = new MIMEType('application/json; charset=utf-8,application/json')\n      t.assert.strictEqual(ct.type, mt.type)\n      t.assert.strictEqual(ct.subtype, mt.subtype)\n      t.assert.strictEqual(ct.mediaType, mt.essence)\n      t.assert.strictEqual(String(ct), String(mt))\n})",
+    "url": "https://github.com/fastify/fastify/pull/6919#discussion_r3734143156"
+  },
+  {
+    "pr": 6919,
+    "file": "lib/mime-type-parser.js",
+    "line": 1,
+    "date": "2026-08-07",
+    "reviewer": "reviewer_17",
+    "body": "Please place the logic inside `content-type.js` no need to create multiple files serving a single purpose.",
+    "url": "https://github.com/fastify/fastify/pull/6919#discussion_r3734129399"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/17-authentication.md",
+    "line": 508,
+    "date": "2026-08-06",
+    "reviewer": "reviewer_4",
+    "body": "What do you think about abstracting this into the plugin? Just to make the plugin decorate the instance with `fastify.authenticate` so it can be use only when required.\n\nAnother option is to create such hook, and read the `routeOptions.config` to hint when to authenticate and when not to?",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3727317009"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/17-authentication.md",
+    "line": 17,
+    "date": "2026-08-06",
+    "reviewer": "reviewer_4",
+    "body": "Maybe we can also the difference between user flow (like a browser) and a machine-to-machine (Bearer token).\n\nNot need to develop that much but just make a mention.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3727281437"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/06-validation-and-serialization.md",
+    "line": 105,
+    "date": "2026-08-06",
+    "reviewer": "reviewer_4",
+    "body": "No strong opinion, wanted to raise that as we were aiming for an initial guide 👍 ",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3727238534"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 109,
+    "date": "2026-08-06",
+    "reviewer": "reviewer_14",
+    "body": "`request.headers['x-signature']` can be a string, an array of strings, or undefined. As written, `Buffer.from(signature ?? '', 'utf8')` will throw if the header value is an array. Coerce array values to a single string before converting so the example doesn’t crash on duplicate headers.",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3726829935"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 152,
+    "date": "2026-08-06",
+    "reviewer": "reviewer_14",
+    "body": "In the `preParsing` variant, the size guard uses `request.server.initialConfig.bodyLimit`, which ignores any per-route `bodyLimit` overrides. Since this recipe is meant to protect the route and match the configured limit, use `request.routeOptions.bodyLimit` (Fastify always populates it with the effective limit).",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3726829889"
+  },
+  {
+    "pr": 6849,
+    "file": ".github/dependabot.yml",
+    "line": 65,
+    "date": "2026-08-06",
+    "reviewer": "reviewer_17",
+    "body": "Also group dev dependencies to prevent seperate PR, must place the last.\r\nDependabot use FIFO for group matching.\r\nFound out when using self-hosted dependabot.",
+    "url": "https://github.com/fastify/fastify/pull/6849#discussion_r3726811431"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 32,
+    "date": "2026-08-05",
+    "reviewer": "reviewer_13",
+    "body": "**[AI: MiniMax M3]** Nit: per `docs/Reference/ContentTypeParser.md:198-199`, `parseAs` defaults to `'buffer'`, so the option is technically redundant in this recipe. Keeping it is fine — it makes the intent obvious for teaching purposes — but a short parenthetical (`\"redundant but kept for clarity\"`) avoids confusion for readers who compare against the reference.",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3723365602"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 148,
+    "date": "2026-08-05",
+    "reviewer": "reviewer_13",
+    "body": "**[AI: MiniMax M3]** Caveat worth one sentence in the prose above this code block: the buffer-parser recipe replaces `request.body` with a `Buffer`, so do not attach a JSON body schema to a webhook route — `schema.body.content` validation will reject the Buffer (or skip validation depending on configuration). The preParsing variant below avoids this because `request.body` stays as parsed JSON.",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3723365599"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 183,
+    "date": "2026-08-05",
+    "reviewer": "reviewer_13",
+    "body": "**[AI: MiniMax M3]** The size guard has a small race window. If `payload.destroy(error)` schedules an `error` event in the same tick the underlying socket flushes `end`, both `done(error)` (from the error listener) and `done(null, stream)` (from the end listener) can fire. Add a `destroyed` flag and short-circuit both handlers:\n\n```js\nlet destroyed = false\npayload.on('data', (chunk) => {\n  if (destroyed) return\n  size += chunk.length\n  if (size > limit) {\n    destroyed = true\n    payload.destroy(Object.assign(new Error('Request body is too large'), { statusCode: 413 }))\n    return\n  }\n  chunks.push(chunk)\n})\npayload.on('end', () => {\n  if (destroyed) return\n  ...\n})\npayload.on('error', (err) => {\n  if (destroyed) return\n  done(err)\n})\n```",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3723365595"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 92,
+    "date": "2026-08-05",
+    "reviewer": "reviewer_13",
+    "body": "**[AI: MiniMax M3]** `verify` is called here but defined on line 101 in a separate fenced block. Function hoisting makes it work at module scope, but readers expect top-down flow. Two cheap fixes:\n\n- Move the `verify` helper into this fenced block, just above `app.register(...)`.\n- Or inline the comparison directly in the handler.\n\nMinor; not a blocker.",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3723365590"
+  },
+  {
+    "pr": 6905,
+    "file": "docs/Guides/Webhook-Signature-Verification.md",
+    "line": 47,
+    "date": "2026-08-05",
+    "reviewer": "reviewer_13",
+    "body": "Instead of webhooks, here you have a fastify instance ",
+    "url": "https://github.com/fastify/fastify/pull/6905#discussion_r3723281060"
+  },
+  {
+    "pr": 6894,
+    "file": "docs/Reference/Errors.md",
+    "line": 193,
+    "date": "2026-08-04",
+    "reviewer": "reviewer_14",
+    "body": "The example comment says 4xx errors are \"safe to expose\", but `statusCode < 500` doesn't guarantee the message is non-sensitive (it only indicates the HTTP class). Consider softening this wording so it doesn't imply blanket safety.",
+    "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3710285640"
+  },
+  {
+    "pr": 6894,
+    "file": "docs/Reference/Errors.md",
+    "line": 167,
+    "date": "2026-08-04",
+    "reviewer": "reviewer_14",
+    "body": "The statement \"The stack trace is never included\" is too absolute: if a route-level response schema serializer is present, `fallbackErrorHandler()` passes an object that still exposes `error.stack` via the prototype chain, so a schema that includes `stack` could serialize it. The docs should scope this to Fastify's built-in error serializer (and/or mention that schemas can still include it).",
+    "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3710285611"
+  },
+  {
+    "pr": 6855,
+    "file": "types/request.d.ts",
+    "line": 74,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_3",
+    "body": "Ok, i add in the pr description.",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700215153"
+  },
+  {
+    "pr": 6855,
+    "file": "types/instance.d.ts",
+    "line": 371,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_3",
+    "body": "> This is a strict improvement, but it shifts the contextual this type — code that relied on this being untyped (or any) now gets a concrete typed value.\r\n\r\nGood",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700213729"
+  },
+  {
+    "pr": 6855,
+    "file": "types/instance.d.ts",
+    "line": 383,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_3",
+    "body": "Ok, i add in the pr description.",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700207330"
+  },
+  {
+    "pr": 6855,
+    "file": "types/request.d.ts",
+    "line": 74,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "Heads-up: `FastifyRequest.server` is now typed as `ServerInstance` (the ninth, newly-public generic on `FastifyRequest`) instead of `FastifyInstance`. The default is `FastifyInstance`, so existing `FastifyRequest<...>` invocations preserve the previous behavior, but the parameter is now part of the public surface and worth flagging in the migration notes.\n\n— Posted by MiniMax M3 AI",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700169024"
+  },
+  {
+    "pr": 6855,
+    "file": "types/instance.d.ts",
+    "line": 371,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "Heads-up: `setErrorHandler`'s `this` is now typed as `FastifyInstance<RawServer, RawRequest, RawReply, Logger, HandlerTypeProvider>` instead of being untyped. Same change applies to `clientErrorHandler` and `frameworkErrors` in `server-options.d.ts`. This is a strict improvement, but it shifts the contextual `this` type — code that relied on `this` being untyped (or `any`) now gets a concrete typed value.\n\n— Posted by MiniMax M3 AI",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700169019"
+  },
+  {
+    "pr": 6855,
+    "file": "types/instance.d.ts",
+    "line": 310,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "Heads-up: `setNotFoundHandler`'s `HandlerTypeProvider` default switched from `FastifyTypeProviderDefault` to `TypeProvider` (the instance's type provider). Same change applied to `setErrorHandler` and `addHook` (`HookLogger` defaults to the instance's `Logger`). Generic *positions* are preserved, but the inferred types for users who don't pass anything explicitly will differ. Worth a changelog entry.\n\n— Posted by MiniMax M3 AI",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700169015"
+  },
+  {
+    "pr": 6855,
+    "file": "types/instance.d.ts",
+    "line": 383,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "Heads-up: `setGenReqId` parameter changed from `RawRequestDefaultExpression<RawServer>` to `RawRequest`. This is correct for users who customize the raw request, but it is a public signature change worth flagging in the changelog (the callback now receives the customized raw request, not the default).\n\nThe new `generic-propagation.tst.ts` test asserts this behavior, so it is covered by the test suite.\n\n— Posted by MiniMax M3 AI",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700158840"
+  },
+  {
+    "pr": 6855,
+    "file": "types/request.d.ts",
+    "line": 52,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "The historical note is now slightly stale: `ServerInstance` was appended after `RequestType`, so `RequestType` is no longer the last argument. Suggest rewording to make the new ordering explicit, e.g.:\n\n> `RequestType` was moved to the last argument in the historical generic list. `ServerInstance` was appended later so existing `RequestType` positions stay compatible. Related issue #4123.\n\n— Posted by MiniMax M3 AI",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700158654"
+  },
+  {
+    "pr": 6855,
+    "file": "types/hooks.d.ts",
+    "line": 940,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "Minor: `onRoute: never` works but is fragile — a future contributor adding an entry to `ApplicationHookAsyncLookupMap` could silently corrupt the dispatch. Consider expressing it as `interface ApplicationHookAsyncLookupMap extends Omit<LifecycleHookAsyncLookupMap, 'onRoute'> { ... }` so the `onRoute` omission is enforced by the type system instead of a hold-your-breath `never`.\n\n— Posted by MiniMax M3 AI",
+    "url": "https://github.com/fastify/fastify/pull/6855#discussion_r3700158405"
+  },
+  {
+    "pr": 6894,
+    "file": "docs/Reference/Errors.md",
+    "line": 189,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "We are already referencing this immediately before this section. Consider to remove this or that reference",
+    "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3699911663"
+  },
+  {
+    "pr": 6894,
+    "file": "docs/Reference/Errors.md",
+    "line": 187,
+    "date": "2026-08-02",
+    "reviewer": "reviewer_13",
+    "body": "I would remove the reference to node_env: it is a non standard convention that we never used.",
+    "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3699910256"
+  },
+  {
+    "pr": 6891,
+    "file": "test/validation-error-handling.test.js",
+    "line": 248,
+    "date": "2026-08-01",
+    "reviewer": "reviewer_13",
+    "body": "Could you just extract the result of attached.json() in a const? So that you can reuse it",
+    "url": "https://github.com/fastify/fastify/pull/6891#discussion_r3695533960"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/11-testing.md",
+    "line": 35,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_3",
+    "body": "I think it's a nice tool for testing ts code with built-in coverage",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3690931423"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/09-plugins-and-encapsulation.md",
+    "line": 18,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_3",
+    "body": "Ok, I will try to make it more clear, but still teach the encapsulation scope/context at play.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3690797069"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/03-create-server.md",
+    "line": 20,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_3",
+    "body": "No preference, we can also remove the major constraint, I think the tutorial will still be valid in v6.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3690783102"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/06-validation-and-serialization.md",
+    "line": 105,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_3",
+    "body": "It was my initial intention, but as @user suggest we write it directly in typescript.\r\nTypeBox is really the recommended default according to our guide: https://fastify.dev/docs/latest/Reference/TypeScript/#json-schema",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3690772269"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/11-testing.md",
+    "line": 35,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_4",
+    "body": "Not opposed to `borp`, but what about plain `node --test`; you can take a look at how is used in different projects",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3689204275"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/09-plugins-and-encapsulation.md",
+    "line": 18,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_4",
+    "body": "```suggestion\nwithin that function it can add routes, decorators, hooks, and any other Fastify\n```\n\nJust trying to avoid collapse the `scope` concept as I've seen is quite confusing for people using the framework for the first time",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3689196418"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/09-errors.md",
+    "line": 203,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_4",
+    "body": "Don't forget: https://github.com/fastify/fastify-sensible",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3689184663"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/06-validation-and-serialization.md",
+    "line": 105,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_4",
+    "body": "I'm not opposed to using alternatives for Input Validation, but as this tutorial is made to teach `fastify` from scratch, shouldn't be better to just stick to what `fastify` ships and add sections showcasing how alternatives for each feature can be used?\n\n> Just what you did lines above",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3689172419"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/03-create-server.md",
+    "line": 20,
+    "date": "2026-07-31",
+    "reviewer": "reviewer_4",
+    "body": "Are we gonna add this to the checklist so we refresh the tutorial upon new majors?",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3689143011"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/03-create-server.md",
+    "line": 34,
+    "date": "2026-07-30",
+    "reviewer": "reviewer_3",
+    "body": "I know that AI agents are performing some refactoring pretty well these days, because this comment doesn’t make me feel clinically depressed.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3683500680"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/03-create-server.md",
+    "line": 34,
+    "date": "2026-07-30",
+    "reviewer": "reviewer_3",
+    "body": "Agree, don't remember why I've written it in vanilla JS.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3683407476"
+  },
+  {
+    "pr": 6239,
+    "file": "docs/Tutorial/03-create-server.md",
+    "line": 34,
+    "date": "2026-07-30",
+    "reviewer": "reviewer_21",
+    "body": "Given the community sentiment, we should use typescript with type stripping for this guide.",
+    "url": "https://github.com/fastify/fastify/pull/6239#discussion_r3683206230"
+  },
+  {
+    "pr": 6879,
+    "file": "lib/warnings.js",
+    "line": 40,
+    "date": "2026-07-29",
+    "reviewer": "reviewer_17",
+    "body": "Shouldn't it place in `FSTDEP`?\nSupport of overriding method without `overrideExisting: true` is deprecated and is a must in next major.",
+    "url": "https://github.com/fastify/fastify/pull/6879#discussion_r3674093126"
+  },
+  {
+    "pr": 6526,
+    "file": "test/internals/reply.test.js",
+    "line": 1994,
+    "date": "2026-07-26",
+    "reviewer": "reviewer_1",
+    "body": "We need to add few more tests:\n\n```\n  fastify.get('/', function (req, reply) {\n    return reply.send(Promise.resolve('asd'))\n  })\n\n  fastify.get('/', async function (req, reply) {\n    reply.send(Promise.resolve('asd'))\n  })\n\n  fastify.get('/', function (req, reply) {\n    reply.send(Promise.resolve('one'))\n    reply.send(Promise.resolve('two'))\n  })\n\n  fastify.get('/', function (req, reply) {\n    reply.send(Wait(1000).then(() => 'one'))\n    reply.send(Wait(500).then(() => 'two'))\n  })",
+    "url": "https://github.com/fastify/fastify/pull/6526#discussion_r3652069209"
+  },
+  {
+    "pr": 6859,
+    "file": "docs/Guides/Getting-Started.md",
+    "line": 149,
+    "date": "2026-07-25",
+    "reviewer": "reviewer_22",
+    "body": "Updated in `0641496e`. All six references in the guide now consistently use `our-first-routes` (ESM imports, CommonJS requires, code-block filename, and heading). Verified with markdownlint; there are zero remaining singular `our-first-route` references.",
+    "url": "https://github.com/fastify/fastify/pull/6859#discussion_r3650755105"
+  },
+  {
+    "pr": 6871,
+    "file": "docs/Reference/Warnings.md",
+    "line": 35,
+    "date": "2026-07-25",
+    "reviewer": "reviewer_9",
+    "body": "The preamble should be removed here. It introduces the bulleted list. The new suggestion should be in that list as the last item. ",
+    "url": "https://github.com/fastify/fastify/pull/6871#discussion_r3650026267"
+  },
+  {
+    "pr": 6859,
+    "file": "docs/Guides/Getting-Started.md",
+    "line": 149,
+    "date": "2026-07-24",
+    "reviewer": "reviewer_3",
+    "body": "```suggestion\nimport routes from './our-first-routes.js'\n```\n\nAlso ctrl+F and update the other references plz.\nI see 6 matches on the doc.",
+    "url": "https://github.com/fastify/fastify/pull/6859#discussion_r3644913447"
+  },
+  {
+    "pr": 6787,
+    "file": "lib/request.js",
+    "line": 252,
+    "date": "2026-07-21",
+    "reviewer": "reviewer_23",
+    "body": "Agreed the getter can't police every malformed shape, but it doesn't try to; its whole job is stripping the port suffix off `host`. While testing I ran the other invalid shapes through it: anything not starting with `[` already falls to the `split(':', 1)` branch and passes through as-is (`exa mple:80` comes back `exa mple`), so invalid input flowing through unchanged is already the getter's behaviour everywhere else. The unclosed bracket was the one shape that instead collapsed to `''`, which is the inconsistency this removes; no validation is added in either direction.\n\nOn `URL`, I did try `new URL('http://' + host)` while investigating. It throws on the unclosed bracket so it needs a try/catch, and for valid hosts it normalises: `EXAMPLE.com` lowercases, `bücher.de` becomes `xn--bcher-kva.de`, default ports get dropped. That changes `hostname` for well-formed requests too, which is a far bigger behaviour change than this guard, plus the extra cost in a per-request getter. If core wants strict Host validation that feels like its own semver-major discussion; happy to rework in that direction if that's where you land.",
+    "url": "https://github.com/fastify/fastify/pull/6787#discussion_r3619981822"
+  },
+  {
+    "pr": 6787,
+    "file": "lib/request.js",
+    "line": 252,
+    "date": "2026-07-21",
+    "reviewer": "reviewer_23",
+    "body": "Agreed there are endless invalid shapes, but the patch isn't trying to catch them: it only removes the one slice where the getter itself manufactures an empty string out of a non-empty header. Everything else already flows through `split(':', 1)[0]` and comes back as whatever the client sent up to the first colon, so the missing bracket was the odd one out, not the start of a validation effort.\n\nGoing through `URL` would be a different feature rather than a guard: `new URL('http://' + host)` throws on invalid input so a fallback still has to be chosen, and it lowercases and punycodes valid hosts, so `hostname` would start disagreeing with `host` for well-formed requests too, on a getter that sits on the hot path. If core wants strict host parsing I'd treat that as its own v6 discussion; this change only keeps `hostname` consistent with `host` for the one input it currently mishandles.\n",
+    "url": "https://github.com/fastify/fastify/pull/6787#discussion_r3619975762"
+  },
+  {
+    "pr": 6787,
+    "file": "lib/request.js",
+    "line": 252,
+    "date": "2026-07-20",
+    "reviewer": "reviewer_1",
+    "body": "Another fear is that there are infine way to write an invalid host and we check for the `[]` only.\n\nIf we want to be strictier, should not we use the [URL](https://nodejs.org/api/url.html) class",
+    "url": "https://github.com/fastify/fastify/pull/6787#discussion_r3615730326"
+  },
+  {
+    "pr": 6833,
+    "file": ".github/workflows/citgm-package.yml",
+    "line": 88,
+    "date": "2026-07-19",
+    "reviewer": "reviewer_16",
+    "body": "Don't think i've ever seen `.` or `~` in package names? Are they allowed?",
+    "url": "https://github.com/fastify/fastify/pull/6833#discussion_r3610109921"
+  },
+  {
+    "pr": 6833,
+    "file": ".github/workflows/citgm-package.yml",
+    "line": 105,
+    "date": "2026-07-19",
+    "reviewer": "reviewer_14",
+    "body": "`data.repository` in npm metadata can be either an object (with a `url` field) or a string. Reading only `data.repository?.url` will treat string repositories as missing and throw `Unsupported repository URL ...: undefined`, which is misleading.",
+    "url": "https://github.com/fastify/fastify/pull/6833#discussion_r3610104489"
+  },
+  {
+    "pr": 6833,
+    "file": ".github/workflows/citgm-package.yml",
+    "line": 88,
+    "date": "2026-07-19",
+    "reviewer": "reviewer_14",
+    "body": "`packageNameRegex` is case-insensitive (`/i`), which allows uppercase characters even though npm package names must be lowercase. This means invalid inputs like `MyPkg` will pass validation and only fail later with a registry 404, producing a less helpful error.",
+    "url": "https://github.com/fastify/fastify/pull/6833#discussion_r3610104481"
+  },
+  {
+    "pr": 6853,
+    "file": ".github/workflows/ci.yml",
+    "line": 33,
+    "date": "2026-07-18",
+    "reviewer": "reviewer_14",
+    "body": "Minor consistency/readability: the version comment is written as `#v6.0.0` here, while other pinned actions in this workflow use the `# vX.Y.Z` style (space after `#`, e.g. line 69).",
+    "url": "https://github.com/fastify/fastify/pull/6853#discussion_r3607783277"
+  },
+  {
+    "pr": 6853,
+    "file": ".github/workflows/lock-threads.yml",
+    "line": 19,
+    "date": "2026-07-18",
+    "reviewer": "reviewer_14",
+    "body": "Minor consistency/readability: the version comment is written as `#v6.0.0` here, while the rest of the workflow pins use the `# vX.Y.Z` style (space after `#`).",
+    "url": "https://github.com/fastify/fastify/pull/6853#discussion_r3607783272"
+  },
+  {
+    "pr": 6853,
+    "file": ".github/workflows/citgm.yml",
+    "line": 121,
+    "date": "2026-07-18",
+    "reviewer": "reviewer_14",
+    "body": "This changes `octokit/request-action` from `v2.x` to `v3.0.0` while the PR is described as “pin actions to commit-hash”. If the intent is only pinning, keep the action on the same major version (v2) and pin the corresponding v2 commit SHA instead; otherwise this is an implicit major upgrade that may change behavior/break inputs.",
+    "url": "https://github.com/fastify/fastify/pull/6853#discussion_r3607783269"
+  },
+  {
+    "pr": 6853,
+    "file": ".github/workflows/missing_types.yml",
+    "line": 21,
+    "date": "2026-07-18",
+    "reviewer": "reviewer_14",
+    "body": "This changes `octokit/request-action` from `v2.x` to `v3.0.0` while the PR is described as “pin actions to commit-hash”. If the intent is only pinning, keep the action on the same major version (v2) and pin the corresponding v2 commit SHA instead; otherwise this is an implicit major upgrade that may change behavior/break inputs.",
+    "url": "https://github.com/fastify/fastify/pull/6853#discussion_r3607783259"
+  },
+  {
+    "pr": 6845,
+    "file": "lib/reply.js",
+    "line": 331,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_24",
+    "body": "Thanks @user, updated.\r\n\r\nI kept `removeTrailer()` as the cheap `undefined` assignment and moved the empty-trailer handling into `onSendEnd()`, where we already inspect the trailer entries. I also reverted the `sendTrailer()` change and added coverage for removing a trailer during stream consumption.",
+    "url": "https://github.com/fastify/fastify/pull/6845#discussion_r3581425907"
+  },
+  {
+    "pr": 6845,
+    "file": "lib/reply.js",
+    "line": 331,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_17",
+    "body": "Using `.values` combine with `.some` is slow.\n\nAssigning `undefined` is the cheapest action we have.",
+    "url": "https://github.com/fastify/fastify/pull/6845#discussion_r3581206529"
+  },
+  {
+    "pr": 6832,
+    "file": "lib/handle-request.js",
+    "line": 45,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_17",
+    "body": "Invalid or Unsupported Content-Type header is checked in later stage.\nIt is the function we already have.",
+    "url": "https://github.com/fastify/fastify/pull/6832#discussion_r3578921654"
+  },
+  {
+    "pr": 6832,
+    "file": "lib/handle-request.js",
+    "line": 62,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_17",
+    "body": "It is partially addressed the `missing` part, for the `inconsistent` part is handled by content type parser.\nYou can check the test `should return 400 if invalid content is provided for QUERY method`\n",
+    "url": "https://github.com/fastify/fastify/pull/6832#discussion_r3578908442"
+  },
+  {
+    "pr": 6832,
+    "file": "lib/handle-request.js",
+    "line": 112,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_17",
+    "body": "This function is used in two place.\n1. Used to check whether using the Content-Type parser.\n2. Used in Query method.\n\nI extract it as a function because I do not want to create variables or access the header when not needed.\nWe can certainly inline the method if it desire.",
+    "url": "https://github.com/fastify/fastify/pull/6832#discussion_r3578897178"
+  },
+  {
+    "pr": 6832,
+    "file": "lib/handle-request.js",
+    "line": 112,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_9",
+    "body": "There should be a docblock on this at least. It doesn't really seem reusable, because the content is clearly tied to the new method, so it really doesn't need to be a separate function. It could be inlined above and avoid the function invocation.",
+    "url": "https://github.com/fastify/fastify/pull/6832#discussion_r3578271082"
+  },
+  {
+    "pr": 6832,
+    "file": "lib/handle-request.js",
+    "line": 62,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_9",
+    "body": "This is only validating one part of the \"is missing or is inconsistent with the request content.\" requirement. So, technically, in order for us to provide support for this action we really need to verify it _after_ the payload has been parsed, or not, by a registered content-type parser.\n\nI am tempted to say that this requirement makes it not possible to generically support it in the framework. In order to be fully compliant, we have to verify the full payload according to the statements above.",
+    "url": "https://github.com/fastify/fastify/pull/6832#discussion_r3578251262"
+  },
+  {
+    "pr": 6832,
+    "file": "lib/handle-request.js",
+    "line": 45,
+    "date": "2026-07-14",
+    "reviewer": "reviewer_9",
+    "body": "I have a suspicion that the parsed content-type header object should be used here.",
+    "url": "https://github.com/fastify/fastify/pull/6832#discussion_r3578218729"
+  },
+  {
+    "pr": 6840,
+    "file": "docs/Guides/Migration-Guide-Express.md",
+    "line": 1,
+    "date": "2026-07-12",
+    "reviewer": "reviewer_16",
+    "body": "I agree, adds additional maintainer burden. If Express changes its functionality then someone needs to update this, and I doubt the AI bot that created this commit will do that.",
+    "url": "https://github.com/fastify/fastify/pull/6840#discussion_r3565891856"
+  },
+  {
+    "pr": 6840,
+    "file": "docs/Guides/Migration-Guide-Express.md",
+    "line": 1,
+    "date": "2026-07-10",
+    "reviewer": "reviewer_1",
+    "body": "I think this is blog post and I would be more than happy to host it on https://backend.cafe/\n\nNot sure we should include it here tho",
+    "url": "https://github.com/fastify/fastify/pull/6840#discussion_r3558275709"
+  },
+  {
+    "pr": 6827,
+    "file": "types/route.d.ts",
+    "line": 70,
+    "date": "2026-07-06",
+    "reviewer": "reviewer_25",
+    "body": "You were right, my earlier push was not updating the PR branch correctly because the remote branch had merge/sync commits. I pushed the clean branch now and confirmed the **\"version\"** option is removed from the PR diff.",
+    "url": "https://github.com/fastify/fastify/pull/6827#discussion_r3531682285"
+  },
+  {
+    "pr": 6827,
+    "file": "types/route.d.ts",
+    "line": 70,
+    "date": "2026-07-06",
+    "reviewer": "reviewer_17",
+    "body": "Still seeing it on the Github.\n<img width=\"2880\" height=\"1428\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/47aa1735-bf46-4d7f-ba3e-5b1ee00509a1\" />",
+    "url": "https://github.com/fastify/fastify/pull/6827#discussion_r3531570780"
+  },
+  {
+    "pr": 6827,
+    "file": "types/route.d.ts",
+    "line": 70,
+    "date": "2026-07-06",
+    "reviewer": "reviewer_17",
+    "body": "Not addressed. Have you pushed the fix?",
+    "url": "https://github.com/fastify/fastify/pull/6827#discussion_r3531541496"
+  },
+  {
+    "pr": 6608,
+    "file": "test/http-methods/custom-http-methods.test.js",
+    "line": 132,
+    "date": "2026-07-06",
+    "reviewer": "reviewer_3",
+    "body": "Plz avoid trivial comments like this.\nAs a general rule, avoid adding comments unless there is a very good reason to do so, for example if the behavior is unexpected, complex or ambiguous.",
+    "url": "https://github.com/fastify/fastify/pull/6608#discussion_r3530632479"
+  },
+  {
+    "pr": 6608,
+    "file": "test/http-methods/custom-http-methods.test.js",
+    "line": 125,
+    "date": "2026-07-06",
+    "reviewer": "reviewer_3",
+    "body": "I think we should rethink the way we handle warnings, this isn’t the first time that the tests tell us (IMO) that our design isn’t optimal:\nhttps://github.com/fastify/fastify/pull/6723#discussion_r3265889392\nhttps://github.com/fastify/fastify/issues/6729#issuecomment-4495509813\n\nI have briefly discussed this topic in the links I shared. \nI can look into this in more detail if you feel the same.",
+    "url": "https://github.com/fastify/fastify/pull/6608#discussion_r3530579072"
+  },
+  {
+    "pr": 6608,
+    "file": "lib/warnings.js",
+    "line": 57,
+    "date": "2026-07-06",
+    "reviewer": "reviewer_3",
+    "body": "Do we agree about this behavior in next major @user/core?",
+    "url": "https://github.com/fastify/fastify/pull/6608#discussion_r3530518867"
+  },
+  {
+    "pr": 6826,
+    "file": "lib/warnings.js",
+    "line": 6,
+    "date": "2026-07-06",
+    "reviewer": "reviewer_26",
+    "body": "yeahh done!! Have removed the list and only kept codes from older versions....",
+    "url": "https://github.com/fastify/fastify/pull/6826#discussion_r3528611847"
+  },
+  {
+    "pr": 6725,
+    "file": "lib/route.js",
+    "line": 552,
+    "date": "2026-07-05",
+    "reviewer": "reviewer_1",
+    "body": "Why the clear is performed only when `req.aborted`?",
+    "url": "https://github.com/fastify/fastify/pull/6725#discussion_r3524628527"
+  },
+  {
+    "pr": 6579,
+    "file": "types/route.d.ts",
+    "line": 48,
+    "date": "2026-07-05",
+    "reviewer": "reviewer_1",
+    "body": "This is wrong: the handler can return a promise",
+    "url": "https://github.com/fastify/fastify/pull/6579#discussion_r3524610876"
+  },
+  {
+    "pr": 6826,
+    "file": "lib/warnings.js",
+    "line": 6,
+    "date": "2026-07-05",
+    "reviewer": "reviewer_1",
+    "body": "TBH I think this list is not needed anymore.\n\nWhat it is useful, it is the list of the older code used on older fastify versions",
+    "url": "https://github.com/fastify/fastify/pull/6826#discussion_r3524575334"
+  },
+  {
+    "pr": 6832,
+    "file": "lib/errors.js",
+    "line": 460,
+    "date": "2026-07-04",
+    "reviewer": "reviewer_17",
+    "body": "It allows future method that requires the same requirement of `query`.",
+    "url": "https://github.com/fastify/fastify/pull/6832#discussion_r3523839931"
+  },
+  {
+    "pr": 6828,
+    "file": "lib/reply.js",
+    "line": 212,
+    "date": "2026-07-04",
+    "reviewer": "reviewer_27",
+    "body": "Right, the `json` check had the same issue, so `application/JsOn` was missed. Fixed it to match case-insensitively, with tests for an uppercase media type and `charset`. I kept it a lowercased match rather than parsing the content type (this runs on every `send` and the lighter fix was approved); if you would prefer the parsed `ContentType` approach, I will switch.\n",
+    "url": "https://github.com/fastify/fastify/pull/6828#discussion_r3523160621"
+  },
+  {
+    "pr": 6830,
+    "file": "test/internals/reply.test.js",
+    "line": 767,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_17",
+    "body": "It changes the content type but still produce a valid content type for the user.",
+    "url": "https://github.com/fastify/fastify/pull/6830#discussion_r3515997328"
+  },
+  {
+    "pr": 6827,
+    "file": "types/route.d.ts",
+    "line": 70,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_25",
+    "body": "Thanks for the review. I removed the unsupported \"version\" option and updated the type tests to cover only \"logSerializers\".",
+    "url": "https://github.com/fastify/fastify/pull/6827#discussion_r3515944624"
+  },
+  {
+    "pr": 6828,
+    "file": "lib/reply.js",
+    "line": 212,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_17",
+    "body": "The same apply to the `json` check.\r\nIt can be `application/JsOn` or something similar.\r\n\r\nMedia Type is case-insensitive value, parameter name also case-insensitive one.\r\nA full solution means we should parse the content type and check it carefully.\r\n\r\n```js\r\nconst contentType = new ContentType(this.getHeader('content-type'))\r\n\r\ncontentType.mediaType.indexOf('json') !== -1\r\ncontentType.parameters.has('charset')\r\n```\r\n",
+    "url": "https://github.com/fastify/fastify/pull/6828#discussion_r3515515810"
+  },
+  {
+    "pr": 6827,
+    "file": "types/route.d.ts",
+    "line": 70,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_17",
+    "body": "No such option.\n\n```suggestion\n```",
+    "url": "https://github.com/fastify/fastify/pull/6827#discussion_r3515459921"
+  },
+  {
+    "pr": 6819,
+    "file": "docs/Guides/Contributing.md",
+    "line": 77,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_26",
+    "body": "Updated it!! Please review...",
+    "url": "https://github.com/fastify/fastify/pull/6819#discussion_r3514580722"
+  },
+  {
+    "pr": 6823,
+    "file": "docs/Reference/Request.md",
+    "line": 92,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_14",
+    "body": "The intro description says “validates … using the specified schema”, but `.validateInput()` also supports using an HTTP part string as the second argument (see the section header/signature and examples later in this doc). To keep the introduction list accurate, mention that it validates using the provided schema **or** HTTP part.",
+    "url": "https://github.com/fastify/fastify/pull/6823#discussion_r3513993064"
+  },
+  {
+    "pr": 6580,
+    "file": "docs/Reference/Server.md",
+    "line": 526,
+    "date": "2026-06-29",
+    "reviewer": "reviewer_1",
+    "body": "Done, but I omitted the `error` for those method that can't receive it (incomingRequest nd notFound one)",
+    "url": "https://github.com/fastify/fastify/pull/6580#discussion_r3493073939"
+  },
+  {
+    "pr": 6580,
+    "file": "docs/Reference/Server.md",
+    "line": 526,
+    "date": "2026-06-28",
+    "reviewer": "reviewer_17",
+    "body": "Can we have a unify interface for all this methods?\n\nFor example, \n```js\n(error, request, response, metadata) => {\n  // error can be null in some case\n\n  // metadata for serializerError\n}\n```\n\n`serviceUnavailable` is the only exception because no route is formed.",
+    "url": "https://github.com/fastify/fastify/pull/6580#discussion_r3487890343"
+  },
+  {
+    "pr": 6790,
+    "file": "docs/Reference/TypeScript.md",
+    "line": 253,
+    "date": "2026-06-26",
+    "reviewer": "reviewer_14",
+    "body": "The import path should match the official TypeBox package name (`@user/typebox`).",
+    "url": "https://github.com/fastify/fastify/pull/6790#discussion_r3480434455"
+  },
+  {
+    "pr": 6790,
+    "file": "docs/Reference/TypeScript.md",
+    "line": 247,
+    "date": "2026-06-26",
+    "reviewer": "reviewer_14",
+    "body": "TypeBox’s official npm package is `@user/typebox`, not `typebox`. The install instructions should use the correct package name.",
+    "url": "https://github.com/fastify/fastify/pull/6790#discussion_r3480434438"
+  },
+  {
+    "pr": 6790,
+    "file": "docs/Reference/TypeScript.md",
+    "line": 236,
+    "date": "2026-06-26",
+    "reviewer": "reviewer_14",
+    "body": "The npm link points to `typebox`, but the official TypeBox package is `@user/typebox`. This link should point to the official package page to avoid sending users to the wrong module.",
+    "url": "https://github.com/fastify/fastify/pull/6790#discussion_r3480434419"
+  },
+  {
+    "pr": 6790,
+    "file": "docs/Reference/TypeScript.md",
+    "line": 524,
+    "date": "2026-06-26",
+    "reviewer": "reviewer_14",
+    "body": "`typescript` does not provide an `npx typescript --init` initializer; the standard initialization command is `npx tsc --init` (also used earlier in this doc).",
+    "url": "https://github.com/fastify/fastify/pull/6790#discussion_r3480434406"
+  },
+  {
+    "pr": 6790,
+    "file": "docs/Reference/TypeScript.md",
+    "line": 68,
+    "date": "2026-06-26",
+    "reviewer": "reviewer_14",
+    "body": "This blockquote note is not indented under list item 3, which can break list rendering in Markdown. Indent the note so it remains part of step 3.",
+    "url": "https://github.com/fastify/fastify/pull/6790#discussion_r3480434389"
+  },
+  {
+    "pr": 6790,
+    "file": "docs/Reference/TypeScript.md",
+    "line": 64,
+    "date": "2026-06-26",
+    "reviewer": "reviewer_14",
+    "body": "These lines are not indented under list item 3, which breaks the numbered list formatting. Indent them to keep the “recommended ones” sentence within step 3.",
+    "url": "https://github.com/fastify/fastify/pull/6790#discussion_r3480434370"
+  },
+  {
+    "pr": 6810,
+    "file": "test/hooks.test.js",
+    "line": 3664,
+    "date": "2026-06-24",
+    "reviewer": "reviewer_28",
+    "body": "@user Removed both `setTimeout` calls since they were no longer needed.",
+    "url": "https://github.com/fastify/fastify/pull/6810#discussion_r3470001489"
+  },
+  {
+    "pr": 6810,
+    "file": "lib/route.js",
+    "line": 590,
+    "date": "2026-06-24",
+    "reviewer": "reviewer_28",
+    "body": "I moved this block before `onRequest` so `socket._meta` gets set before any hooks run.\n\nBefore this change, `_meta` was only assigned after `onRequestAbort`. If a socket timeout happened while an `onRequest` hook was still executing, `handleTimeout` would try to access `socket._meta` before it existed and crash.\n\nSetting `_meta` right after `setupResponseListeners` guarantees the socket has the required context attached for the entire request lifecycle, including all hooks.\n",
+    "url": "https://github.com/fastify/fastify/pull/6810#discussion_r3469990274"
+  },
+  {
+    "pr": 6810,
+    "file": "test/hooks.test.js",
+    "line": 3664,
+    "date": "2026-06-24",
+    "reviewer": "reviewer_21",
+    "body": "can you avoid setTimeout in tests? They are flaky.",
+    "url": "https://github.com/fastify/fastify/pull/6810#discussion_r3469150855"
+  },
+  {
+    "pr": 6810,
+    "file": "lib/route.js",
+    "line": 610,
+    "date": "2026-06-23",
+    "reviewer": "reviewer_28",
+    "body": "You're right. Clearing the timeout should be sufficient and avoids the additional listener cleanup, and I have updated the implementation to handle it that way.",
+    "url": "https://github.com/fastify/fastify/pull/6810#discussion_r3458888050"
+  },
+  {
+    "pr": 6810,
+    "file": "lib/reply.js",
+    "line": 977,
+    "date": "2026-06-23",
+    "reviewer": "reviewer_28",
+    "body": "@user It isn’t needed. I rechecked the lifecycle and this listener is attached to the per-request IncomingMessage, not the keep-alive socket, so it does not accumulate across requests on the same connection. I’ve removed this change and the related test.",
+    "url": "https://github.com/fastify/fastify/pull/6810#discussion_r3458882830"
+  },
+  {
+    "pr": 6810,
+    "file": "lib/route.js",
+    "line": 610,
+    "date": "2026-06-23",
+    "reviewer": "reviewer_21",
+    "body": "This should not be needed. We should clear the timeout",
+    "url": "https://github.com/fastify/fastify/pull/6810#discussion_r3458723699"
+  },
+  {
+    "pr": 6810,
+    "file": "lib/reply.js",
+    "line": 977,
+    "date": "2026-06-23",
+    "reviewer": "reviewer_21",
+    "body": "I don't understand why it's needed.",
+    "url": "https://github.com/fastify/fastify/pull/6810#discussion_r3458719318"
+  },
+  {
+    "pr": 6802,
+    "file": "docs/Guides/Serverless.md",
+    "line": 386,
+    "date": "2026-06-21",
+    "reviewer": "reviewer_14",
+    "body": "This bullet implies you only get per-route logging/observability by moving to Cloud Run, but Fastify’s per-request logging (method/url/latency, etc.) works the same on Cloud Functions too — the main limitation is that Cloud Console will still group everything under a single function when you use one `onRequest()` wrapper. Consider rewording to avoid suggesting Cloud Run is required for per-route logs.",
+    "url": "https://github.com/fastify/fastify/pull/6802#discussion_r3448627719"
+  },
+  {
+    "pr": 6802,
+    "file": "docs/Guides/Serverless.md",
+    "line": 377,
+    "date": "2026-06-21",
+    "reviewer": "reviewer_14",
+    "body": "The wording here is a bit absolute/misleading: it’s specifically the *single* `onRequest()` wrapper that guarantees you only get one Cloud Function entry in the console. You can keep using Fastify, but to get per-function grouping you must export multiple Cloud Functions (one per route/group) rather than routing everything through one wrapper.",
+    "url": "https://github.com/fastify/fastify/pull/6802#discussion_r3448627711"
+  },
+  {
+    "pr": 6806,
+    "file": "docs/Reference/Server.md",
+    "line": 593,
+    "date": "2026-06-21",
+    "reviewer": "reviewer_14",
+    "body": "The updated sentence reads as if Fastify’s default parser is “a fork of `fast-querystring` … called `fast-querystring`”, which is circular and inaccurate. It should describe `fast-querystring` as the default parser and (optionally) that it’s a fork of Node.js core `querystring`. Also, the later `routerOptions.querystringParser` section (around the second `### querystringParser`) still mentions Node.js core `querystring` and imports `node:querystring`, so it remains inconsistent with this section.",
+    "url": "https://github.com/fastify/fastify/pull/6806#discussion_r3448626379"
+  },
+  {
+    "pr": 6806,
+    "file": "docs/Reference/Server.md",
+    "line": 475,
+    "date": "2026-06-21",
+    "reviewer": "reviewer_14",
+    "body": "This section ends up showing the default twice: once here and again a few lines later (another “+ Default: `false`” before the example). Please keep only a single default entry for `requestIdHeader` to avoid redundancy.",
+    "url": "https://github.com/fastify/fastify/pull/6806#discussion_r3448626365"
+  },
+  {
+    "pr": 6804,
+    "file": ".github/workflows/ci-deno.yml",
+    "line": 46,
+    "date": "2026-06-21",
+    "reviewer": "reviewer_16",
+    "body": "Third party action so needs to use sha\n\n```suggestion\n      - uses: denoland/setup-deno@user # v2.0.4\n```",
+    "url": "https://github.com/fastify/fastify/pull/6804#discussion_r3448621559"
+  },
+  {
+    "pr": 6805,
+    "file": "docs/Reference/Server.md",
+    "line": 864,
+    "date": "2026-06-21",
+    "reviewer": "reviewer_14",
+    "body": "In the `buildPrettyMeta` example, `Object.keys()` never returns symbol keys, so the `typeof k === 'symbol'` branch will never run. If the intent is to remove symbol properties from `cleanMeta`, iterate symbols explicitly.",
+    "url": "https://github.com/fastify/fastify/pull/6805#discussion_r3448616088"
+  },
+  {
+    "pr": 6805,
+    "file": "docs/Reference/Server.md",
+    "line": 522,
+    "date": "2026-06-21",
+    "reviewer": "reviewer_14",
+    "body": "Grammar: \"will be not called\" is unidiomatic; it should be \"will not be called\".",
+    "url": "https://github.com/fastify/fastify/pull/6805#discussion_r3448616073"
+  },
+  {
+    "pr": 6804,
+    "file": ".github/workflows/ci-deno.yml",
+    "line": 44,
+    "date": "2026-06-20",
+    "reviewer": "reviewer_29",
+    "body": "If that's okay, I'd skip this one too and just use `deno install` for everything",
+    "url": "https://github.com/fastify/fastify/pull/6804#discussion_r3446089462"
+  },
+  {
+    "pr": 6799,
+    "file": "lib/reply.js",
+    "line": 956,
+    "date": "2026-06-18",
+    "reviewer": "reviewer_28",
+    "body": "The goal was to ensure cleanup always happened, but I agree the root cause should be addressed instead. I've removed this change and kept only the `socket._meta` fix.\r\n",
+    "url": "https://github.com/fastify/fastify/pull/6799#discussion_r3437942952"
+  },
+  {
+    "pr": 6799,
+    "file": "lib/reply.js",
+    "line": 962,
+    "date": "2026-06-18",
+    "reviewer": "reviewer_28",
+    "body": "Makes sense. I've removed this change and kept the PR focused on the `socket._meta` retention issue.",
+    "url": "https://github.com/fastify/fastify/pull/6799#discussion_r3437941579"
+  },
+  {
+    "pr": 6799,
+    "file": "lib/reply.js",
+    "line": 968,
+    "date": "2026-06-18",
+    "reviewer": "reviewer_21",
+    "body": "This is the real bug fix. Good catch!",
+    "url": "https://github.com/fastify/fastify/pull/6799#discussion_r3437505828"
+  },
+  {
+    "pr": 6799,
+    "file": "lib/reply.js",
+    "line": 962,
+    "date": "2026-06-18",
+    "reviewer": "reviewer_21",
+    "body": "This should actually not be needed. `request` should not survive after a request is completed.",
+    "url": "https://github.com/fastify/fastify/pull/6799#discussion_r3437504577"
+  },
+  {
+    "pr": 6799,
+    "file": "lib/reply.js",
+    "line": 956,
+    "date": "2026-06-18",
+    "reviewer": "reviewer_21",
+    "body": "What's the purpose? There should be no need, and if there is let's fix the root cause.",
+    "url": "https://github.com/fastify/fastify/pull/6799#discussion_r3437488786"
+  },
+  {
+    "pr": 6769,
+    "file": "docs/Reference/Server.md",
+    "line": 487,
+    "date": "2026-06-14",
+    "reviewer": "reviewer_17",
+    "body": "Please remove the duplicate `Default` here.",
+    "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3409724789"
+  },
+  {
+    "pr": 6757,
+    "file": "test/schema-double-bucket.test.js",
+    "line": 52,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "Unused `t` parameter will fail linting under `no-unused-vars`. If you’re not using the test context, remove the parameter.",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600332"
+  },
+  {
+    "pr": 6757,
+    "file": "test/schema-double-bucket.test.js",
+    "line": 37,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "Unused `t` parameter will fail linting under `no-unused-vars`. If you’re not using the test context, remove the parameter.",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600330"
+  },
+  {
+    "pr": 6757,
+    "file": "test/schema-double-bucket.test.js",
+    "line": 22,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "Unused `t` parameter will fail linting under `no-unused-vars`. If you’re not using the test context, remove the parameter.",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600328"
+  },
+  {
+    "pr": 6757,
+    "file": "test/schema-double-bucket.test.js",
+    "line": 7,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "Unused `t` parameter will fail linting under `no-unused-vars`. If you’re not using the test context, remove the parameter.",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600325"
+  },
+  {
+    "pr": 6757,
+    "file": "lib/schema-controller.js",
+    "line": 66,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "With the new per-bucket `options`, `this.addedSchemas` is still a single global flag. This means adding a serializer-only schema will force validator compiler rebuilds (and vice versa), even though the corresponding bucket didn’t change. Consider tracking changes per bucket (e.g. `addedValidatorSchemas` / `addedSerializerSchemas`) and gating `setupValidator` / `setupSerializer` rebuilds accordingly.",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600323"
+  },
+  {
+    "pr": 6757,
+    "file": "lib/schema-controller.js",
+    "line": 93,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "`getSchemas()` now always merges into a plain object via `Object.assign`. This breaks compatibility with custom `schemaController.bucket` implementations whose `getSchemas()` returns a non-plain store (the codebase currently tests/relies on `Map` being returned, e.g. `test/schema-feature.test.js` \"Schema controller bucket\" uses `.size`). At minimum, preserve `Map` by returning a merged `Map` when the underlying stores are `Map`s.",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600319"
+  },
+  {
+    "pr": 6757,
+    "file": "lib/schema-controller.js",
+    "line": 79,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "The `addSchema(schema, options)` flag logic mis-handles the case where callers pass a single `false` flag (e.g. `{ validator: false }` or `{ serializer: false }`): it currently still adds to the disabled side. Since the new API’s options accept booleans, `{ validator: false }` should reliably mean “do not add to validator” (and likewise for serializer).",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600313"
+  },
+  {
+    "pr": 6757,
+    "file": "lib/schema-controller.js",
+    "line": 50,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "`schemaController.bucket` factory is now invoked twice per encapsulation context (validator + serializer). This breaks the existing contract that the bucket factory is called once per `register()` context (and is exercised by the current test `test/schema-feature.test.js` \"Schema controller bucket\", which counts bucket instantiations). It also gives custom bucket implementations no way to distinguish which bucket they are building, and doubles work even when the user doesn’t need the split.\n\nConsider either (1) calling the bucket factory once and building validator/serializer *views* on top of it, or (2) extending the `schemaController.bucket` option to accept separate factories (e.g. `{ validator, serializer }`) while keeping the single-factory form backwards compatible.",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3407600309"
+  },
+  {
+    "pr": 6769,
+    "file": "docs/Reference/Server.md",
+    "line": 475,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "The `requestIdHeader` section still repeats a second `+ Default: `false`` line just before the example. This is redundant and inconsistent with how other options are documented here; please remove the duplicate default block so the section has a single default value declaration.",
+    "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3407594721"
+  },
+  {
+    "pr": 6769,
+    "file": "docs/Reference/Server.md",
+    "line": 1088,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "This example now requires `fast-querystring`, but Fastify does not list `fast-querystring` as a direct dependency (it is pulled in transitively via `find-my-way`). In strict/non-hoisting setups (e.g. pnpm), `require('fast-querystring')` may fail unless users install it explicitly—please note that in the snippet.",
+    "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3407594714"
+  },
+  {
+    "pr": 6769,
+    "file": "docs/Reference/Server.md",
+    "line": 858,
+    "date": "2026-06-13",
+    "reviewer": "reviewer_14",
+    "body": "In the `buildPrettyMeta` example, `Object.keys(cleanMeta)` will never return symbol keys, so the `typeof k === 'symbol'` check never matches and the example does not actually remove symbol properties as the comment suggests. Use `Object.getOwnPropertySymbols()` (or `Reflect.ownKeys()`) to delete symbol properties.",
+    "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3407594701"
+  },
+  {
+    "pr": 6781,
+    "file": "test/trust-proxy.test.js",
+    "line": 63,
+    "date": "2026-06-12",
+    "reviewer": "reviewer_30",
+    "body": "Thanks for the feedback @user ! I now used matches.groups.port consistently in the null-check, and updated the testRequestValues helper to use 'port' in options so it handles null properly, then passed port: null in the test to lock in the expected behavior.",
+    "url": "https://github.com/fastify/fastify/pull/6781#discussion_r3405107890"
+  },
+  {
+    "pr": 6757,
+    "file": "lib/schema-controller.js",
+    "line": 92,
+    "date": "2026-06-12",
+    "reviewer": "reviewer_1",
+    "body": "What about conflicts?\nI think we need to work more on the feature design first",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3402720089"
+  },
+  {
+    "pr": 6757,
+    "file": "lib/schema-controller.js",
+    "line": 64,
+    "date": "2026-06-12",
+    "reviewer": "reviewer_1",
+    "body": "it requires to update this doc:\nhttps://fastify.dev/docs/latest/Reference/Server/#schemacontroller\n\nbut I think the main surface API should be:\n\n- fastify.addSchema() --> adds to a shared bucket\n- fastify.addValidationSchema() --> adds to validation only\n- fastify.addSerializationSchema() --> adds to serializer only",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3402700284"
+  },
+  {
+    "pr": 6757,
+    "file": "lib/schema-controller.js",
+    "line": 82,
+    "date": "2026-06-12",
+    "reviewer": "reviewer_1",
+    "body": "this behaviour should not be the default: we are duplicating everything for those users that that does not use the default setup.\n\nIn general:\n- by default you get everything out of the box in the best shape\n- if you want to customize the validator and/or the serializer, you need to work for it",
+    "url": "https://github.com/fastify/fastify/pull/6757#discussion_r3402665914"
+  },
+  {
+    "pr": 6781,
+    "file": "test/trust-proxy.test.js",
+    "line": 63,
+    "date": "2026-06-12",
+    "reviewer": "reviewer_14",
+    "body": "These trust-proxy tests no longer assert the intended behavior for `req.port` when `X-Forwarded-Host` does not include a port. Since `request.port` now derives from `req.host`, it should be `null` here (otherwise regressions back to reading the raw `Host` header port could slip through).",
+    "url": "https://github.com/fastify/fastify/pull/6781#discussion_r3402594691"
+  },
+  {
+    "pr": 6686,
+    "file": "docs/Reference/Type-Providers.md",
+    "line": 101,
+    "date": "2026-06-12",
+    "reviewer": "reviewer_31",
+    "body": "> Does it worth to add it to a type test?\r\n\r\nI think it’s worth mentioning that the one with Zod changes the setup a bit compared to Typebox. At least for people who are new to type providers with Fastify, this might be helpful.\r\n\r\nI'm also waiting for approval to create a private repository to test the type provider using the standard V1 schema, in order to avoid having too many type providers 😆; there is an ongoing private discussion on this topic so that other members can test it.🙂",
+    "url": "https://github.com/fastify/fastify/pull/6686#discussion_r3401893130"
+  },
+  {
+    "pr": 6686,
+    "file": "docs/Reference/Type-Providers.md",
+    "line": 101,
+    "date": "2026-06-12",
+    "reviewer": "reviewer_1",
+    "body": "Does it worth to add it to a type test?",
+    "url": "https://github.com/fastify/fastify/pull/6686#discussion_r3401802358"
+  },
+  {
+    "pr": 6775,
+    "file": "lib/schemas.js",
+    "line": 23,
+    "date": "2026-06-11",
+    "reviewer": "reviewer_1",
+    "body": "this can't work because we have this check few lines below:\n\n```\n if (this.store[id]) {\n    throw new FST_ERR_SCH_ALREADY_PRESENT(id)\n  }\n```\n\nSo, it means that this use case (running `addSchema` with the same `$id`) does not exist",
+    "url": "https://github.com/fastify/fastify/pull/6775#discussion_r3395679283"
+  },
+  {
+    "pr": 6783,
+    "file": "fastify.js",
+    "line": 512,
+    "date": "2026-06-11",
+    "reviewer": "reviewer_30",
+    "body": "Thanks for the review! I am a student learning OSS contribution so I appreciate the feedback. :)\r\nI read through the full discussion now and I understand the concern better. climba already showed that this can be done in a plugin without importing light-my-request at all using '_lightMyRequest' in request.raw, which makes sense as a userland solution rather than something in core. I will close this PR. ",
+    "url": "https://github.com/fastify/fastify/pull/6783#discussion_r3394776857"
+  },
+  {
+    "pr": 6783,
+    "file": "fastify.js",
+    "line": 512,
+    "date": "2026-06-11",
+    "reviewer": "reviewer_1",
+    "body": "I don't know if we should include this feature:\n- what is the use case? Ideally, the application should not have `isInjectionRequest` checks, or I think an endpoint is injecting the request to another one\n- as showed, this can be done via `require('light-my-request').isInjection(req.raw ?? req)` or a decorator (with an external plugin?)",
+    "url": "https://github.com/fastify/fastify/pull/6783#discussion_r3394350044"
+  },
+  {
+    "pr": 6741,
+    "file": "docs/Reference/Validation-and-Serialization.md",
+    "line": 924,
+    "date": "2026-06-11",
+    "reviewer": "reviewer_1",
+    "body": "I would add a link to:\nhttps://github.com/fastify/ajv-compiler/#versions",
+    "url": "https://github.com/fastify/fastify/pull/6741#discussion_r3394314960"
+  },
+  {
+    "pr": 6774,
+    "file": "docs/Reference/Errors.md",
+    "line": 380,
+    "date": "2026-06-09",
+    "reviewer": "reviewer_3",
+    "body": "We should create an issue for investigating this.",
+    "url": "https://github.com/fastify/fastify/pull/6774#discussion_r3380493286"
+  },
+  {
+    "pr": 6774,
+    "file": "docs/Reference/Errors.md",
+    "line": 380,
+    "date": "2026-06-09",
+    "reviewer": "reviewer_19",
+    "body": "> Why the tests did not catch it?\r\n> \r\n> https://github.com/fastify/fastify/blob/27f4d6222dd945238e96c1fdaa632d5dc3c37b2c/test/internals/errors.test.js#L913\r\n> \r\n> And there are more...\r\n> \r\n> <img alt=\"Image\" width=\"1060\" height=\"188\" src=\"https://private-user-images.githubusercontent.com/110341611/605065030-ce657a03-d0b6-439a-971c-83dd1c020670.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3ODEwMDYzNTksIm5iZiI6MTc4MTAwNjA1OSwicGF0aCI6Ii8xMTAzNDE2MTEvNjA1MDY1MDMwLWNlNjU3YTAzLWQwYjYtNDM5YS05NzFjLTgzZGQxYzAyMDY3MC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNjA5JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDYwOVQxMTU0MTlaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mZWIxNjBiMzY3NjYwYzE4ODM1MDJhYTBjMTc4MzE0Zjg3YmQ0ZWVmNjE4ZmUzM2RhOGQwMzZkNGU5M2RhNGM3JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZwbmcifQ.Fu1BcaWt7vsLFehjIAaMzTNpkuxmWwj6Ph6_YiODo6g\">\r\n> There is probably an issue in the links checker, or I miss something.\r\n\r\nAgreed. If the test had enforced this, I would have caught it before opening the PR.",
+    "url": "https://github.com/fastify/fastify/pull/6774#discussion_r3380392543"
+  },
+  {
+    "pr": 6774,
+    "file": "docs/Reference/Errors.md",
+    "line": 380,
+    "date": "2026-06-09",
+    "reviewer": "reviewer_19",
+    "body": "> Link is missing.\r\n\r\nFixed in the latest commit",
+    "url": "https://github.com/fastify/fastify/pull/6774#discussion_r3380378779"
+  }
+]

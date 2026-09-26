@@ -41,8 +41,14 @@ function anonymize(login) {
   return loginMap.get(login);
 }
 
+// Links to organisations/projects are kept; links to anyone else's GitHub account are redacted.
+const KEEP_OWNERS = new Set([repoArg.split("/")[0].toLowerCase(), "nodejs", "tc39", "whatwg", "pillarjs", "jshttp", "expressjs", "fastify", "sindresorhus", "orgs", "user-attachments", "features", "advisories"]);
+
 function stripMentions(text) {
-  return text.replace(/@[A-Za-z0-9_-]+/g, "@user");
+  return text
+    .replace(/@[A-Za-z0-9_-]+/g, "@user")
+    .replace(/github\.com\/([A-Za-z0-9-]+)(\/[^\s)\]]*)?/g, (m, owner) =>
+      KEEP_OWNERS.has(owner.toLowerCase()) ? m : "github.com/[redacted]");
 }
 
 // ---------- fetch loop ----------

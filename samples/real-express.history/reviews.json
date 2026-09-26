@@ -1,0 +1,2018 @@
+[
+  {
+    "pr": 7369,
+    "file": "Readme.md",
+    "line": 99,
+    "date": "2026-09-23",
+    "reviewer": "reviewer_1",
+    "body": "Thanks for the nit. I updated the paragraph to link the official Express generator directly.",
+    "url": "https://github.com/expressjs/express/pull/7369#discussion_r4081337235"
+  },
+  {
+    "pr": 7369,
+    "file": "Readme.md",
+    "line": 99,
+    "date": "2026-09-13",
+    "reviewer": "reviewer_2",
+    "body": "[nit]: The official generator `which` creates JavaScript applications. For TypeScript projects,",
+    "url": "https://github.com/expressjs/express/pull/7369#discussion_r4000116856"
+  },
+  {
+    "pr": 7467,
+    "file": "lib/response.js",
+    "line": 406,
+    "date": "2026-09-12",
+    "reviewer": "reviewer_3",
+    "body": "```suggestion\n  opts.etag ??= this.app.enabled('etag');\n```\n\nThis would slightly change logic (overwrite `undefined` **and `null`**), but why not write it the easier way (boolean is expected anyway). Nullish coalescing assignment was [designed for such use case](https://github.com/tc39/proposal-logical-assignment#motivation).",
+    "url": "https://github.com/expressjs/express/pull/7467#discussion_r3996799311"
+  },
+  {
+    "pr": 7467,
+    "file": "lib/response.js",
+    "line": 403,
+    "date": "2026-09-12",
+    "reviewer": "reviewer_3",
+    "body": "I don't think that expanding this comment is necessary. I know that LLMs love comments, but not every line of code needs 3 lines of comments to explain what it does.",
+    "url": "https://github.com/expressjs/express/pull/7467#discussion_r3996787531"
+  },
+  {
+    "pr": 7464,
+    "file": ".github/workflows/npm-publish.yml",
+    "line": 69,
+    "date": "2026-09-11",
+    "reviewer": "reviewer_3",
+    "body": "```suggestion\r\n          else tag = `latest-${major}`\r\n```\r\n\r\nExpress has tags `latest` and `latest-4`. This is not consistent between packages - `body-parser`, from which this is copied, has `latest-1.x`.\r\n\r\n```console\r\n$ npm dist-tag ls express\r\nlatest-4: 4.22.2\r\nlatest: 5.2.1\r\n$ npm dist-tag ls body-parser\r\nlatest-1.x: 1.20.8\r\nlatest: 2.3.0\r\nnext: 2.1.0\r\n```\r\n\r\nThe [comment above](https://github.com/expressjs/express/pull/7464#discussion_r3991715496) this step also refers to `latest-<major>.x` and should be updated.",
+    "url": "https://github.com/expressjs/express/pull/7464#discussion_r3991713397"
+  },
+  {
+    "pr": 7459,
+    "file": "lib/response.js",
+    "line": 166,
+    "date": "2026-09-08",
+    "reviewer": "reviewer_4",
+    "body": " Moved the `Content-Length` / `Transfer-Encoding` comment to the conditional header assignment.\r\n",
+    "url": "https://github.com/expressjs/express/pull/7459#discussion_r3953743108"
+  },
+  {
+    "pr": 7459,
+    "file": "lib/response.js",
+    "line": 166,
+    "date": "2026-09-07",
+    "reviewer": "reviewer_3",
+    "body": "This comment should be moved below (above the new `if`), since it no longer applies to this section of code.",
+    "url": "https://github.com/expressjs/express/pull/7459#discussion_r3952110404"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 195,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "`after(2, done)`, but worse",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916266420"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 151,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "`after(2, done)`, but worse",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916256683"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 107,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "`after(2, done)`, but worse - can call `done()` multiple times",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916246339"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 75,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "Nothing was wrong with the previous check. I have no idea what this is supposed to do.",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916234207"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 60,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "Style only change.\n\nSee also [`supertest` docs](https://github.com/[redacted])",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916201605"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 56,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "This is just `after(2, done)`, but worse.\n\nSee also [`after`](https://github.com/[redacted])",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916192639"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 44,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "Yes, it should fail and Express should automatically do what was added here.\n\nThe `try`/`catch` is completely unnecessary, because Express (or [`router`](https://github.com/pillarjs/router/blob/bda4af36c1e66811717b13421579c63029ea2877/lib/layer.js#L114-L130) in 5.x) catches errors and forwards them to the error handling middleware, which in this case is the default error handler:\n\nhttps://github.com/expressjs/express/blob/023767fe9872e029271df1418f73401bff20ff40/lib/application.js#L153-L157\n\nSee also [`finalhandler`](https://github.com/pillarjs/finalhandler)",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916179816"
+  },
+  {
+    "pr": 7447,
+    "file": "test/app.request.js",
+    "line": 23,
+    "date": "2026-09-02",
+    "reviewer": "reviewer_3",
+    "body": "The `.expect(200)` is ok, but not really necessary. If Express changed the default status code other tests would also catch it.\n\nOtherwise it's just a formatting change.",
+    "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916130428"
+  },
+  {
+    "pr": 7317,
+    "file": "lib/request.js",
+    "line": 463,
+    "date": "2026-08-04",
+    "reviewer": "reviewer_5",
+    "body": "These outcomes are inconsistent with each other aren't they?\n\nOr more specifically, is there spec based logic im missing which would lead to sanitizing userinfo, but rejecting invalid port info? Both are technically invalid [Host header](https://datatracker.ietf.org/doc/html/rfc9110#section-7.2) values right? So why not set both to undefined?\n\nThese are questions, not necessarily suggested changes to be clear.\n\nIs it that the non numeric port value is an invalid URI? Whereas a URI with userinfo is just an invalid Host header, not necessarily a bad URI?",
+    "url": "https://github.com/expressjs/express/pull/7317#discussion_r3716973707"
+  },
+  {
+    "pr": 6703,
+    "file": "package.json",
+    "line": 95,
+    "date": "2026-07-23",
+    "reviewer": "reviewer_6",
+    "body": "Yep, and `test-ci` uses `test`. Maybe it was because of that PR, I honestly don't remember anymore.",
+    "url": "https://github.com/expressjs/express/pull/6703#discussion_r3640295267"
+  },
+  {
+    "pr": 6703,
+    "file": "package.json",
+    "line": 95,
+    "date": "2026-07-23",
+    "reviewer": "reviewer_3",
+    "body": "CI uses `test-ci`:\r\n\r\nhttps://github.com/expressjs/express/blob/ae6dd37680e3a00618d6c8a3e522f0ee4eeba1a4/.github/workflows/ci.yml#L78-L80\r\n\r\nThere have been no runs that have [timed out](https://github.com/expressjs/express/actions/workflows/ci.yml?query=is%3Atimed_out) in the last year. [One run](https://github.com/expressjs/express/actions/runs/17486034801) was cancelled after over an hour, but it seems to be a problem with one specific PR (https://github.com/expressjs/express/pull/6742).",
+    "url": "https://github.com/expressjs/express/pull/6703#discussion_r3640252948"
+  },
+  {
+    "pr": 6703,
+    "file": "package.json",
+    "line": 95,
+    "date": "2026-07-23",
+    "reviewer": "reviewer_6",
+    "body": "There were PRs where the process would stay running indefinitely, consuming CI resources.\r\n",
+    "url": "https://github.com/expressjs/express/pull/6703#discussion_r3640197718"
+  },
+  {
+    "pr": 6703,
+    "file": "package.json",
+    "line": 95,
+    "date": "2026-07-23",
+    "reviewer": "reviewer_6",
+    "body": "Hmm, I don't even remember why I added that anymore, it's been quite a while since I opened this PR. But I think it was to make sure it would always close and wouldn't leave the process hanging",
+    "url": "https://github.com/expressjs/express/pull/6703#discussion_r3640195519"
+  },
+  {
+    "pr": 6703,
+    "file": "package.json",
+    "line": 95,
+    "date": "2026-07-23",
+    "reviewer": "reviewer_3",
+    "body": "Why is this `--exit` here? The tests should work (and work for me) without it. According to Mocha [docs](https://mochajs.org/running/cli/#--exit) `--exit` is a workaround for improper cleanup and I don't see anything wrong here.",
+    "url": "https://github.com/expressjs/express/pull/6703#discussion_r3640165114"
+  },
+  {
+    "pr": 5555,
+    "file": "test/res.location.js",
+    "line": 149,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_7",
+    "body": "The only URL-instance test uses `http://google.com/`, which round-trips unchanged. Since the WHATWG `URL` serializer already percent-encodes, it would be worth adding a case where the two encoders interact — e.g. `new URL('http://example.com/a b?q=\\u00e9')` — to assert the resulting `Location` header is encoded once and not double-encoded by the subsequent `encodeUrl(loc)` call. Also note the `typeof URL !== 'undefined'` guard silently drops the test on old Node; using a skip (so it shows as skipped in the runner) makes the missing coverage visible.",
+    "url": "https://github.com/expressjs/express/pull/5555#discussion_r3510607305"
+  },
+  {
+    "pr": 5555,
+    "file": "lib/response.js",
+    "line": 908,
+    "date": "2026-07-02",
+    "reviewer": "reviewer_7",
+    "body": "`String(url)` fixes the `TypeError` for `URL` instances, but it also silently converts `null`, `undefined`, and arbitrary objects into the literal header values `Location: null`, `Location: undefined`, and `Location: [object Object]`. Before this change those inputs threw at `loc.toLowerCase()`, which made the caller's bug visible instead of shipping a bogus redirect target. Consider coercing more deliberately, e.g. accept strings as-is, call `.toString()`/`String()` only for `URL`-like objects (`url instanceof URL` or duck-typing `href`), and keep throwing (or add an explicit `TypeError` with a clear message) for `null`/`undefined`.",
+    "url": "https://github.com/expressjs/express/pull/5555#discussion_r3510607299"
+  },
+  {
+    "pr": 7342,
+    "file": "name",
+    "line": 1,
+    "date": "2026-06-30",
+    "reviewer": "reviewer_8",
+    "body": "i am learning how to merge pull request by apna college \n",
+    "url": "https://github.com/expressjs/express/pull/7342#discussion_r3498869154"
+  },
+  {
+    "pr": 7331,
+    "file": "lib/request.js",
+    "line": 390,
+    "date": "2026-06-26",
+    "reviewer": "reviewer_3",
+    "body": "A regular expression is going to be slower than something like:\n\n```suggestion\n  if (hostname[hostname.length - 1] === '.') {\n    hostname = hostname.slice(0, -1);\n  }\n```",
+    "url": "https://github.com/expressjs/express/pull/7331#discussion_r3478442875"
+  },
+  {
+    "pr": 7278,
+    "file": "examples/search/index.js",
+    "line": 123,
+    "date": "2026-05-23",
+    "reviewer": "reviewer_9",
+    "body": "Error handling is incomplete for the streaming pipeline: errors from `InjectMetaTransform` (or downstream write errors on `res`) may not be forwarded to `next`, potentially causing unhandled `error` events. Prefer `stream.pipeline(...)` (or `pipeline` from `node:stream`) and pass `next` as the callback to ensure all pipeline errors are handled consistently.",
+    "url": "https://github.com/expressjs/express/pull/7278#discussion_r3293395645"
+  },
+  {
+    "pr": 7278,
+    "file": "lib/injectMetaTransform.js",
+    "line": 35,
+    "date": "2026-05-23",
+    "reviewer": "reviewer_9",
+    "body": "The “bounded buffer” logic can prevent injection in valid cases: if `</head>` occurs after a large `<head>` section (>128KB) or is split across the boundary when you flush `this.buffer`, the transform may never see the full `</head>` token and will skip injection. A safer approach is to flush all but a small tail (e.g., keep the last `\"</head>\".length - 1` chars) so delimiter matching still works, and consider `StringDecoder` to avoid UTF-8 multibyte boundary issues when concatenating `chunk.toString(\"utf8\")`.",
+    "url": "https://github.com/expressjs/express/pull/7278#discussion_r3293395643"
+  },
+  {
+    "pr": 7278,
+    "file": "lib/injectMetaTransform.js",
+    "line": 21,
+    "date": "2026-05-23",
+    "reviewer": "reviewer_9",
+    "body": "The “bounded buffer” logic can prevent injection in valid cases: if `</head>` occurs after a large `<head>` section (>128KB) or is split across the boundary when you flush `this.buffer`, the transform may never see the full `</head>` token and will skip injection. A safer approach is to flush all but a small tail (e.g., keep the last `\"</head>\".length - 1` chars) so delimiter matching still works, and consider `StringDecoder` to avoid UTF-8 multibyte boundary issues when concatenating `chunk.toString(\"utf8\")`.",
+    "url": "https://github.com/expressjs/express/pull/7278#discussion_r3293395638"
+  },
+  {
+    "pr": 7278,
+    "file": "package.json",
+    "line": 60,
+    "date": "2026-05-23",
+    "reviewer": "reviewer_9",
+    "body": "Adding `isbot` as a top-level dependency impacts all consumers of the package even though it’s only used by an example. Consider moving `isbot` to `devDependencies` (or making it optional) and updating the example to degrade gracefully when it’s not installed (similar to the Redis handling), so library consumers don’t inherit an extra runtime dependency.",
+    "url": "https://github.com/expressjs/express/pull/7278#discussion_r3293395626"
+  },
+  {
+    "pr": 7278,
+    "file": "examples/search/index.js",
+    "line": 76,
+    "date": "2026-05-23",
+    "reviewer": "reviewer_9",
+    "body": "`\"/search/{:query}\"` is not a valid Express route parameter pattern, so `req.params.query` will not be populated as intended. Use `\"/search/:query\"` (without braces) so the query parameter is actually captured.\n",
+    "url": "https://github.com/expressjs/express/pull/7278#discussion_r3293395619"
+  },
+  {
+    "pr": 7233,
+    "file": "lib/response.js",
+    "line": 458,
+    "date": "2026-05-11",
+    "reviewer": "reviewer_10",
+    "body": "The correct backward compatibility would be `basename(name || path)`, should I do that instead? The difference is if someone gave a path instead of a filename in the `filename` parameter.",
+    "url": "https://github.com/expressjs/express/pull/7233#discussion_r3222168328"
+  },
+  {
+    "pr": 7225,
+    "file": "History.md",
+    "line": 1,
+    "date": "2026-05-11",
+    "reviewer": "reviewer_3",
+    "body": "Typo\n\n```suggestion\n4.22.2 / 2026-05-11\n```",
+    "url": "https://github.com/expressjs/express/pull/7225#discussion_r3221327892"
+  },
+  {
+    "pr": 7225,
+    "file": "History.md",
+    "line": 4,
+    "date": "2026-05-09",
+    "reviewer": "reviewer_5",
+    "body": "Thank you. I chose the commit bc I wrote a richer description there compared to what is in the PR body",
+    "url": "https://github.com/expressjs/express/pull/7225#discussion_r3213701573"
+  },
+  {
+    "pr": 7225,
+    "file": "History.md",
+    "line": 4,
+    "date": "2026-05-08",
+    "reviewer": "reviewer_3",
+    "body": "GitHub does not detect and link commit hashes (and issue/PR numbers) in markdown files.\n\n```suggestion\n* fix: restore >20 array parsing for `req.query` repeated keys ([`8d09bfe6`](https://github.com/expressjs/express/commit/8d09bfe6d88983da5c3e12cfdd54782c4dc675db))\n```\n\nBTW This is the only reference to a commit in the whole `History.md` file.",
+    "url": "https://github.com/expressjs/express/pull/7225#discussion_r3211765252"
+  },
+  {
+    "pr": 7181,
+    "file": "lib/utils.js",
+    "line": 291,
+    "date": "2026-05-08",
+    "reviewer": "reviewer_5",
+    "body": "The decision here from last TC meeting is that we're trying to hard to fix an edgecase w/ sparse arrays. If folks raise issues about this specific `?arr[500]=v` going from an object in v4.21 to an array w/ 1 member in 4.22.x we can reevaluate.",
+    "url": "https://github.com/expressjs/express/pull/7181#discussion_r3210828532"
+  },
+  {
+    "pr": 7181,
+    "file": "lib/utils.js",
+    "line": 291,
+    "date": "2026-04-27",
+    "reviewer": "reviewer_5",
+    "body": "```suggestion\n    arrayLimit: 1000,\n    allowSparse: true\n```\n\nPer @user's comment, this would allow folks to still access `arr[500]=foo` as an object ala `a[\"500\"] === \"foo\"`.\n\nthis is in reference to this bit of my [comment](https://github.com/expressjs/express/pull/7181#pullrequestreview-4184221235):\n\n> Note on indexed-bracket notation: qs uses arrayLimit as a single knob across three parsing paths (repeated keys, empty-bracket arr[]=, and indexed-bracket arr[N]=). For indexed-bracket queries at indices 21..999, this PR widens the threshold past 4.21's effective limit of 20 — ?arr[500]=v will now parse as an array [\"v\"] rather than an object {\"500\":\"v\"}.\n> \n> This is, to me, a surprising side effect. But I do think it is reasonable as my own experience expects that the repeated key form is more common. Open to input here though",
+    "url": "https://github.com/expressjs/express/pull/7181#discussion_r3150389007"
+  },
+  {
+    "pr": 7144,
+    "file": ".npmrc",
+    "line": 2,
+    "date": "2026-03-31",
+    "reviewer": "reviewer_11",
+    "body": "```suggestion\nmin-release-age=7\n```\n\ntwo days only seems low",
+    "url": "https://github.com/expressjs/express/pull/7144#discussion_r3016481455"
+  },
+  {
+    "pr": 7136,
+    "file": "Readme.md",
+    "line": 252,
+    "date": "2026-03-30",
+    "reviewer": "reviewer_3",
+    "body": "```suggestion\n  * [ejcheng](https://github.com/[redacted])- **Eric Cheng** (he/him)\n```\n\nThe account has been renamed to @user. You can verify this in #4721 or by checking the [org's member list](https://github.com/orgs/expressjs/people?query=eric+cheng).",
+    "url": "https://github.com/expressjs/express/pull/7136#discussion_r3010693666"
+  },
+  {
+    "pr": 7117,
+    "file": "lib/application.js",
+    "line": 98,
+    "date": "2026-03-21",
+    "reviewer": "reviewer_3",
+    "body": "In my opinion any new limit setting should be the same as current one (`1000` in this case).",
+    "url": "https://github.com/expressjs/express/pull/7117#discussion_r2970506392"
+  },
+  {
+    "pr": 7117,
+    "file": "lib/application.js",
+    "line": 97,
+    "date": "2026-03-21",
+    "reviewer": "reviewer_3",
+    "body": "`'query parser'` changed to `'simple'` in Express 5 (#3621) and I don't think reverting to `'extended'` is planned.",
+    "url": "https://github.com/expressjs/express/pull/7117#discussion_r2970503853"
+  },
+  {
+    "pr": 7092,
+    "file": "examples/auth/index.js",
+    "line": 61,
+    "date": "2026-03-17",
+    "reviewer": "reviewer_12",
+    "body": "## Clear-text logging of sensitive information\n\nThis logs sensitive data returned by [an access to password](1) as clear text.\n\n[Show more details](https://github.com/expressjs/express/security/code-scanning/47)",
+    "url": "https://github.com/expressjs/express/pull/7092#discussion_r2949590309"
+  },
+  {
+    "pr": 7105,
+    "file": "test/app.response.js",
+    "line": 169,
+    "date": "2026-03-17",
+    "reviewer": "reviewer_3",
+    "body": "Just \"covering\" some lines without checking if they do what they are supposed to do does not make sense in my opinion.\n\nThe tests are named \"should deprecate\", so I consider not checking this behaviour a problem.",
+    "url": "https://github.com/expressjs/express/pull/7105#discussion_r2944873054"
+  },
+  {
+    "pr": 7105,
+    "file": "test/app.response.js",
+    "line": 169,
+    "date": "2026-03-15",
+    "reviewer": "reviewer_13",
+    "body": "Thanks for the feedback! \r\nYou're correct that the tests only verify the deprecated behaviour, not the warnings themselves. However, since deprecation warnings for Express are suppressed in the test environment via [NO_DEPRECATION](to avoid noise), the tests focus on ensuring the deprecated code paths are executed, which is confirmed by coverage reports showing lines 824, 828, and 832 in lib/response.js are hit.\r\n\r\nThe tests would indeed pass without the deprecation calls if the behaviour remained the same, but since the goal is coverage, these tests ensure the deprecation logic runs. If you'd like explicit warning checks, we could modify the test environment to enable them, but that might introduce noise in CI. Let me know if you'd prefer that approach!\r\n\r\nThe changes ensure the targeted lines are covered while maintaining test stability.",
+    "url": "https://github.com/expressjs/express/pull/7105#discussion_r2936687733"
+  },
+  {
+    "pr": 7105,
+    "file": "test/app.response.js",
+    "line": 169,
+    "date": "2026-03-15",
+    "reviewer": "reviewer_3",
+    "body": "How are you checking here for a deprecation warning? I don't see any code that would verify if there is a warning. These tests would also pass without #6405.",
+    "url": "https://github.com/expressjs/express/pull/7105#discussion_r2936615681"
+  },
+  {
+    "pr": 7103,
+    "file": "lib/response.js",
+    "line": 825,
+    "date": "2026-03-12",
+    "reviewer": "reviewer_9",
+    "body": "This change introduces new throwing behavior for invalid/missing redirect arguments, but the existing redirect test suite (`test/res.redirect.js`) doesn’t appear to assert these error cases. Adding tests for the new TypeError conditions (missing url, non-string url, non-number status) would prevent regressions and clarify the breaking-change contract.",
+    "url": "https://github.com/expressjs/express/pull/7103#discussion_r2926730154"
+  },
+  {
+    "pr": 7103,
+    "file": "lib/response.js",
+    "line": 832,
+    "date": "2026-03-12",
+    "reviewer": "reviewer_9",
+    "body": "The new redirect TypeError messages use a different format (e.g. capitalized “The \\\"url\\\" argument…”) than other argument validation errors in this file (e.g. `path must be a string to res.sendFile`). Aligning the wording/format makes errors more consistent and easier to search/maintain across the codebase.",
+    "url": "https://github.com/expressjs/express/pull/7103#discussion_r2926730138"
+  },
+  {
+    "pr": 7103,
+    "file": "lib/response.js",
+    "line": 825,
+    "date": "2026-03-12",
+    "reviewer": "reviewer_9",
+    "body": "`if (!address)` will treat empty strings and other falsy-but-provided values (e.g. `0` when called as `res.redirect(301, 0)`) as “missing url” and throw the wrong TypeError message. Consider checking explicitly for missing values (e.g. `arguments.length === 0` / `address == null`) and, if desired, handling `''` as its own invalid-url case with a clearer error.",
+    "url": "https://github.com/expressjs/express/pull/7103#discussion_r2926730104"
+  },
+  {
+    "pr": 7089,
+    "file": "lib/utils.js",
+    "line": 173,
+    "date": "2026-03-07",
+    "reviewer": "reviewer_3",
+    "body": "[`querystring.parse`](https://nodejs.org/api/querystring.html#querystringparsestr-sep-eq-options) does not have an option named `parameterLimit`",
+    "url": "https://github.com/expressjs/express/pull/7089#discussion_r2899374925"
+  },
+  {
+    "pr": 7089,
+    "file": "lib/application.js",
+    "line": 617,
+    "date": "2026-03-07",
+    "reviewer": "reviewer_3",
+    "body": "This is an unrelated change",
+    "url": "https://github.com/expressjs/express/pull/7089#discussion_r2899367197"
+  },
+  {
+    "pr": 7035,
+    "file": "test/res.set.js",
+    "line": 47,
+    "date": "2026-02-24",
+    "reviewer": "reviewer_14",
+    "body": "Good catch, that makes my additional test is unnecessary, thank you.",
+    "url": "https://github.com/expressjs/express/pull/7035#discussion_r2847457435"
+  },
+  {
+    "pr": 7035,
+    "file": "test/res.set.js",
+    "line": 47,
+    "date": "2026-02-24",
+    "reviewer": "reviewer_3",
+    "body": "If the string passed to `mime.contentType()` contains a `/`, then it is treated as a mime type and returned as is ([ref](https://github.com/jshttp/mime-types/blob/80cdcb346c66fb39ab17be88a0a1031ffaee678f/index.js#L85)).",
+    "url": "https://github.com/expressjs/express/pull/7035#discussion_r2847397915"
+  },
+  {
+    "pr": 7035,
+    "file": "test/res.set.js",
+    "line": 47,
+    "date": "2026-02-24",
+    "reviewer": "reviewer_14",
+    "body": "```suggestion\n    })\n    \n    it('should preserve Content-Type value when mime lookup fails even has slash', function (done) {\n      var app = express();\n\n      app.use(function (req, res) {\n        res.set('Content-Type', 'custom-type/subtype');\n        res.end();\n      });\n\n      request(app)\n      .get('/')\n      .expect('Content-Type', 'custom-type/subtype')\n      .expect(200, done);\n    })\n```\n\nSince MIME types are closely related to slash based formats, adding a test case that includes a slash helps catch potential production issues before release.",
+    "url": "https://github.com/expressjs/express/pull/7035#discussion_r2847355758"
+  },
+  {
+    "pr": 6404,
+    "file": "lib/response.js",
+    "line": 839,
+    "date": "2026-02-24",
+    "reviewer": "reviewer_3",
+    "body": "Status is set using [`this.status(status)`](https://github.com/expressjs/express/pull/6404/files#diff-c03f99ad1a5cf68a9b32468371973a5898c4c9c9d5f097e124f1d2b7b27db11dR860), which performs [type validation](https://github.com/expressjs/express/blob/b4ab7d65d7724d9309b6faaaf82ad492da2a6d35/lib/response.js#L65-L68) (#4212). Earlier `status` is used to get a status message for body, but passing something invalid there is not a problem if an error is thrown before it's sent.\n\n```suggestion\n```",
+    "url": "https://github.com/expressjs/express/pull/6404#discussion_r2846986034"
+  },
+  {
+    "pr": 7041,
+    "file": "lib/diagnostics.js",
+    "line": 5,
+    "date": "2026-02-20",
+    "reviewer": "reviewer_9",
+    "body": "The codebase convention for top-level requires in lib/ files is to use `var` rather than `const`. This pattern is consistently followed across all other lib/ files (application.js, request.js, response.js, utils.js, view.js, express.js). While `const` is used in the codebase for destructuring and local variables inside functions, top-level requires should use `var` for consistency with the rest of the codebase.\n```suggestion\nvar dc = require('node:diagnostics_channel');\n\nvar initialization = dc.channel('express.initialization');\n```",
+    "url": "https://github.com/expressjs/express/pull/7041#discussion_r2832478177"
+  },
+  {
+    "pr": 7041,
+    "file": "lib/express.js",
+    "line": 22,
+    "date": "2026-02-20",
+    "reviewer": "reviewer_9",
+    "body": "The codebase convention for top-level requires in lib/ files is to use `var` rather than `const`. All other module requires in this file (lines 15-21) use `var`, and this pattern is consistently followed across all other lib/ files (application.js, request.js, response.js, utils.js, view.js). While `const` is used in the codebase for destructuring and local variables inside functions, top-level requires should use `var` for consistency.\n```suggestion\nvar channels = require('./diagnostics');\n```",
+    "url": "https://github.com/expressjs/express/pull/7041#discussion_r2832478126"
+  },
+  {
+    "pr": 7037,
+    "file": "test/res.type.js",
+    "line": 46,
+    "date": "2026-02-19",
+    "reviewer": "reviewer_14",
+    "body": "```suggestion\n+\n+     describe('edge cases', function(){\n```\n\nAdding a new line here would be good for code flow protection, the remaining tests looks good to me.",
+    "url": "https://github.com/expressjs/express/pull/7037#discussion_r2826570319"
+  },
+  {
+    "pr": 6996,
+    "file": "test/res.location.js",
+    "line": 49,
+    "date": "2026-02-02",
+    "reviewer": "reviewer_14",
+    "body": "Good point, I would prefer direct commit from suggestion but diff looks wrong so I'm gonna fix suffix with another commit.",
+    "url": "https://github.com/expressjs/express/pull/6996#discussion_r2753481587"
+  },
+  {
+    "pr": 6996,
+    "file": "test/res.location.js",
+    "line": 49,
+    "date": "2026-02-01",
+    "reviewer": "reviewer_3",
+    "body": "```suggestion\n    it('should encode data uri', function (done) {\n```\n\nIf the duplicate test is removed, I think the suffix can also be removed. Suffixes have been added in c96c690dc087d121137c97318215e03a432395c5.\n\nThis duplicate test seems to have been a mistake - https://github.com/expressjs/express/pull/5561#discussion_r1537721155 (check reactions).",
+    "url": "https://github.com/expressjs/express/pull/6996#discussion_r2750393551"
+  },
+  {
+    "pr": 6758,
+    "file": "lib/response.js",
+    "line": 71,
+    "date": "2026-02-01",
+    "reviewer": "reviewer_6",
+    "body": "I think it’s better to fix it this way, and we wouldn’t show a new message.\n\n```suggestion\n    throw new TypeError(`Invalid status code: ${typeof code === \"bigint\" ? code : JSON.stringify(code)}. Status code must be an integer.`);\n```",
+    "url": "https://github.com/expressjs/express/pull/6758#discussion_r2750333740"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/response.js",
+    "line": 140,
+    "date": "2026-01-19",
+    "reviewer": "reviewer_15",
+    "body": "> `utf8` is not a [valid value](https://www.iana.org/assignments/character-sets/character-sets.xhtml)\r\n\r\nI know this also modern browsers understand utf8. I did some research, only node use utf8 in buffers, others like Django use utf-8. ",
+    "url": "https://github.com/expressjs/express/pull/6991#discussion_r2704333111"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/response.js",
+    "line": 140,
+    "date": "2026-01-19",
+    "reviewer": "reviewer_3",
+    "body": "> I still don't understand, why not to use 'utf8' encoding in http header? Node buffer use alias 'utf8' for utf-8 encoding.\r\n\r\nThis encoding name is what ends up in HTTP header, `utf8` is not a [valid value](https://www.iana.org/assignments/character-sets/character-sets.xhtml) there and makes the tests [fail](https://github.com/expressjs/express/actions/runs/21080370093) ([RFC 9110](https://httpwg.org/specs/rfc9110.html#rfc.section.8.3.2)).",
+    "url": "https://github.com/expressjs/express/pull/6991#discussion_r2704226354"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/response.js",
+    "line": 140,
+    "date": "2026-01-19",
+    "reviewer": "reviewer_15",
+    "body": "I still don't understand, why not to use 'utf8' encoding in http header? Node buffer use alias 'utf8' for utf-8 encoding. What we achieved by doing this separation?",
+    "url": "https://github.com/expressjs/express/pull/6991#discussion_r2703276167"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/response.js",
+    "line": 140,
+    "date": "2026-01-19",
+    "reviewer": "reviewer_6",
+    "body": "We can’t do that, which is why I had to revert the change in https://github.com/expressjs/express/pull/6991/changes/bf678ff1f4568cae16f24035a9e8d9c4fab64d38.",
+    "url": "https://github.com/expressjs/express/pull/6991#discussion_r2703073217"
+  },
+  {
+    "pr": 6936,
+    "file": "lib/request.js",
+    "line": 107,
+    "date": "2026-01-16",
+    "reviewer": "reviewer_6",
+    "body": "That is, that support didn’t come when the `accepts` package was created.",
+    "url": "https://github.com/expressjs/express/pull/6936#discussion_r2699978771"
+  },
+  {
+    "pr": 6936,
+    "file": "lib/request.js",
+    "line": 107,
+    "date": "2026-01-16",
+    "reviewer": "reviewer_6",
+    "body": "I was looking for how long we haven't had that support; it happened in [https://github.com/expressjs/express/commit/cec0c06a70c874298761282984573475293c0071](https://github.com/expressjs/express/commit/cec0c06a70c874298761282984573475293c0071), for [https://github.com/expressjs/express/releases/tag/4.0.0-rc1](https://github.com/expressjs/express/releases/tag/4.0.0-rc1).",
+    "url": "https://github.com/expressjs/express/pull/6936#discussion_r2699976722"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/response.js",
+    "line": 138,
+    "date": "2026-01-16",
+    "reviewer": "reviewer_5",
+    "body": "This can be turned into a block scoped const now, it is only used in this context. \n\nCan remove the var type at function top scope",
+    "url": "https://github.com/expressjs/express/pull/6991#discussion_r2699519915"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/response.js",
+    "line": 142,
+    "date": "2026-01-16",
+    "reviewer": "reviewer_5",
+    "body": "Ah no nvm, this.type sets it",
+    "url": "https://github.com/expressjs/express/pull/6991#discussion_r2699499609"
+  },
+  {
+    "pr": 6991,
+    "file": "lib/response.js",
+    "line": 142,
+    "date": "2026-01-16",
+    "reviewer": "reviewer_5",
+    "body": "We are no longer setting charset now when using the fallback html content type",
+    "url": "https://github.com/expressjs/express/pull/6991#discussion_r2699439828"
+  },
+  {
+    "pr": 6979,
+    "file": "lib/response.js",
+    "line": 124,
+    "date": "2026-01-07",
+    "reviewer": "reviewer_9",
+    "body": "This inline comment is redundant and deviates from the codebase conventions. The function already has a comprehensive JSDoc comment immediately above (lines 112-123) that describes its purpose: \"Send a response.\" Throughout this file, inline comments appear only within function bodies to explain specific logic (e.g., line 101: \"Allow multiple links if links[rel] is an array\"), not between JSDoc and function declarations. No other function in this file follows this pattern. Consider removing this comment as the existing JSDoc documentation is sufficient and follows the established pattern.",
+    "url": "https://github.com/expressjs/express/pull/6979#discussion_r2669651125"
+  },
+  {
+    "pr": 6952,
+    "file": "lib/utils.js",
+    "line": 414,
+    "date": "2025-12-16",
+    "reviewer": "reviewer_12",
+    "body": "## Double escaping or unescaping\n\nThis replacement may produce '\\' characters that are double-unescaped [here](1).\n\n[Show more details](https://github.com/expressjs/express/security/code-scanning/46)",
+    "url": "https://github.com/expressjs/express/pull/6952#discussion_r2623812622"
+  },
+  {
+    "pr": 6758,
+    "file": "test/res.sendStatus.js",
+    "line": 54,
+    "date": "2025-12-12",
+    "reviewer": "reviewer_16",
+    "body": "This test will need to move to `res.status.js` after the other change.",
+    "url": "https://github.com/expressjs/express/pull/6758#discussion_r2615790161"
+  },
+  {
+    "pr": 6758,
+    "file": "lib/response.js",
+    "line": 331,
+    "date": "2025-12-12",
+    "reviewer": "reviewer_16",
+    "body": "Agreed with @user, move this to `res.status`, but throwing for `BigInt` is the right way to go. ",
+    "url": "https://github.com/expressjs/express/pull/6758#discussion_r2615789159"
+  },
+  {
+    "pr": 6908,
+    "file": "test/req.query.options.js",
+    "line": 126,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "This test doesn't adequately verify that the `arrayLimit` option is working correctly. It only checks that `res.body.ids` exists, but doesn't verify the actual structure of the result. According to the comment on line 122, indices above the limit should become object keys, so the test should assert the actual structure, for example by checking if `res.body.ids` is an array or an object, and verifying the specific structure that results from exceeding the array limit.",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645755"
+  },
+  {
+    "pr": 6908,
+    "file": "lib/utils.js",
+    "line": 316,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "[nitpick] If a header value contains invalid UTF-8 sequences or other non-string data that can't be properly converted to a string, the `String(value)` conversion on line 306 might produce unexpected results, and `Buffer.from(headerParts.join('|'), 'utf8')` on line 316 could potentially fail or produce incorrect results. Consider adding validation or error handling for header values to ensure they're valid strings before including them in the ETag calculation.",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645748"
+  },
+  {
+    "pr": 6908,
+    "file": "test/req.query.options.js",
+    "line": 195,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "The prototype pollution test is checking the wrong condition. `testObj.hasOwnProperty('__proto__')` will always return false because `__proto__` is not an own property - it's an accessor property on Object.prototype. To properly test if prototype pollution was prevented, you should check if a property set via `__proto__[test]=polluted` actually polluted the prototype, e.g., by checking `testObj.test === undefined` or by creating a clean object and checking `({}).test === undefined`.",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645738"
+  },
+  {
+    "pr": 6908,
+    "file": "lib/application.js",
+    "line": 376,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "[nitpick] When `'query parser options'` is set before `'query parser'` mode is set, the options will be stored in settings but won't be used until the parser mode is set. However, when `'query parser'` is subsequently set, it will correctly retrieve and use these options via `this.get('query parser options')` on line 368. This behavior should be documented or the code should handle this edge case more explicitly to avoid confusion.",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645728"
+  },
+  {
+    "pr": 6908,
+    "file": "lib/utils.js",
+    "line": 333,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "Setting `allowPrototypes: true` as the default (line 333) maintains backward compatibility but leaves applications vulnerable to prototype pollution attacks unless developers explicitly set it to `false`. While the comment mentions \"consider changing to false in v6\", this is a security risk in the current version. Consider documenting this security concern prominently in the PR description and migration guide, or at minimum add a deprecation warning when this default is used.",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645717"
+  },
+  {
+    "pr": 6908,
+    "file": "test/req.query.options.js",
+    "line": 172,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "This test doesn't actually verify that prototype pollution is allowed with `allowPrototypes:true`. It just expects a 200 response, which doesn't prove anything about whether the prototype was actually polluted. The test should verify that the pollution actually occurred, similar to what the second test attempts to do (though that one also has issues as noted in another comment).",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645706"
+  },
+  {
+    "pr": 6908,
+    "file": "test/req.query.options.js",
+    "line": 152,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "This test doesn't adequately verify the depth limit behavior. The comment on line 146 states \"should only parse a[b]\" and \"Further nesting should be flattened or ignored\", but the test doesn't verify this. It should check the actual structure of `res.body.a.b` to confirm that deeper nesting (c and d) was not parsed as expected, for example by verifying that `res.body.a.b.c` is undefined or has a different structure than expected.",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645693"
+  },
+  {
+    "pr": 6908,
+    "file": "lib/utils.js",
+    "line": 317,
+    "date": "2025-12-10",
+    "reviewer": "reviewer_9",
+    "body": "[nitpick] The implementation uses a pipe character (`|`) as a delimiter between body and headers (line 317). If the body itself ends with a pipe character and a header value starts with the same content, there's a theoretical (though extremely unlikely) hash collision risk. Consider using a more robust delimiter strategy, such as including the length of each component, or using a null byte (`\\x00`) which is invalid in HTTP headers.\n```suggestion\n    var headerBuf = Buffer.from(headerParts.join('\\x00'), 'utf8');\n    var combined = Buffer.concat([buf, Buffer.from('\\x00'), headerBuf]);\n```",
+    "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645669"
+  },
+  {
+    "pr": 6924,
+    "file": "examples/middleware-deep-dive/index.js",
+    "line": 51,
+    "date": "2025-12-01",
+    "reviewer": "reviewer_3",
+    "body": "If you are not using `next()` it can be omitted from the function signature. The only case when Express cares about the number of arguments in function signature is error handlers (must have [exactly 4](https://github.com/pillarjs/router/blob/cb2a5fcdf31b9cc92296183ceeff8126b5c57453/lib/layer.js#L109)).",
+    "url": "https://github.com/expressjs/express/pull/6924#discussion_r2579086702"
+  },
+  {
+    "pr": 6924,
+    "file": "package.json",
+    "line": 46,
+    "date": "2025-12-01",
+    "reviewer": "reviewer_3",
+    "body": "Why should express have itself as a dependency?",
+    "url": "https://github.com/expressjs/express/pull/6924#discussion_r2579021584"
+  },
+  {
+    "pr": 6920,
+    "file": "History.md",
+    "line": 3,
+    "date": "2025-11-26",
+    "reviewer": "reviewer_17",
+    "body": "Included in 7f600a0. Thanks @user!",
+    "url": "https://github.com/expressjs/express/pull/6920#discussion_r2565205500"
+  },
+  {
+    "pr": 6885,
+    "file": "examples/cookies/index.js",
+    "line": 22,
+    "date": "2025-11-07",
+    "reviewer": "reviewer_3",
+    "body": "The proper way of setting options is\n\n```suggestion\napp.use(express.urlencoded({ extended: false })\n```\n",
+    "url": "https://github.com/expressjs/express/pull/6885#discussion_r2503775806"
+  },
+  {
+    "pr": 6856,
+    "file": "package.json",
+    "line": 79,
+    "date": "2025-10-30",
+    "reviewer": "reviewer_5",
+    "body": "```suggestion\n```\nUnused?",
+    "url": "https://github.com/expressjs/express/pull/6856#discussion_r2476158644"
+  },
+  {
+    "pr": 6856,
+    "file": "test/express.static.js",
+    "line": 288,
+    "date": "2025-10-30",
+    "reviewer": "reviewer_5",
+    "body": "When the assertions throw, they prevent cleanup (`server.close`) so the suite hangs forever with an open server.\r\n\r\nThey're also throwing in callbacks, so mocha only sees them due to its global uncaught exception handler. \r\nThey'd need to be try/catch'd, otherwise we can never clean up or reliaby associate the failure w/ the test.\r\n\r\n(ideally we assert in only one place, so moved the first one)\r\n\r\nThis feedback applies to all of the updated test cases in the PR\r\n\r\n```suggestion\r\n          }, function (res) {\r\n            var body = ''\r\n            res.on('data', function (chunk) { body += chunk })\r\n            res.on('end', function () {\r\n              try {\r\n                assert.strictEqual(res.statusCode, 404)\r\n                assert.strictEqual(body, 'Not Found')\r\n                server.close(done)\r\n              } catch(err) {\r\n                server.close(() => done(err))\r\n              }\r\n            })\r\n```",
+    "url": "https://github.com/expressjs/express/pull/6856#discussion_r2476157979"
+  },
+  {
+    "pr": 6865,
+    "file": "lib/utils.js",
+    "line": 176,
+    "date": "2025-10-29",
+    "reviewer": "reviewer_18",
+    "body": "https://github.com/[redacted] => allowPrototypes: true is not a security issue",
+    "url": "https://github.com/expressjs/express/pull/6865#discussion_r2475800637"
+  },
+  {
+    "pr": 6865,
+    "file": "History.md",
+    "line": 5,
+    "date": "2025-10-29",
+    "reviewer": "reviewer_9",
+    "body": "The migration instruction in History.md omits the `{ allowPrototypes: true }` option that was present in the original `parseExtendedQueryString` function. This inconsistency means the suggested migration code won't perfectly replicate the old behavior, which could cause issues for users with nested prototypes in their query strings. The documentation should either include the option or explicitly note the difference.\n```suggestion\n  - To replicate old `'extended'` behavior: `app.set('query parser', str => require('qs').parse(str, { allowPrototypes: true }))`\n```",
+    "url": "https://github.com/expressjs/express/pull/6865#discussion_r2475793862"
+  },
+  {
+    "pr": 6865,
+    "file": "lib/utils.js",
+    "line": 176,
+    "date": "2025-10-29",
+    "reviewer": "reviewer_9",
+    "body": "The error message suggests using `{ allowPrototypes: true }` but this option is a security risk. The old `parseExtendedQueryString` function used this option, but users migrating should be warned about the security implications or given a safer default option.\n```suggestion\n      throw new TypeError(\"query parser 'extended' is no longer supported. To replicate the old behavior, you may use: `app.set('query parser', str => qs.parse(str, { allowPrototypes: true }))`, but WARNING: enabling `{ allowPrototypes: true }` is a security risk and can lead to prototype pollution vulnerabilities. Do not use this option in production unless you fully understand the risks. The default behavior is safer and recommended.\");\n```",
+    "url": "https://github.com/expressjs/express/pull/6865#discussion_r2475793826"
+  },
+  {
+    "pr": 6848,
+    "file": "lib/response.js",
+    "line": 67,
+    "date": "2025-10-23",
+    "reviewer": "reviewer_3",
+    "body": "As @user pointed out in https://github.com/expressjs/express/pull/6848#discussion_r245208588, this will print objects as `[Object object]`, but it has other drawbacks. While you (or your LLM) claim that this will prevent crashes, this change will introduce new problems if someone passes an object with null prototype (`Object.create(null)`) - see https://github.com/expressjs/express/issues/6756#issuecomment-3412660339.",
+    "url": "https://github.com/expressjs/express/pull/6848#discussion_r2456860888"
+  },
+  {
+    "pr": 6848,
+    "file": "lib/response.js",
+    "line": 67,
+    "date": "2025-10-22",
+    "reviewer": "reviewer_19",
+    "body": "> Likely, they wanted to show what the user has passed.\r\n\r\nYou raise a valid point about object serialization. However, I believe the current approach with String(code) is the right solution for the following reasons:\r\n\r\nCrash Prevention: The primary goal is to prevent server crashes. JSON.stringify() causes an uncaught TypeError with BigInt, which crashes the entire server. This is a critical issue that needs to be fixed.\r\n\r\nType Information: The error message format ${String(code)} (${typeof code}) actually provides more useful debugging information than JSON.stringify() in many cases:\r\nFor BigInt: \"200 (bigint)\" vs crash\r\nFor objects: \"[object Object] (object)\" vs \"{\\\"a\\\":1}\"\r\nFor functions: \"function(){} (function)\" vs \"{}\"\r\nFor arrays: \"1,2,3 (object)\" vs \"[1,2,3]\"\r\n\r\nPractical Usage: Status codes are typically integers, strings, or occasionally undefined/null. Objects and functions as status codes are extremely rare edge cases that indicate programming errors rather than legitimate use cases.\r\n\r\nConsistency: Using String() provides consistent behavior across all JavaScript types without special handling.\r\n\r\nIf we wanted to show more object details, we could use a try-catch approach:\r\nBut this adds complexity for a rare edge case. The current solution prioritizes crash prevention and provides sufficient debugging information for the vast majority of real-world scenarios.\r\n\r\nWhat do you think? Should we stick with the simple String(code) approach, or would you prefer the try-catch solution for better object serialization?",
+    "url": "https://github.com/expressjs/express/pull/6848#discussion_r2452500836"
+  },
+  {
+    "pr": 6848,
+    "file": "lib/response.js",
+    "line": 67,
+    "date": "2025-10-22",
+    "reviewer": "reviewer_20",
+    "body": "Likely, they wanted to show what the user has passed.",
+    "url": "https://github.com/expressjs/express/pull/6848#discussion_r2452091440"
+  },
+  {
+    "pr": 6848,
+    "file": "lib/response.js",
+    "line": 67,
+    "date": "2025-10-22",
+    "reviewer": "reviewer_20",
+    "body": "What if the `code` is an object? `String(code)` will give `[Object object]`",
+    "url": "https://github.com/expressjs/express/pull/6848#discussion_r2452085881"
+  },
+  {
+    "pr": 6839,
+    "file": "lib/response.js",
+    "line": 330,
+    "date": "2025-10-16",
+    "reviewer": "reviewer_21",
+    "body": "i did some changes so it just allows numbers between 100-990.",
+    "url": "https://github.com/expressjs/express/pull/6839#discussion_r2437177711"
+  },
+  {
+    "pr": 6839,
+    "file": "lib/response.js",
+    "line": 330,
+    "date": "2025-10-16",
+    "reviewer": "reviewer_22",
+    "body": "Ig including !Number.isSafeInteger(statusCode) should work of maybe limiting the number by providing a range for the value should be best approach",
+    "url": "https://github.com/expressjs/express/pull/6839#discussion_r2436977679"
+  },
+  {
+    "pr": 6839,
+    "file": "lib/response.js",
+    "line": 330,
+    "date": "2025-10-16",
+    "reviewer": "reviewer_23",
+    "body": "The new check in the diff only rejects BigInt values (typeof === \"bigint\"). It will not catch oversized numeric Numbers, so a huge-number literal above will pass that check.",
+    "url": "https://github.com/expressjs/express/pull/6839#discussion_r2436612996"
+  },
+  {
+    "pr": 6805,
+    "file": ".github/workflows/block-readme-prs.yml",
+    "line": 3,
+    "date": "2025-10-08",
+    "reviewer": "reviewer_24",
+    "body": "will do a check and commit",
+    "url": "https://github.com/expressjs/express/pull/6805#discussion_r2414882366"
+  },
+  {
+    "pr": 6805,
+    "file": ".github/workflows/block-readme-prs.yml",
+    "line": 36,
+    "date": "2025-10-08",
+    "reviewer": "reviewer_24",
+    "body": "the name of the readme is \"Readme.md\" neither \"README.md\" nor \"readme.md\", please have a look at the naming in the repo",
+    "url": "https://github.com/expressjs/express/pull/6805#discussion_r2414880850"
+  },
+  {
+    "pr": 6805,
+    "file": ".github/workflows/block-readme-prs.yml",
+    "line": 3,
+    "date": "2025-10-08",
+    "reviewer": "reviewer_25",
+    "body": "Avoid using pull_request_target , use pull_request instead. This provides workflows with write permission to the repo when it runs to checkout PR code. Attacker's code runs WITH the base repo's privileges\r\nPlease refer to : https://securitylab.github.com/[redacted]",
+    "url": "https://github.com/expressjs/express/pull/6805#discussion_r2414357581"
+  },
+  {
+    "pr": 6805,
+    "file": ".github/workflows/block-readme-prs.yml",
+    "line": 36,
+    "date": "2025-10-08",
+    "reviewer": "reviewer_25",
+    "body": "grep -q \"^Readme.md$\" - Won't catch \"README.md\" or \"readme.md\"",
+    "url": "https://github.com/expressjs/express/pull/6805#discussion_r2414348179"
+  },
+  {
+    "pr": 6810,
+    "file": ".github/workflows/close_trivial_pr.yaml",
+    "line": 3,
+    "date": "2025-10-07",
+    "reviewer": "reviewer_26",
+    "body": "This would need to be \n```suggestion\n  pull_request_target:\n```\n\nTo perform the actions you want. You can also filter to only include readme changes.\n\n**However**, be careful of script injections on that environment, like the other review comment noted",
+    "url": "https://github.com/expressjs/express/pull/6810#discussion_r2411987346"
+  },
+  {
+    "pr": 6810,
+    "file": ".github/workflows/close_trivial_pr.yaml",
+    "line": 16,
+    "date": "2025-10-07",
+    "reviewer": "reviewer_27",
+    "body": "This script is vulnerable to actions injection :(\r\n\r\n<https://docs.github.com/[redacted]\r\n",
+    "url": "https://github.com/expressjs/express/pull/6810#discussion_r2411614883"
+  },
+  {
+    "pr": 5819,
+    "file": "test/app.router.js",
+    "line": 1146,
+    "date": "2025-09-24",
+    "reviewer": "reviewer_28",
+    "body": "To demonstrate the issue I am trying to address, replace\r\n`return router.handle(req, res, next);`\r\nwith\r\n`\r\nconsole.log('I want to remove this');\r\nreturn router.handle(req, res, next);\r\n`\r\n\r\nIs there a mechanism in this case to remove the console.log(...)?",
+    "url": "https://github.com/expressjs/express/pull/5819#discussion_r2373796216"
+  },
+  {
+    "pr": 5819,
+    "file": "test/app.router.js",
+    "line": 1165,
+    "date": "2025-09-24",
+    "reviewer": "reviewer_28",
+    "body": "I don't want to replace the router, I want to completely remove it.",
+    "url": "https://github.com/expressjs/express/pull/5819#discussion_r2373792228"
+  },
+  {
+    "pr": 6703,
+    "file": "test/req.is.js",
+    "line": 5,
+    "date": "2025-09-22",
+    "reviewer": "reviewer_29",
+    "body": "```suggestion\r\nconst after = require('after')\r\n```\r\n// in modern JS is better to use const instead of var!",
+    "url": "https://github.com/expressjs/express/pull/6703#discussion_r2369939201"
+  },
+  {
+    "pr": 6774,
+    "file": "lib/response.js",
+    "line": 331,
+    "date": "2025-09-18",
+    "reviewer": "reviewer_30",
+    "body": "```suggestion\r\n    deprecate('statusCode must be a valid number to res.sendStatus.');\r\n```\r\n\r\nI think keep it simple and only idea is just show deprecation warning.",
+    "url": "https://github.com/expressjs/express/pull/6774#discussion_r2359648791"
+  },
+  {
+    "pr": 6758,
+    "file": "lib/response.js",
+    "line": 330,
+    "date": "2025-09-13",
+    "reviewer": "reviewer_30",
+    "body": "```suggestion\r\n    throw new TypeError(`statusCode must be a valid number to res.sendStatus`);\r\n```\r\n\r\nI think it seems consistent",
+    "url": "https://github.com/expressjs/express/pull/6758#discussion_r2346793696"
+  },
+  {
+    "pr": 6654,
+    "file": "lib/response.js",
+    "line": 174,
+    "date": "2025-08-25",
+    "reviewer": "reviewer_31",
+    "body": "We could even return earlier.",
+    "url": "https://github.com/expressjs/express/pull/6654#discussion_r2299034804"
+  },
+  {
+    "pr": 6654,
+    "file": "lib/response.js",
+    "line": 137,
+    "date": "2025-08-25",
+    "reviewer": "reviewer_31",
+    "body": "It would make sense to split the `null` case from the `boolean | number` case to avoid using a ternary.\r\n",
+    "url": "https://github.com/expressjs/express/pull/6654#discussion_r2299029572"
+  },
+  {
+    "pr": 6654,
+    "file": "lib/response.js",
+    "line": 135,
+    "date": "2025-08-25",
+    "reviewer": "reviewer_31",
+    "body": "Using curly braces would make it more consistent and readable.",
+    "url": "https://github.com/expressjs/express/pull/6654#discussion_r2299025712"
+  },
+  {
+    "pr": 6588,
+    "file": "Readme.md",
+    "line": 45,
+    "date": "2025-08-21",
+    "reviewer": "reviewer_30",
+    "body": "I opened - https://github.com/expressjs/express/pull/6718",
+    "url": "https://github.com/expressjs/express/pull/6588#discussion_r2290144934"
+  },
+  {
+    "pr": 6588,
+    "file": "Readme.md",
+    "line": 45,
+    "date": "2025-08-20",
+    "reviewer": "reviewer_17",
+    "body": "```suggestion\r\napp.listen(3000)\r\n```\r\n\r\n@user please create a separate PR for this doc change :+1: ",
+    "url": "https://github.com/expressjs/express/pull/6588#discussion_r2288131967"
+  },
+  {
+    "pr": 6649,
+    "file": ".github/workflows/expf-testing.yml",
+    "line": 61,
+    "date": "2025-07-18",
+    "reviewer": "reviewer_12",
+    "body": "## Workflow does not contain permissions\n\nActions job or workflow does not limit the permissions of the GITHUB_TOKEN. Consider setting an explicit permissions block, using the following as a minimal starting point: {{contents: read}}\n\n[Show more details](https://github.com/expressjs/express/security/code-scanning/45)",
+    "url": "https://github.com/expressjs/express/pull/6649#discussion_r2215787667"
+  },
+  {
+    "pr": 6604,
+    "file": "package.json",
+    "line": 1,
+    "date": "2025-07-13",
+    "reviewer": "reviewer_6",
+    "body": "@user This change is still here. Please remove the changes you made here, they don't belong in this PR",
+    "url": "https://github.com/expressjs/express/pull/6604#discussion_r2203489433"
+  },
+  {
+    "pr": 6604,
+    "file": "Readme.md",
+    "line": 1,
+    "date": "2025-07-13",
+    "reviewer": "reviewer_6",
+    "body": "The changes here are already being handled by https://github.com/expressjs/express/pull/6601",
+    "url": "https://github.com/expressjs/express/pull/6604#discussion_r2203489308"
+  },
+  {
+    "pr": 6601,
+    "file": "Readme.md",
+    "line": 5,
+    "date": "2025-07-05",
+    "reviewer": "reviewer_15",
+    "body": "> []\r\n\r\nSelf references work without square brackets too.\r\nCan you help me to remove it?😃",
+    "url": "https://github.com/expressjs/express/pull/6601#discussion_r2186463028"
+  },
+  {
+    "pr": 6601,
+    "file": "Readme.md",
+    "line": 151,
+    "date": "2025-06-30",
+    "reviewer": "reviewer_15",
+    "body": "Changed to default branch naming alias in the commit https://github.com/expressjs/express/pull/6601/commits/9316cda39e71a148b15f3dcbfe3c94a980372173",
+    "url": "https://github.com/expressjs/express/pull/6601#discussion_r2174112201"
+  },
+  {
+    "pr": 6601,
+    "file": "Readme.md",
+    "line": 5,
+    "date": "2025-06-30",
+    "reviewer": "reviewer_15",
+    "body": "Thanks to for pointing out the reference link in the README that I had forgotten about.",
+    "url": "https://github.com/expressjs/express/pull/6601#discussion_r2174111167"
+  },
+  {
+    "pr": 6601,
+    "file": "Readme.md",
+    "line": 5,
+    "date": "2025-06-29",
+    "reviewer": "reviewer_3",
+    "body": "I'm not sure if this is the right place to update the link. The address right now is defined at the end of the readme, so either it should be updated there or removed if the intention is replacing it with an inline link:\r\n\r\nhttps://github.com/expressjs/express/blob/98c85eb0dd64f23940f1ac5b43d74d0eac659248/Readme.md?plain=1#L272",
+    "url": "https://github.com/expressjs/express/pull/6601#discussion_r2173904325"
+  },
+  {
+    "pr": 6604,
+    "file": "Contributing.md",
+    "line": 1,
+    "date": "2025-06-29",
+    "reviewer": "reviewer_6",
+    "body": "same here https://github.com/expressjs/express/pull/6604/files#r2173881665",
+    "url": "https://github.com/expressjs/express/pull/6604#discussion_r2173881934"
+  },
+  {
+    "pr": 6604,
+    "file": "code_of_conduct.md",
+    "line": 1,
+    "date": "2025-06-29",
+    "reviewer": "reviewer_6",
+    "body": "The content of this file should say something like \"The code of conduct is located in https://github.com/expressjs/.github/blob/HEAD/CODE_OF_CONDUCT.md\" rather than bringing back the full content, since we don’t want to maintain two versions in different places.",
+    "url": "https://github.com/expressjs/express/pull/6604#discussion_r2173881665"
+  },
+  {
+    "pr": 6604,
+    "file": "package.json",
+    "line": 1,
+    "date": "2025-06-29",
+    "reviewer": "reviewer_6",
+    "body": "It would be better if you created a new PR, since this change could block the goal of the current one, which is to bring that file back.",
+    "url": "https://github.com/expressjs/express/pull/6604#discussion_r2173876347"
+  },
+  {
+    "pr": 6604,
+    "file": "package.json",
+    "line": 1,
+    "date": "2025-06-29",
+    "reviewer": "reviewer_6",
+    "body": "Please keep the PR focused, this change is unnecessary",
+    "url": "https://github.com/expressjs/express/pull/6604#discussion_r2173874361"
+  },
+  {
+    "pr": 6357,
+    "file": "Contributing.md",
+    "line": 123,
+    "date": "2025-04-22",
+    "reviewer": "reviewer_16",
+    "body": "Re-posting this comment here:\r\n\r\n> We might also want to say \"Repo captians are empowered to maintain the project with the repo maintain role and pacakge publication rights.\"?\r\n\r\nhttps://github.com/expressjs/express/pull/6477#discussion_r2054308331",
+    "url": "https://github.com/expressjs/express/pull/6357#discussion_r2054573543"
+  },
+  {
+    "pr": 6477,
+    "file": "Contributing.md",
+    "line": 124,
+    "date": "2025-04-22",
+    "reviewer": "reviewer_16",
+    "body": "Oh! I think we can just close this as duplicate then, and either you or @user can re-open it.",
+    "url": "https://github.com/expressjs/express/pull/6477#discussion_r2054570783"
+  },
+  {
+    "pr": 6477,
+    "file": "Contributing.md",
+    "line": 124,
+    "date": "2025-04-22",
+    "reviewer": "reviewer_6",
+    "body": "https://github.com/expressjs/express/pull/6357",
+    "url": "https://github.com/expressjs/express/pull/6477#discussion_r2054562901"
+  },
+  {
+    "pr": 6477,
+    "file": "Contributing.md",
+    "line": 124,
+    "date": "2025-04-22",
+    "reviewer": "reviewer_16",
+    "body": "Do you mean this one? https://github.com/expressjs/discussions/pull/353\r\n\r\nI don't see one that updates this language and checked that it was not changed in `master`. ",
+    "url": "https://github.com/expressjs/express/pull/6477#discussion_r2054558847"
+  },
+  {
+    "pr": 6477,
+    "file": "Contributing.md",
+    "line": 124,
+    "date": "2025-04-22",
+    "reviewer": "reviewer_6",
+    "body": "I feel like there's already a PR open in this repository for the same thing, but yes please, open this PR in the discussions repo.",
+    "url": "https://github.com/expressjs/express/pull/6477#discussion_r2054556348"
+  },
+  {
+    "pr": 6477,
+    "file": "Contributing.md",
+    "line": 124,
+    "date": "2025-04-22",
+    "reviewer": "reviewer_16",
+    "body": "I think this is a legitimate change to make, but we recently moved these docs to the `discussions` repo. If you want to try and land this, [can you make this PR there](https://github.com/expressjs/discussions/blob/master/docs/GOVERNANCE.md#project-captains)?\r\n\r\nWe might also want to say \"Repo captians are empowered to maintain the project with the repo `maintain` role and pacakge publication rights.\"?",
+    "url": "https://github.com/expressjs/express/pull/6477#discussion_r2054308331"
+  },
+  {
+    "pr": 6470,
+    "file": "lib/response.js",
+    "line": 69,
+    "date": "2025-04-19",
+    "reviewer": "reviewer_3",
+    "body": "This change makes the message less clear and wrong, regardless of interpretation:\n\n- greater than 99 and less than 1000 => `99 < code < 1000` (correct)\n- between 99 and 999 could be interpreted as:\n  - (99, 999) => `99 < code < 999` (wrong)\n  - [99, 999] => `99 <= code <= 999` (wrong)\n  - [99, 999) => `99 <= code < 999` (wrong)",
+    "url": "https://github.com/expressjs/express/pull/6470#discussion_r2051440558"
+  },
+  {
+    "pr": 6470,
+    "file": "lib/response.js",
+    "line": 65,
+    "date": "2025-04-19",
+    "reviewer": "reviewer_3",
+    "body": "Tests expect the error message to start with \"Invalid status code\"",
+    "url": "https://github.com/expressjs/express/pull/6470#discussion_r2051440070"
+  },
+  {
+    "pr": 6470,
+    "file": "lib/response.js",
+    "line": 64,
+    "date": "2025-04-19",
+    "reviewer": "reviewer_3",
+    "body": "`Number.isInteger()` checks if the argument is a number - the `typeof` check is unnecessary.\n\nhttps://262.ecma-international.org/15.0/index.html#sec-number.isinteger\nhttps://262.ecma-international.org/15.0/index.html#sec-isintegralnumber",
+    "url": "https://github.com/expressjs/express/pull/6470#discussion_r2051439916"
+  },
+  {
+    "pr": 6427,
+    "file": "Readme.md",
+    "line": 173,
+    "date": "2025-04-17",
+    "reviewer": "reviewer_16",
+    "body": "This moved to `discussions` right?",
+    "url": "https://github.com/expressjs/express/pull/6427#discussion_r2049173058"
+  },
+  {
+    "pr": 6404,
+    "file": "test/res.redirect.js",
+    "line": 50,
+    "date": "2025-04-11",
+    "reviewer": "reviewer_16",
+    "body": "Not bad, but also just to be clear it is not necessary in the tests.",
+    "url": "https://github.com/expressjs/express/pull/6404#discussion_r2039650558"
+  },
+  {
+    "pr": 5167,
+    "file": "lib/response.js",
+    "line": 964,
+    "date": "2025-04-11",
+    "reviewer": "reviewer_16",
+    "body": "While we are at it, any reason not to be a bit more formal and add head/body? Not blocking on this, but just want to make sure the question was asked.",
+    "url": "https://github.com/expressjs/express/pull/5167#discussion_r2039643695"
+  },
+  {
+    "pr": 4106,
+    "file": "lib/request.js",
+    "line": 17,
+    "date": "2025-04-08",
+    "reviewer": "reviewer_32",
+    "body": "Sorry for the delay, I just added it back in.",
+    "url": "https://github.com/expressjs/express/pull/4106#discussion_r2032963325"
+  },
+  {
+    "pr": 6404,
+    "file": "test/res.redirect.js",
+    "line": 50,
+    "date": "2025-03-29",
+    "reviewer": "reviewer_30",
+    "body": "```suggestion\r\n        res.redirect(\"300\", 'https://google.com')\r\n```\r\nhttp -> https",
+    "url": "https://github.com/expressjs/express/pull/6404#discussion_r2019738085"
+  },
+  {
+    "pr": 6415,
+    "file": ".github/workflows/scorecard.yml",
+    "line": 62,
+    "date": "2025-03-27",
+    "reviewer": "reviewer_33",
+    "body": "I already used that sha for the other workflows so not updating it here when i already looked it up would be a waste of time. We for sure should let dependabot do its job once all actions use the full commit sha",
+    "url": "https://github.com/expressjs/express/pull/6415#discussion_r2016628957"
+  },
+  {
+    "pr": 6415,
+    "file": ".github/workflows/scorecard.yml",
+    "line": 62,
+    "date": "2025-03-27",
+    "reviewer": "reviewer_6",
+    "body": "Please let Dependabot update. It's not that I don't trust you, but if the hash is already there, let's let the tool do its job for security reasons",
+    "url": "https://github.com/expressjs/express/pull/6415#discussion_r2016544841"
+  },
+  {
+    "pr": 4106,
+    "file": "lib/request.js",
+    "line": 17,
+    "date": "2025-03-27",
+    "reviewer": "reviewer_6",
+    "body": "This dependency is no longer in master, please add the dependency back.",
+    "url": "https://github.com/expressjs/express/pull/4106#discussion_r2016540178"
+  },
+  {
+    "pr": 3714,
+    "file": "lib/application.js",
+    "line": 198,
+    "date": "2025-03-27",
+    "reviewer": "reviewer_3",
+    "body": "A typo appeared here after rebase from 9f34d06cf85cb7f5542342db895c066f6869b192 to 77ada8512a903b8e27b52b5caf649e5cc464125e\r\n\r\n```suggestion\r\n * mounted at the _route_ specified.\r\n```",
+    "url": "https://github.com/expressjs/express/pull/3714#discussion_r2016295080"
+  },
+  {
+    "pr": 6414,
+    "file": "package.json",
+    "line": 50,
+    "date": "2025-03-27",
+    "reviewer": "reviewer_17",
+    "body": "This needs to be in the `HISTORY.md`",
+    "url": "https://github.com/expressjs/express/pull/6414#discussion_r2016154790"
+  },
+  {
+    "pr": 6382,
+    "file": "index.d.ts",
+    "line": 25,
+    "date": "2025-03-20",
+    "reviewer": "reviewer_34",
+    "body": "in the future we should replace `var` with `const`",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r2004991628"
+  },
+  {
+    "pr": 6382,
+    "file": "index.d.ts",
+    "line": 9,
+    "date": "2025-03-20",
+    "reviewer": "reviewer_34",
+    "body": "I came to conclusion that we don't need tripple slash directives here.\r\nI'm removing it together with the `@user/...` dependencies they refer to",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r2004989976"
+  },
+  {
+    "pr": 6382,
+    "file": "core.d.ts",
+    "line": 98,
+    "date": "2025-03-20",
+    "reviewer": "reviewer_34",
+    "body": "Looks like we don't\r\n\r\n```suggestion\r\n```",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r2004961115"
+  },
+  {
+    "pr": 6382,
+    "file": "core.d.ts",
+    "line": 98,
+    "date": "2025-03-20",
+    "reviewer": "reviewer_34",
+    "body": "I need to check if we have `prettier` here",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r2004938458"
+  },
+  {
+    "pr": 6382,
+    "file": "core.d.ts",
+    "line": 720,
+    "date": "2025-03-13",
+    "reviewer": "reviewer_35",
+    "body": "I agree with that logic. I'll use this comment as a reminder to open a PR or kick off a discussion in the future 🙂 ",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1994134152"
+  },
+  {
+    "pr": 6382,
+    "file": "core.d.ts",
+    "line": 720,
+    "date": "2025-03-13",
+    "reviewer": "reviewer_34",
+    "body": "I intentionally limit this PR to copying as it is, as much as possible in order to avoid bugs.\r\nSo that we could copy first, try it, and then do other changes and improvements.\r\nOtherwise, it would be hard to figure out why something works differently, @user ",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1994130864"
+  },
+  {
+    "pr": 6382,
+    "file": "core.d.ts",
+    "line": 720,
+    "date": "2025-03-13",
+    "reviewer": "reviewer_35",
+    "body": "Re: https://github.com/expressjs/express/issues/6385\r\n\r\nWhat are folk's thoughts on taking this PR as an opportunity to slightly tighten the types around function input like this? In the actual code, a fixed set of \"types\" are documented but is not reflected in the TS types.\r\n\r\ne.g.\r\n\r\nhttps://github.com/expressjs/express/blob/0bb00e19068e9d95afcebb1821ab1eec5c1430aa/lib/response.js#L110-L123\r\n\r\nPerhaps such changes should land in a follow-on PR but it seemed worth proposing in this context.",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1994116253"
+  },
+  {
+    "pr": 6378,
+    "file": "Contributing.md",
+    "line": 155,
+    "date": "2025-03-11",
+    "reviewer": "reviewer_17",
+    "body": "```suggestion\r\n- [`expressjs/codemod`](https://github.com/expressjs/codemod): @user (npm: `@user`), @user (npm: `@user.kudla`)\r\n```\r\n\r\nJust to avoid pinging other users :)",
+    "url": "https://github.com/expressjs/express/pull/6378#discussion_r1989927809"
+  },
+  {
+    "pr": 6378,
+    "file": "Contributing.md",
+    "line": 155,
+    "date": "2025-03-10",
+    "reviewer": "reviewer_36",
+    "body": "Thanks for question! 🙌\nI have just made an account. It's just filip.kudla",
+    "url": "https://github.com/expressjs/express/pull/6378#discussion_r1988131076"
+  },
+  {
+    "pr": 6382,
+    "file": "package.json",
+    "line": 76,
+    "date": "2025-03-10",
+    "reviewer": "reviewer_6",
+    "body": "We have an active discussion about changing it, see https://github.com/expressjs/discussions/issues/327.",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1986474206"
+  },
+  {
+    "pr": 6382,
+    "file": "package.json",
+    "line": 76,
+    "date": "2025-03-09",
+    "reviewer": "reviewer_34",
+    "body": "this was required to install `typescript-eslint`.\r\nBut in general, I suggest upgrading to v9 (latest) in the future and migrating to flat config.",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1986394791"
+  },
+  {
+    "pr": 6382,
+    "file": "index.d.ts",
+    "line": 9,
+    "date": "2025-03-09",
+    "reviewer": "reviewer_34",
+    "body": "these lines are for old versions of TypeScript, presumably v1.x\r\nI believe we can get rid of them, as well as the installed `@user/*` dev dependencies on the next step.",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1986305920"
+  },
+  {
+    "pr": 6382,
+    "file": "index.d.ts",
+    "line": 13,
+    "date": "2025-03-09",
+    "reviewer": "reviewer_34",
+    "body": "no longer needed since `express.query()` was removed\r\nhttps://github.com/expressjs/express/blob/master/History.md#500-alpha1--2014-11-06",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1986283528"
+  },
+  {
+    "pr": 6382,
+    "file": "index.d.ts",
+    "line": 64,
+    "date": "2025-03-09",
+    "reviewer": "reviewer_34",
+    "body": "found the proof https://github.com/expressjs/express/blob/master/History.md#500-alpha1--2014-11-06",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1986283474"
+  },
+  {
+    "pr": 6382,
+    "file": "index.d.ts",
+    "line": 13,
+    "date": "2025-03-09",
+    "reviewer": "reviewer_34",
+    "body": "if `express.query()` no longer exists, then this import is no longer needed as well",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1986278659"
+  },
+  {
+    "pr": 6382,
+    "file": "index.d.ts",
+    "line": 64,
+    "date": "2025-03-09",
+    "reviewer": "reviewer_34",
+    "body": "this one needs to be clarified, because ATTW noticed that there is no such thing anymore as `express.query` in the source code",
+    "url": "https://github.com/expressjs/express/pull/6382#discussion_r1986277611"
+  },
+  {
+    "pr": 6378,
+    "file": "Contributing.md",
+    "line": 155,
+    "date": "2025-03-06",
+    "reviewer": "reviewer_6",
+    "body": "@user, is your npm username the same as your GitHub one?",
+    "url": "https://github.com/expressjs/express/pull/6378#discussion_r1983994269"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 17,
+    "date": "2025-03-05",
+    "reviewer": "reviewer_16",
+    "body": "I think we can call this resolved? I would rather we see how it goes and remove it if we need to than never try at all.",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1982266818"
+  },
+  {
+    "pr": 6357,
+    "file": "Contributing.md",
+    "line": 123,
+    "date": "2025-03-04",
+    "reviewer": "reviewer_16",
+    "body": "I believe that this is intentional. Security reports should come through the security triage team *first* and the repo captains should be looped in once the initial triage has happened. So they would be individually added to applicable security issues/pr's/private forks.\r\n\r\nMaybe I am wrong on that though? cc @user @user ",
+    "url": "https://github.com/expressjs/express/pull/6357#discussion_r1979541295"
+  },
+  {
+    "pr": 5503,
+    "file": "Contributing.md",
+    "line": 96,
+    "date": "2025-03-04",
+    "reviewer": "reviewer_6",
+    "body": "By the way, the captains only have maintainer access for now",
+    "url": "https://github.com/expressjs/express/pull/5503#discussion_r1978468952"
+  },
+  {
+    "pr": 6357,
+    "file": "Contributing.md",
+    "line": 123,
+    "date": "2025-02-22",
+    "reviewer": "reviewer_6",
+    "body": "I understand that only the TCs can have admin rights, but when it comes to security reports, with maintainer rights, it is not possible to publish or review those reports on GitHub. There are quite a few limitations with those permissions.",
+    "url": "https://github.com/expressjs/express/pull/6357#discussion_r1966545599"
+  },
+  {
+    "pr": 6349,
+    "file": "Contributing.md",
+    "line": 71,
+    "date": "2025-02-18",
+    "reviewer": "reviewer_6",
+    "body": "This is important and was not considered before. Here, I think it should be the triage group instead of the person who creates the PR.",
+    "url": "https://github.com/expressjs/express/pull/6349#discussion_r1960749708"
+  },
+  {
+    "pr": 6349,
+    "file": "Contributing.md",
+    "line": 71,
+    "date": "2025-02-18",
+    "reviewer": "reviewer_17",
+    "body": "```suggestion\r\nbe willing to support you. If they agree, they can create a pull request to formalize your nomination. In the case of an objection to the nomination, the PR Creator is responsible for working with the individuals involved and finding a resolution.\r\n```\r\n\r\nIt is important that in case of an objection to ensure that we help the nominee while possible, otherwise the nominees might feel unwelcome to the project :thinking:.\r\n\r\nBTW... Node has a similar policy for certain roles like Core Team ([ref](https://github.com/nodejs/node/blob/main/GOVERNANCE.md?plain=1#L173))\r\n\r\n",
+    "url": "https://github.com/expressjs/express/pull/6349#discussion_r1960623533"
+  },
+  {
+    "pr": 6306,
+    "file": "test/view.js",
+    "line": 82,
+    "date": "2025-02-10",
+    "reviewer": "reviewer_16",
+    "body": "This assertion is a self fulfilling test. If you want to test this properly you would need to hard code the expected path here, not use `view.path` since no matter what we changed `view.path` to this would pass. right?",
+    "url": "https://github.com/expressjs/express/pull/6306#discussion_r1950015265"
+  },
+  {
+    "pr": 6306,
+    "file": "test/view.js",
+    "line": 65,
+    "date": "2025-02-10",
+    "reviewer": "reviewer_16",
+    "body": "As with the one above, I dont think this `isAsync` stuff is doing anything meaningful. Can you describe what you are going for here to help me understand?",
+    "url": "https://github.com/expressjs/express/pull/6306#discussion_r1950013870"
+  },
+  {
+    "pr": 6306,
+    "file": "test/view.js",
+    "line": 9,
+    "date": "2025-02-10",
+    "reviewer": "reviewer_16",
+    "body": "I dont think this test is correct. I would need to play around locally to be sure (which I didn't do), but your `mockEngine` is *not* asnyc and I am not sure this test even makes sense if it was. Can you describe what you are trying to prove with this `isAsync` part of the test?",
+    "url": "https://github.com/expressjs/express/pull/6306#discussion_r1950012435"
+  },
+  {
+    "pr": 6306,
+    "file": "test/view.js",
+    "line": 8,
+    "date": "2025-02-10",
+    "reviewer": "reviewer_16",
+    "body": "We can probably just call this `view`.",
+    "url": "https://github.com/expressjs/express/pull/6306#discussion_r1949997521"
+  },
+  {
+    "pr": 6306,
+    "file": "test/app.render.js",
+    "line": 374,
+    "date": "2025-02-10",
+    "reviewer": "reviewer_16",
+    "body": "Can we fix this so it doesn't show as changed in the PR?",
+    "url": "https://github.com/expressjs/express/pull/6306#discussion_r1949996971"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 17,
+    "date": "2025-02-06",
+    "reviewer": "reviewer_16",
+    "body": "Yeah, I am just not sure this really helps us at all. It is trivial to run `npm install` locally and run the tests then open a PR, it is actually (minorly) *more difficult* to pull down a depndabot PR for the same. If it was just security updates, as @user asks, it would be more of a \"notification to us\" than just a PR and in that case I it would be nice. That said, even for security things we very quickly get notifications from users and GH, so I am not sure that is even that valuable.\r\n\r\nAnyway, I wouldn't block on it since we can always see if it feels valuable and remove it later if we want, so maybe we just go with it?",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1944913347"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 17,
+    "date": "2025-02-04",
+    "reviewer": "reviewer_17",
+    "body": "Are we ok with this setup for npm... or we want to remove npm support for now (cc: @user/express-tc )? ",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1941832472"
+  },
+  {
+    "pr": 6306,
+    "file": "test/app.render.js",
+    "line": 369,
+    "date": "2025-02-04",
+    "reviewer": "reviewer_37",
+    "body": "Do you think like this?\r\n",
+    "url": "https://github.com/expressjs/express/pull/6306#discussion_r1941677347"
+  },
+  {
+    "pr": 6306,
+    "file": "test/app.render.js",
+    "line": 369,
+    "date": "2025-02-04",
+    "reviewer": "reviewer_16",
+    "body": "Typically we put tests for sub systems into their own files. I have not fully read these new tests, but before I do can you move them into a new test file? The pattern for the others is to use the same file name, so in this case `view.js`.",
+    "url": "https://github.com/expressjs/express/pull/6306#discussion_r1941589709"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 14,
+    "date": "2025-02-04",
+    "reviewer": "reviewer_6",
+    "body": "Additionally, we agreed in the last meeting (if I understood correctly) that it would only be for security updates for npm packages.",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1941281401"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 14,
+    "date": "2025-02-04",
+    "reviewer": "reviewer_6",
+    "body": "Mainly because I'm sure that many times we won't be able to upgrade to a major version due to compatibility with Node.js versions. Since Dependabot will only work on the main branch, this will likely be the best approach.",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1941279534"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 14,
+    "date": "2025-02-04",
+    "reviewer": "reviewer_30",
+    "body": "@user any reason?\r\n",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1941022428"
+  },
+  {
+    "pr": 6286,
+    "file": "examples/online/online-tracker.js",
+    "line": 20,
+    "date": "2025-01-20",
+    "reviewer": "reviewer_16",
+    "body": "Noticing now that you have both this *and* the call to `add` in a try/catch, which is unnecessary.",
+    "url": "https://github.com/expressjs/express/pull/6286#discussion_r1922580271"
+  },
+  {
+    "pr": 6286,
+    "file": "examples/online/online-tracker.js",
+    "line": 17,
+    "date": "2025-01-20",
+    "reviewer": "reviewer_16",
+    "body": "I am not sure where this came from (was lifted from the `online` package maybe?), but either way I think this is not the optimal way to achieve this. New versions of redis support expiry on hash keys via `hexpire` which is likely the optimal way to do this. Either way, this is an forever growing hash which is *never* good.\r\n\r\nIf you think jumping to a new feature is a bad idea (which is a valid opinion I think), then you could add some code to remove the items which are expried in the `last` method.",
+    "url": "https://github.com/expressjs/express/pull/6286#discussion_r1922578577"
+  },
+  {
+    "pr": 6286,
+    "file": "examples/online/online-tracker.js",
+    "line": 3,
+    "date": "2025-01-20",
+    "reviewer": "reviewer_16",
+    "body": "You are not using this in this file. Take my other suggestion and move this logic into the `index.js` and you can just remove this line. Additionally, I dont think any of this code works because you are not calling your exported `createOnlineTracker` anywhere.",
+    "url": "https://github.com/expressjs/express/pull/6286#discussion_r1922556658"
+  },
+  {
+    "pr": 6286,
+    "file": "examples/online/index.js",
+    "line": 15,
+    "date": "2025-01-20",
+    "reviewer": "reviewer_16",
+    "body": "Just remove this entire file and pull the logic into here. It is an example, and examples this small should be easy to follow in a single file.",
+    "url": "https://github.com/expressjs/express/pull/6286#discussion_r1922552296"
+  },
+  {
+    "pr": 6286,
+    "file": "examples/online/index.js",
+    "line": 32,
+    "date": "2025-01-20",
+    "reviewer": "reviewer_16",
+    "body": "It is not fire and forget with an `await` and `try/catch`. The original design of this was because they didn't want to fail the request if the write failed and still fall back to the response handling.\r\n\r\nThat said, as an example goes I would prefer we just handle this type of error more robustly to show how. So I would suggest you change the `catch` to not pass the error to next, just `console.error(err)` it.",
+    "url": "https://github.com/expressjs/express/pull/6286#discussion_r1922551031"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 11,
+    "date": "2025-01-16",
+    "reviewer": "reviewer_6",
+    "body": "Maybe here too, it should be monthly\r\n\r\n```suggestion\r\n      interval: monthly\r\n```",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1918923155"
+  },
+  {
+    "pr": 5435,
+    "file": ".github/workflows/dependabot.yml",
+    "line": 6,
+    "date": "2025-01-16",
+    "reviewer": "reviewer_6",
+    "body": "It's better if it's monthly, to avoid the noise from the PRs\r\n```suggestion\r\n      interval: monthly\r\n```",
+    "url": "https://github.com/expressjs/express/pull/5435#discussion_r1918922305"
+  },
+  {
+    "pr": 6113,
+    "file": "package.json",
+    "line": 70,
+    "date": "2025-01-15",
+    "reviewer": "reviewer_16",
+    "body": "For all dep updates we are moving to `^` prefixes. This will need to be updated as well, but we prefer doing this in individual commits, so it is unlikely this PR would merge. You may want to open these independently so they can be merged.",
+    "url": "https://github.com/expressjs/express/pull/6113#discussion_r1917425076"
+  },
+  {
+    "pr": 6113,
+    "file": "package.json",
+    "line": 39,
+    "date": "2025-01-15",
+    "reviewer": "reviewer_16",
+    "body": "@user can you comment on this? I believe the breaking changes in 1.x are passed through and so must go out with a major of express, but maybe I am wrong.",
+    "url": "https://github.com/expressjs/express/pull/6113#discussion_r1917424575"
+  },
+  {
+    "pr": 6113,
+    "file": "lib/response.js",
+    "line": 764,
+    "date": "2025-01-15",
+    "reviewer": "reviewer_16",
+    "body": "Is this somehow related to the updates? If so, please document why.",
+    "url": "https://github.com/expressjs/express/pull/6113#discussion_r1917423945"
+  },
+  {
+    "pr": 6110,
+    "file": ".github/pull_request_template.md",
+    "line": 32,
+    "date": "2025-01-13",
+    "reviewer": "reviewer_16",
+    "body": "I have been just editing the commit messages as I merge things this week. Since we didn't have clear guidance on it, I figured just starting the ball rolling on using them was alright. I agree we should agree on it though, especially before adopting the release tooling we want which would likely rely on them. I can make an ADR for it soon.",
+    "url": "https://github.com/expressjs/express/pull/6110#discussion_r1913279721"
+  },
+  {
+    "pr": 6274,
+    "file": "examples/search/index.js",
+    "line": 43,
+    "date": "2025-01-12",
+    "reviewer": "reviewer_38",
+    "body": "Appreciate the input! I've refactored the redis setup into a dedicated function `initializeRedis` and called it with `await` before the server starts. ",
+    "url": "https://github.com/expressjs/express/pull/6274#discussion_r1912537449"
+  },
+  {
+    "pr": 6274,
+    "file": "examples/search/index.js",
+    "line": 49,
+    "date": "2025-01-12",
+    "reviewer": "reviewer_38",
+    "body": "Thanks for pointing this out! I've updated the route accordingly. ",
+    "url": "https://github.com/expressjs/express/pull/6274#discussion_r1912537051"
+  },
+  {
+    "pr": 6274,
+    "file": "examples/search/index.js",
+    "line": 43,
+    "date": "2025-01-12",
+    "reviewer": "reviewer_16",
+    "body": "Oh oops, I forgot to hit add on this one. I had tried to comment that this change led to some unexpected ordering issues. My original comment was likely better, but for this I think we should make sure that these being run after the server starts is not an issue (because they will be since this is not `aiwat`/`.then`'d before the server starts.",
+    "url": "https://github.com/expressjs/express/pull/6274#discussion_r1912524538"
+  },
+  {
+    "pr": 6274,
+    "file": "examples/search/index.js",
+    "line": 49,
+    "date": "2025-01-12",
+    "reviewer": "reviewer_16",
+    "body": "This is probably better done as `/{:query}` if we intend it to be optional like the original example. ",
+    "url": "https://github.com/expressjs/express/pull/6274#discussion_r1912524124"
+  },
+  {
+    "pr": 6266,
+    "file": "Readme.md",
+    "line": 24,
+    "date": "2025-01-09",
+    "reviewer": "reviewer_16",
+    "body": "Oh ha, oops. I probably should have read the diff. Fixed.",
+    "url": "https://github.com/expressjs/express/pull/6266#discussion_r1909090408"
+  },
+  {
+    "pr": 6112,
+    "file": "package.json",
+    "line": 81,
+    "date": "2025-01-08",
+    "reviewer": "reviewer_16",
+    "body": "Can we just unpin this (`^`)? I thought we agreed to just unpin all these as we touched them?",
+    "url": "https://github.com/expressjs/express/pull/6112#discussion_r1907848611"
+  },
+  {
+    "pr": 6091,
+    "file": "lib/application.js",
+    "line": 536,
+    "date": "2024-12-02",
+    "reviewer": "reviewer_39",
+    "body": "AFAIK there is no need to have a fallback, spreading a variable that is `undefined` results in an empty object:\r\n\r\n```js\r\nvar a = undefined\r\nvar b = { ...a }\r\na // {}\r\n```\r\n\r\n```suggestion\r\n  var renderOptions = { ...this.locals, ...opts._locals, ...opts };\r\n```",
+    "url": "https://github.com/expressjs/express/pull/6091#discussion_r1866238755"
+  },
+  {
+    "pr": 6118,
+    "file": "test/res.download.js",
+    "line": 495,
+    "date": "2024-12-02",
+    "reviewer": "reviewer_6",
+    "body": "Why use finally here and catch in the others?",
+    "url": "https://github.com/expressjs/express/pull/6118#discussion_r1865128102"
+  },
+  {
+    "pr": 5856,
+    "file": "test/res.status.js",
+    "line": 132,
+    "date": "2024-11-30",
+    "reviewer": "reviewer_40",
+    "body": "Can you also add the test case for status code less than 100, if in future this PR is accepted\r\n",
+    "url": "https://github.com/expressjs/express/pull/5856#discussion_r1864424171"
+  },
+  {
+    "pr": 6033,
+    "file": "Contributing.md",
+    "line": 142,
+    "date": "2024-11-17",
+    "reviewer": "reviewer_10",
+    "body": "```suggestion\r\n## Active projects and teams\r\n```\r\n\r\nOr title case, one or the other.",
+    "url": "https://github.com/expressjs/express/pull/6033#discussion_r1845564432"
+  },
+  {
+    "pr": 6124,
+    "file": "lib/application.js",
+    "line": 499,
+    "date": "2024-11-13",
+    "reviewer": "reviewer_40",
+    "body": "`forEach` method is slower than for loop that's the issue",
+    "url": "https://github.com/expressjs/express/pull/6124#discussion_r1841137067"
+  },
+  {
+    "pr": 6091,
+    "file": "lib/application.js",
+    "line": 545,
+    "date": "2024-11-13",
+    "reviewer": "reviewer_16",
+    "body": "For this section, we should combine it all and use spread:\r\n\r\n```var renderOptions = { ...this.locals, ...(opts._locals || {}), ...opts };```",
+    "url": "https://github.com/expressjs/express/pull/6091#discussion_r1841135605"
+  },
+  {
+    "pr": 6173,
+    "file": "examples/params/index.js",
+    "line": 35,
+    "date": "2024-11-12",
+    "reviewer": "reviewer_3",
+    "body": "Also is the only place that sets `req.user`, which is then read in line 55. Changing the assignment to comparison will break this example.",
+    "url": "https://github.com/expressjs/express/pull/6173#discussion_r1838743834"
+  },
+  {
+    "pr": 6173,
+    "file": "examples/params/index.js",
+    "line": 35,
+    "date": "2024-11-12",
+    "reviewer": "reviewer_16",
+    "body": "While this is some bad code, I don't think it is a typo.\r\n\r\nThis check is checking if users array has an id from the param value, and then evaluating the truthiness of `req.user`. For sure something we should remove as unclear, but not a typeo in the sense that this change fixes it.",
+    "url": "https://github.com/expressjs/express/pull/6173#discussion_r1838736555"
+  },
+  {
+    "pr": 6118,
+    "file": "eslint.config.mjs",
+    "line": 27,
+    "date": "2024-11-03",
+    "reviewer": "reviewer_41",
+    "body": "After i upgrade eslint, it need additional file config, and no need eslintrc yml, eslintignore. eslint config is the result converted from eslintrc, and i dont add rules or changes rule. ",
+    "url": "https://github.com/expressjs/express/pull/6118#discussion_r1826908742"
+  },
+  {
+    "pr": 6118,
+    "file": "eslint.config.mjs",
+    "line": 27,
+    "date": "2024-11-01",
+    "reviewer": "reviewer_17",
+    "body": "I think that the config will require a team agreement.",
+    "url": "https://github.com/expressjs/express/pull/6118#discussion_r1825734936"
+  },
+  {
+    "pr": 6109,
+    "file": "package.json",
+    "line": 96,
+    "date": "2024-10-31",
+    "reviewer": "reviewer_17",
+    "body": "```suggestion\r\n    \"format\": \"prettier \\\"**/*.js\\\"\",\r\n    \"format:fix\": \"prettier --write \\\"**/*.js\\\"\",\r\n```\r\nAs it is suggested to use `npm run format` in the ci, I expect that that command only checks if the format is valid. Any modification in code done via script should be done in a different command like `npm run format:fix`\r\n",
+    "url": "https://github.com/expressjs/express/pull/6109#discussion_r1824593835"
+  },
+  {
+    "pr": 6110,
+    "file": ".github/pull_request_template.md",
+    "line": 32,
+    "date": "2024-10-31",
+    "reviewer": "reviewer_17",
+    "body": "while I love the idea of following conventional commits, maybe we should agree on it first.",
+    "url": "https://github.com/expressjs/express/pull/6110#discussion_r1824585580"
+  },
+  {
+    "pr": 3948,
+    "file": "package.json",
+    "line": 83,
+    "date": "2024-10-31",
+    "reviewer": "reviewer_42",
+    "body": "```suggestion\r\n    \"node\": \"^8 || ^10 || ^12 || ^14 || ^16 || ^18 || ^20 || >=22\"\r\n```\r\n\r\nSee: https://github.com/expressjs/express/pull/3948#issuecomment-2449356236",
+    "url": "https://github.com/expressjs/express/pull/3948#discussion_r1824106929"
+  },
+  {
+    "pr": 6033,
+    "file": "Contributing.md",
+    "line": 86,
+    "date": "2024-10-20",
+    "reviewer": "reviewer_17",
+    "body": "I will mark this as resolved with my latest changes, please re-open otherwise.",
+    "url": "https://github.com/expressjs/express/pull/6033#discussion_r1807917831"
+  },
+  {
+    "pr": 6033,
+    "file": "Contributing.md",
+    "line": 86,
+    "date": "2024-10-20",
+    "reviewer": "reviewer_17",
+    "body": "We probably want to do a clean up of the teams/members :thinking: ",
+    "url": "https://github.com/expressjs/express/pull/6033#discussion_r1807916445"
+  },
+  {
+    "pr": 6033,
+    "file": "Contributing.md",
+    "line": 86,
+    "date": "2024-10-09",
+    "reviewer": "reviewer_10",
+    "body": "I see more collaborators in the list here that aren't being committed: https://github.com/orgs/expressjs/teams.",
+    "url": "https://github.com/expressjs/express/pull/6033#discussion_r1793969721"
+  },
+  {
+    "pr": 6033,
+    "file": "Contributing.md",
+    "line": 86,
+    "date": "2024-10-09",
+    "reviewer": "reviewer_10",
+    "body": "Got it, I think it makes sense for them to be separate. Should this be a list we commit or can we manage it in GitHub and make the teams public?\r\n\r\nIf you really want to commit it, maybe move it below the current active project list and make it a sub-title like `Active Committers`? Having two sections in a long document calls \"active projects\" is my main confusion, and committing committers or putting them first makes less sense as I assume this document is the one which we expect people to visit when they need to contact the DRI for a project.",
+    "url": "https://github.com/expressjs/express/pull/6033#discussion_r1793967796"
+  },
+  {
+    "pr": 6033,
+    "file": "Contributing.md",
+    "line": 86,
+    "date": "2024-10-09",
+    "reviewer": "reviewer_17",
+    "body": "Based on the last discussion ([context](https://github.com/expressjs/express/pull/5768#issuecomment-2233841823)) comitters and captains are different roles (different access level and responsibilities). Also currently we manage that in different Github teams.\r\n\r\nMaybe we can use the same project list and add a sub-list in each project for the captains and comitters. So we duplicate less. But not sure if that solves the thing :thinking: ",
+    "url": "https://github.com/expressjs/express/pull/6033#discussion_r1793396576"
+  },
+  {
+    "pr": 6033,
+    "file": "Contributing.md",
+    "line": 86,
+    "date": "2024-10-08",
+    "reviewer": "reviewer_10",
+    "body": "What's the difference between this and `### Active Projects and Captains`? Can we merge them? Ideally there isn't two different project lists and committers, it seems like the captains should be updated instead?",
+    "url": "https://github.com/expressjs/express/pull/6033#discussion_r1792320545"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-08",
+    "reviewer": "reviewer_42",
+    "body": "Then you should have jumped to 0.7.2 as said here https://github.com/expressjs/express/pull/6017#discussion_r1790123549\r\n\r\nWhich has this fix: https://github.com/jshttp/cookie/pull/177\r\n\r\nI guess I will need to continue using the package.json npm override.",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1792249292"
+  },
+  {
+    "pr": 6029,
+    "file": "package.json",
+    "line": 36,
+    "date": "2024-10-08",
+    "reviewer": "reviewer_17",
+    "body": "Thanks for the suggestion @user, please check https://github.com/expressjs/express/pull/6029#discussion_r1791589983",
+    "url": "https://github.com/expressjs/express/pull/6029#discussion_r1791600348"
+  },
+  {
+    "pr": 6029,
+    "file": "package.json",
+    "line": 36,
+    "date": "2024-10-08",
+    "reviewer": "reviewer_17",
+    "body": "```suggestion\r\n    \"cookie\": \"0.7.1\",\r\n```\r\n\r\nRef: https://github.com/expressjs/express/pull/6017#discussion_r1791588098",
+    "url": "https://github.com/expressjs/express/pull/6029#discussion_r1791589983"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-08",
+    "reviewer": "reviewer_17",
+    "body": "Just to unblock this PR, I will merge my suggested change and move the discussion to https://github.com/expressjs/discussions/issues/279 so we can take a team decision and after that we can do a PR updating all the dependencies with caret if needed :+1:  ",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1791588098"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-07",
+    "reviewer": "reviewer_43",
+    "body": "Overly strict version pinning (especially in libraries) tends to cause more problems than it solves [in my experience](https://github.com/[redacted]).\r\n\r\nAs long as your dependencies are properly adhering to semver ([which sometimes they don't :roll_eyes:](https://github.com/[redacted])), there should be no downsides to allowing backwards compatible updates with a fuzzy lock ([`^` in npm](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#dependencies)).",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1790742653"
+  },
+  {
+    "pr": 6029,
+    "file": "package.json",
+    "line": 36,
+    "date": "2024-10-07",
+    "reviewer": "reviewer_42",
+    "body": "LGTM\r\n\r\nPlease check these relevant comments as well. https://github.com/expressjs/express/pull/6017/files#r1789129519\r\n\r\nMy take: Please keep this change as is with the caret ^. It will make my life easier in the future.\r\nAnother reason is these express dependencies are probably the best I have seen adhering to the semver principles.\r\n\r\nThank you.",
+    "url": "https://github.com/expressjs/express/pull/6029#discussion_r1790707655"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-07",
+    "reviewer": "reviewer_42",
+    "body": "The applications are under similar organizations. We had this problem before with mismatched dependency versions unless you do the new releases in a very specific order. I have to use npm overrides for other things until they also land.\r\n\r\nPlease keep this change as is with the caret ^. It will make my life easier in the future.\r\nAnother reason is these express dependencies are probably the best I have seen adhering to the semver principles.\r\n\r\nThank you.",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1790704794"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-07",
+    "reviewer": "reviewer_44",
+    "body": "And they did [release 0.7.2](https://github.com/jshttp/cookie/releases/tag/v0.7.2) just a few hours ago.",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1790123549"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-06",
+    "reviewer": "reviewer_34",
+    "body": "anyway, within v0, `^` means patches only. So you may ask yourself: do you wanna do it again if they fix another bug?",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1789210790"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-06",
+    "reviewer": "reviewer_34",
+    "body": "not in 5x if I remember correctly\r\nCC @user ",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1789210371"
+  },
+  {
+    "pr": 6017,
+    "file": "package.json",
+    "line": 35,
+    "date": "2024-10-06",
+    "reviewer": "reviewer_17",
+    "body": "```suggestion\r\n    \"cookie\": \"0.7.1\",\r\n```\r\nI believe that we want this value to be anchored. cc: @user/express-tc ",
+    "url": "https://github.com/expressjs/express/pull/6017#discussion_r1789129519"
+  }
+]

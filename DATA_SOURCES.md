@@ -51,3 +51,17 @@
 This dataset contains no real user data. All entities (orders, ships, ports, personnel)
 are invented. It was designed to exercise common engineering patterns so that the
 Rule Miner mode has a reproducible, self-contained example to work with.
+
+## 2. Additional real-world repositories (gallery, fetched 2026-09-26)
+
+| Repository | License | Comments kept | PRs | Output |
+|---|---|---|---|---|
+| <https://github.com/expressjs/express> | MIT | 224 | 79 | `samples/real-express.history/reviews.json` |
+| <https://github.com/fastify/fastify> | MIT | 247 | 72 | `samples/real-fastify.history/reviews.json` |
+
+Same collection method and fields as above (`scripts/fetch-reviews.mjs`).
+
+### Privacy hardening (applies to all three real repositories)
+- Reviewer logins → `reviewer_N`; `@mentions` → `@user`.
+- **Links to individual GitHub accounts inside comment text are replaced with `github.com/[redacted]`**; links to the project itself and to well-known organisations (e.g. `nodejs`, `tc39`) are kept. `samples/real-ky.history` was re-fetched on 2026-09-26 with this rule; all mined quotes still verify.
+- Only short excerpts are quoted in the dashboard, each linking to the original public comment.
