@@ -1,0 +1,967 @@
+[
+  {
+    "repo": "sindresorhus/ky",
+    "url": "https://github.com/sindresorhus/ky",
+    "license": "MIT",
+    "comments": 256,
+    "prs": 60,
+    "initChars": 5606,
+    "candidates": [
+      {
+        "id": "R1",
+        "rule": "Keep TypeScript JSDoc comments and the README in sync: every option, parameter, or behaviour documented in one must be mirrored in the other.",
+        "layer": "project",
+        "recurrence": 7,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #454",
+            "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r996409637",
+            "quote": "The docs for TS and readme should be in sync as much as possible. It makes it hard to maintain if they differ significantly.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #454",
+            "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r1008699633",
+            "quote": "This sentence still needs to be added to the readme.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #459",
+            "url": "https://github.com/sindresorhus/ky/pull/459#discussion_r1008700396",
+            "quote": "You also need to document this in the TS doc comment.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #417",
+            "url": "https://github.com/sindresorhus/ky/pull/417#discussion_r805319986",
+            "quote": "Readme and TS docs should be in sync.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #632",
+            "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1759693315",
+            "quote": "The TS doc comments and readme should be in sync.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #611",
+            "url": "https://github.com/sindresorhus/ky/pull/611#discussion_r1682870371",
+            "quote": "It would be nice to include this part in the `.extends` TS doc comment too.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #840",
+            "url": "https://github.com/sindresorhus/ky/pull/840#discussion_r2996771843",
+            "quote": "TS doc comments needs to be updated too.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a new option to options.ts with a JSDoc comment but omit it from readme.md, then check whether the reviewer flags the omission.",
+        "confidence": "high",
+        "verifiedCount": 7,
+        "totalCount": 7,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R2",
+        "rule": "Use `t.plan()` in every AVA test that contains async callbacks or hooks so that missing or skipped assertions are caught as test failures.",
+        "layer": "project",
+        "recurrence": 4,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #671",
+            "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951321300",
+            "quote": "Use `t.plan()` to guarantee that the hook and its assertion runs.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #671",
+            "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951381960",
+            "quote": "Indeed, the test suite is pretty good in general but we've been a bit inconsistent with assertion planning. Feel free to add `t.plan()` to some other tests if you feel motivated to do so, whether in this PR or otherwise.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #772",
+            "url": "https://github.com/sindresorhus/ky/pull/772#discussion_r2447839680",
+            "quote": "I think we should add `t.plan()` to at least this test, if not the others, too, in case the hooks don't run for some reason.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Write an AVA test that invokes a beforeRequest hook and asserts its output, but omit `t.plan()`, then see if the reviewer requests it.",
+        "confidence": "high",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R3",
+        "rule": "Never hit external third-party URLs (e.g. example.com) in tests; use the project's local HTTP test server instead to prevent flaky CI failures.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #858",
+            "url": "https://github.com/sindresorhus/ky/pull/858#discussion_r3071861480",
+            "quote": "These tests reach out to `example.com` but they should probably use a local echo server instead.\n\nTesting against 3rd party services should only be done when necessary, because it causes sporadic test failures when a site is down. Tests can also hit rate limits or IP bans in CI very easily.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #734",
+            "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2341573014",
+            "quote": "These tests are mostly just mimicking the current implementation to test the internal utilities. I would prefer that they use a server and Ky itself, as most of the other tests do, to echo back the de-serialized body length that it receives and maybe also the `Content-Length`, for example, and then run assertions for different body types based on that and the `totalBytes` parameter. Thus making the assertions more realistic and less coupled to the implementation.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Submit a test that makes a real network request to `https://example.com` to assert redirect behaviour, and see whether the reviewer asks to replace it with a local server.",
+        "confidence": "high",
+        "verifiedCount": 2,
+        "totalCount": 2,
+        "coverage": "partial",
+        "initQuote": "`test/helpers/create-http-test-server.ts` — spins up a real Express server on a random port; call with `t` (ava `ExecutionContext`) to auto-teardown, or manage `server.close()` manually.",
+        "initFile": "baseline-init-real/ky/AGENTS.md"
+      },
+      {
+        "id": "R4",
+        "rule": "Avoid TypeScript `as` casts wherever possible; fix the underlying type instead. Use casts only as a last resort and accompany them with a comment explaining why.",
+        "layer": "project",
+        "recurrence": 5,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #339",
+            "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626639778",
+            "quote": "Sidenote: We should also try to reduce use of `as` as it just overrides the type no matter what.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #339",
+            "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626710880",
+            "quote": "I mean didn't mean to imply that you added it. Was just saying in general, we should try to reduce the `as` whenever possible as they're often as bad as `@user`.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #339",
+            "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r627971443",
+            "quote": "Why is this needed? Is the `options.headers` type not correct?",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #671",
+            "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951342746",
+            "quote": "I am however curious why the type assertions `(this._input as Request)` appear three times in this file. The constructor's signature indicates `input` (which is being assigned to `this._input` immediately) can also be of type `string` or `URL` which would produce an exception at any of these three sites.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #339",
+            "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626643593",
+            "quote": "The real issue is that the `options` parameter doesn't have the correct type.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Introduce a helper function that uses `as SomeType` to silence a TypeScript error on an options field, and check whether the reviewer asks for a proper type fix instead.",
+        "confidence": "high",
+        "verifiedCount": 5,
+        "totalCount": 5,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R5",
+        "rule": "Ensure every test assertion covers the key side-effect or state change (e.g. assert `requestCount`, not just the response); tests that silently allow regressions are rejected.",
+        "layer": "project",
+        "recurrence": 6,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #598",
+            "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1651983533",
+            "quote": "Missing an assertion for the `requestCount`.\r\n\r\nLooks like some of the other retry tests also have this mistake.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #746",
+            "url": "https://github.com/sindresorhus/ky/pull/746#discussion_r2403340627",
+            "quote": "Same here. Should be an additional assertion.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #845",
+            "url": "https://github.com/sindresorhus/ky/pull/845#discussion_r2990240906",
+            "quote": "This test only asserts about the response. It doesn't really check anything regarding the upload or the progress callback.\n\nI think ideally it would check that the `'hello'` body was received and that the progress callback was not called.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #844",
+            "url": "https://github.com/sindresorhus/ky/pull/844#discussion_r2986609399",
+            "quote": "The `retry.afterStatusCodes` regression test doesn't currently prove replacement semantics: it would still pass even if `afterStatusCodes` were concatenated (429 would still be present, retries would still succeed, and `requestCount` would still be 3).",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #416",
+            "url": "https://github.com/sindresorhus/ky/pull/416#discussion_r780039926",
+            "quote": "Can you also add tests for 202s with a body, one with valid JSON and one with invalid JSON (e.g. plain text)?",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Write a retry test that checks the final response status but does not assert how many times the request was made, then see if the reviewer requests a `requestCount` assertion.",
+        "confidence": "high",
+        "verifiedCount": 5,
+        "totalCount": 5,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R6",
+        "rule": "Do not duplicate logic: extract shared code into a helper rather than repeating it across multiple call sites or tests.",
+        "layer": "project",
+        "recurrence": 3,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #858",
+            "url": "https://github.com/sindresorhus/ky/pull/858#discussion_r3071880285",
+            "quote": "This seems to be handled twice. Once here and once in the loop. I think only the loop is necessary.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #533",
+            "url": "https://github.com/sindresorhus/ky/pull/533#discussion_r1359861378",
+            "quote": "I feel like the performance mesurement code could be abstracted a bit so we don't have so much duplication between the tests.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #632",
+            "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1747852048",
+            "quote": "Seems to me like we should just rename `DownloadProgress` to `Progress` or `LoadProgress` or something and then reuse it.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Copy-paste a timing-measurement block into two separate test functions instead of extracting a helper, then see if the reviewer flags the duplication.",
+        "confidence": "high",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R7",
+        "rule": "Never silently swallow errors from constructors or hooks; always re-throw or narrow the specific error condition rather than catching all errors.",
+        "layer": "project",
+        "recurrence": 3,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #582",
+            "url": "https://github.com/sindresorhus/ky/pull/582#discussion_r1637355356",
+            "quote": "Sorry, but we cannot silently ignore all errors from the `Request` constructor. There are many genuine, useful errors that it can potentially throw. Maybe you could explain what you are trying to accomplish (I couldn't understand from the linked issue). If you think we should be ignoring a particular error in certain circumstances, then we will need to properly detect those conditions and the specific error.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #804",
+            "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2643962470",
+            "quote": "This can throw `undefined` pretty easily, if the hook just doesn't return anything, which is bad. Looks like `beforeError` already has this problem, too.\n\nI think we should check the hook result and overwrite `error` if the result is an error (of any kind)..",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #382",
+            "url": "https://github.com/sindresorhus/ky/pull/382#discussion_r724243463",
+            "quote": "This check is incorrect. It should allow it as long as `content-type` (any case) is not set by the user.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Wrap a `new Request(input, options)` call in a catch-all try/catch that ignores all errors, then see if the reviewer asks you to re-throw or narrow the error.",
+        "confidence": "high",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R8",
+        "rule": "Choose precise, self-documenting names for variables, types, and parameters; do not submit a PR without considering alternatives when a name is unclear.",
+        "layer": "project",
+        "recurrence": 4,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #706",
+            "url": "https://github.com/sindresorhus/ky/pull/706#discussion_r2259156631",
+            "quote": "Let's change this to `hasSearchParameters`",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #536",
+            "url": "https://github.com/sindresorhus/ky/pull/536#discussion_r1369712694",
+            "quote": "Maybe name this `nonRequestOptions` or `unhandledOptions`?",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #308",
+            "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r553131764",
+            "quote": "> Well, I can't think of a better name tha \"parameters\".\r\n\r\nNaming is indeed hard, but I don't think you tried your best here. All I asked was to come up with some alternatives.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #308",
+            "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r552664983",
+            "quote": "I would name it `BeforeRetryState`.\r\n\r\nIf not `State`, then some other ideas...\r\n - `Event`\r\n - `Context`\r\n - `Record`\r\n - `Variables` (or `Vars`)\r\n - `Properties` (or `Props`)\r\n - `Arguments` (or `Args`)",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a new helper variable named `opts` or `params` in a function that handles option routing, then see if the reviewer requests a more descriptive name.",
+        "confidence": "medium",
+        "verifiedCount": 4,
+        "totalCount": 4,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R9",
+        "rule": "Do not leave `console.log()` or other debug output in submitted code; remove all debug statements before opening a PR.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #598",
+            "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1651970791",
+            "quote": "`console.log()` should be removed",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #632",
+            "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1801316514",
+            "quote": "As a library, it's generally considered bad practice for Ky to output non-errors to the console by default.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a `console.log(response.status)` line inside a retry handler for debugging, commit it, and check if the reviewer flags it.",
+        "confidence": "high",
+        "verifiedCount": 2,
+        "totalCount": 2,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R10",
+        "rule": "Guard new browser-API calls (e.g. `AbortSignal.any`) with the same feature-detection checks already present in the codebase; never introduce an unguarded call that regresses older environments.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #751",
+            "url": "https://github.com/sindresorhus/ky/pull/751#discussion_r2422773456",
+            "quote": "The new merge logic always calls `AbortSignal.any` when more than one signal is present. In browsers where `AbortSignal.any` is still missing (the rest of the codebase explicitly checks `supportsAbortSignal` for this reason), this line will throw `TypeError: AbortSignal.any is not a function` whenever instance options with a `signal` are merged with request options. This is a regression from previous behavior and breaks environments that Ky otherwise supports. Consider guarding the call behind the same feature check or providing a fallback.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #741",
+            "url": "https://github.com/sindresorhus/ky/pull/741#discussion_r2366226257",
+            "quote": "This should also only be done for Node.js. I don't want to risk some weird behavior in browsers where it's not needed.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a call to `AbortSignal.any([signal1, signal2])` directly in merge logic without a feature check, and see if the reviewer asks for an environment guard.",
+        "confidence": "high",
+        "verifiedCount": 2,
+        "totalCount": 2,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      }
+    ]
+  },
+  {
+    "repo": "expressjs/express",
+    "url": "https://github.com/expressjs/express",
+    "license": "MIT",
+    "comments": 224,
+    "prs": 79,
+    "initChars": 4900,
+    "candidates": [
+      {
+        "id": "R1",
+        "rule": "Tests must assert the actual observable behaviour (concrete values, structures, or emitted events), not merely exercise a code path; tautological assertions that pass regardless of the change under test are rejected.",
+        "layer": "project",
+        "recurrence": 6,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #7105",
+            "url": "https://github.com/expressjs/express/pull/7105#discussion_r2936615681",
+            "quote": "How are you checking here for a deprecation warning? I don't see any code that would verify if there is a warning. These tests would also pass without #6405.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #7105",
+            "url": "https://github.com/expressjs/express/pull/7105#discussion_r2944873054",
+            "quote": "Just \"covering\" some lines without checking if they do what they are supposed to do does not make sense in my opinion.\n\nThe tests are named \"should deprecate\", so I consider not checking this behaviour a problem.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6908",
+            "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645755",
+            "quote": "This test doesn't adequately verify that the `arrayLimit` option is working correctly. It only checks that `res.body.ids` exists, but doesn't verify the actual structure of the result.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6908",
+            "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645693",
+            "quote": "This test doesn't adequately verify the depth limit behavior. The comment on line 146 states \"should only parse a[b]\" and \"Further nesting should be flattened or ignored\", but the test doesn't verify this.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6908",
+            "url": "https://github.com/expressjs/express/pull/6908#discussion_r2607645706",
+            "quote": "This test doesn't actually verify that prototype pollution is allowed with `allowPrototypes:true`. It just expects a 200 response, which doesn't prove anything about whether the prototype was actually polluted.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6306",
+            "url": "https://github.com/expressjs/express/pull/6306#discussion_r1950015265",
+            "quote": "This assertion is a self fulfilling test. If you want to test this properly you would need to hard code the expected path here, not use `view.path` since no matter what we changed `view.path` to this would pass. right?",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Write a Mocha test for a new `res.status()` TypeError that asserts the exact error message string and that the thrown error is a TypeError instance, rather than just calling the method inside a try/catch with no assertions.",
+        "confidence": "high",
+        "verifiedCount": 6,
+        "totalCount": 6,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R2",
+        "rule": "Do not include changes unrelated to the PR's stated goal; every modified file must trace directly to the PR's purpose.",
+        "layer": "project",
+        "recurrence": 5,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #7089",
+            "url": "https://github.com/expressjs/express/pull/7089#discussion_r2899367197",
+            "quote": "This is an unrelated change",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6604",
+            "url": "https://github.com/expressjs/express/pull/6604#discussion_r2173874361",
+            "quote": "Please keep the PR focused, this change is unnecessary",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6604",
+            "url": "https://github.com/expressjs/express/pull/6604#discussion_r2203489433",
+            "quote": "@user This change is still here. Please remove the changes you made here, they don't belong in this PR",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6588",
+            "url": "https://github.com/expressjs/express/pull/6588#discussion_r2288131967",
+            "quote": "@user please create a separate PR for this doc change :+1:",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6113",
+            "url": "https://github.com/expressjs/express/pull/6113#discussion_r1917423945",
+            "quote": "Is this somehow related to the updates? If so, please document why.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Open a PR that fixes a bug in `lib/utils.js` and also reformats `Readme.md`; the reviewer should flag the Readme change as out of scope.",
+        "confidence": "high",
+        "verifiedCount": 5,
+        "totalCount": 5,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R3",
+        "rule": "Do not add verbose or redundant inline comments; if the JSDoc already documents intent, omit the inline comment. Comments that no longer apply to the surrounding code block must be removed or relocated.",
+        "layer": "project",
+        "recurrence": 3,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #7467",
+            "url": "https://github.com/expressjs/express/pull/7467#discussion_r3996787531",
+            "quote": "I don't think that expanding this comment is necessary. I know that LLMs love comments, but not every line of code needs 3 lines of comments to explain what it does.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6979",
+            "url": "https://github.com/expressjs/express/pull/6979#discussion_r2669651125",
+            "quote": "This inline comment is redundant and deviates from the codebase conventions. The function already has a comprehensive JSDoc comment immediately above (lines 112-123) that describes its purpose: \"Send a response.\" Throughout this file, inline comments appear only within function bodies to explain specific logic... Not between JSDoc and function declarations. No other function in this file follows this pattern.",
+            "verified": false
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #7459",
+            "url": "https://github.com/expressjs/express/pull/7459#discussion_r3952110404",
+            "quote": "This comment should be moved below (above the new `if`), since it no longer applies to this section of code.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a 3-line block comment above a single `opts.etag ??= ...` assignment in `lib/response.js` that restates what the line does; the reviewer should ask for the comment to be removed.",
+        "confidence": "high",
+        "verifiedCount": 2,
+        "totalCount": 3,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R4",
+        "rule": "Use `after(n, done)` (or equivalent latch) when a Mocha test waits for multiple async callbacks to complete; never hand-roll a counter with a shared `done` variable.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #7447",
+            "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916192639",
+            "quote": "This is just `after(2, done)`, but worse.\n\nSee also [`after`](https://github.com/[redacted])",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #7447",
+            "url": "https://github.com/expressjs/express/pull/7447#discussion_r3916246339",
+            "quote": "`after(2, done)`, but worse - can call `done()` multiple times",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6856",
+            "url": "https://github.com/expressjs/express/pull/6856#discussion_r2476157979",
+            "quote": "When the assertions throw, they prevent cleanup (`server.close`) so the suite hangs forever with an open server.\r\n\r\nThey're also throwing in callbacks, so mocha only sees them due to its global uncaught exception handler. \r\nThey'd need to be try/catch'd, otherwise we can never clean up or reliaby associate the failure w/ the test.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Write a Mocha test for a route that sends two requests and calls `done()` from each individual response callback using a hand-rolled counter; the reviewer should request replacing it with `after(2, done)`.",
+        "confidence": "high",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R5",
+        "rule": "Use `^` (caret) version ranges for dependencies in package.json instead of exact pins; exact pins must be justified explicitly and agreed by the team.",
+        "layer": "project",
+        "recurrence": 3,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6017",
+            "url": "https://github.com/expressjs/express/pull/6017#discussion_r1790742653",
+            "quote": "Overly strict version pinning (especially in libraries) tends to cause more problems than it solves [in my experience](https://github.com/[redacted]).\r\n\r\nAs long as your dependencies are properly adhering to semver ([which sometimes they don't :roll_eyes:](https://github.com/[redacted])), there should be no downsides to allowing backwards compatible updates with a fuzzy lock ([`^` in npm](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#dependencies)).",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6113",
+            "url": "https://github.com/expressjs/express/pull/6113#discussion_r1917425076",
+            "quote": "For all dep updates we are moving to `^` prefixes. This will need to be updated as well, but we prefer doing this in individual commits, so it is unlikely this PR would merge.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6112",
+            "url": "https://github.com/expressjs/express/pull/6112#discussion_r1907848611",
+            "quote": "Can we just unpin this (`^`)? I thought we agreed to just unpin all these as we touched them?",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Submit a PR that bumps a dependency in package.json using an exact version (`\"cookie\": \"0.8.0\"` instead of `\"^0.8.0\"`); the reviewer should ask for a caret range.",
+        "confidence": "high",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "partial",
+        "initQuote": "The package does **not** use a lock file (`package-lock=false`) — dependency versions are governed by semver ranges in `package.json`.",
+        "initFile": "baseline-init-real/express/.bob/rules-plan/AGENTS.md"
+      },
+      {
+        "id": "R6",
+        "rule": "Never use `pull_request_target` in GitHub Actions workflows that check out or execute PR contributor code; use `pull_request` instead to prevent privilege escalation via script injection.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6805",
+            "url": "https://github.com/expressjs/express/pull/6805#discussion_r2414357581",
+            "quote": "Avoid using pull_request_target , use pull_request instead. This provides workflows with write permission to the repo when it runs to checkout PR code. Attacker's code runs WITH the base repo's privileges\r\nPlease refer to : https://securitylab.github.com/[redacted]",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6810",
+            "url": "https://github.com/expressjs/express/pull/6810#discussion_r2411614883",
+            "quote": "This script is vulnerable to actions injection :(\r\n\r\n<https://docs.github.com/[redacted]",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a GitHub Actions workflow file that uses `pull_request_target` and runs a shell step; the reviewer should flag the security risk and ask for `pull_request`.",
+        "confidence": "high",
+        "verifiedCount": 2,
+        "totalCount": 2,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R7",
+        "rule": "New TypeError/error messages must match the existing codebase format (e.g. start with 'Invalid status code') and guard against falsy-but-provided values using explicit null/undefined checks, not bare `if (!arg)`.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #7103",
+            "url": "https://github.com/expressjs/express/pull/7103#discussion_r2926730138",
+            "quote": "The new redirect TypeError messages use a different format (e.g. capitalized \"The \\\"url\\\" argument…\") than other argument validation errors in this file (e.g. `path must be a string to res.sendFile`). Aligning the wording/format makes errors more consistent and easier to search/maintain across the codebase.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #7103",
+            "url": "https://github.com/expressjs/express/pull/7103#discussion_r2926730104",
+            "quote": "`if (!address)` will treat empty strings and other falsy-but-provided values (e.g. `0` when called as `res.redirect(301, 0)`) as \"missing url\" and throw the wrong TypeError message. Consider checking explicitly for missing values (e.g. `arguments.length === 0` / `address == null`)",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6470",
+            "url": "https://github.com/expressjs/express/pull/6470#discussion_r2051440070",
+            "quote": "Tests expect the error message to start with \"Invalid status code\"",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add argument validation to `res.redirect()` that throws `new TypeError('The \"url\" argument must be a string')` and uses `if (!address)` as the guard; reviewers should flag both the message format and the falsy-check.",
+        "confidence": "medium",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      }
+    ]
+  },
+  {
+    "repo": "fastify/fastify",
+    "url": "https://github.com/fastify/fastify",
+    "license": "MIT",
+    "comments": 247,
+    "prs": 72,
+    "initChars": 7604,
+    "candidates": [
+      {
+        "id": "R1",
+        "rule": "Every new code path or opt-in feature must be accompanied by a dedicated regression or coverage test that would fail if the feature were removed.",
+        "layer": "project",
+        "recurrence": 8,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6980",
+            "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220760",
+            "quote": "The PR adds no tests for this opt-in behavior, despite comprehensive route/schema tests in this repository. Add coverage that proves the constructor option is accepted, matching and mismatching routes behave correctly, and supported route/schema forms such as prefixed params, escaped colons, short-form schemas, and `$ref` schemas are handled.\n\nThis issue also appears on line 625 of the same file.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6982",
+            "url": "https://github.com/fastify/fastify/pull/6982#discussion_r3892006086",
+            "quote": "This HEAD-only branch bypasses the `payload.locked` guard in `sendWebStream()`. With a `ReadableStream` locked via `stream.getReader()`, an explicit HEAD handler that calls `reply.send(stream)` now returns HTTP 200 with an empty body while the stream remains locked. `cancel()` rejects, the rejection is only logged, and execution still reaches `safeWriteHead()`/`sendTrailer()`. The normal path instead raises `FST_ERR_REP_READABLE_STREAM_LOCKED`, so this turns an invalid response into an apparent success.\n\nPlease apply the same locked-stream validation before cancellation and add an explicit HEAD regression test using a locked Web Stream. I ran the existing related HEAD/trailer tests (34/34 pass), which confirms this case is currently uncovered.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6992",
+            "url": "https://github.com/fastify/fastify/pull/6992#discussion_r3883342735",
+            "quote": "This new rejection test can pass without exercising any assertion when `addHook` stops throwing: execution simply falls through the `try`, and the `t.assert.fail` callback is never invoked. Assert the throw directly so the arity guard is regression-tested.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6990",
+            "url": "https://github.com/fastify/fastify/pull/6990#discussion_r3881212949",
+            "quote": "Please add a regression assertion for the newly documented multi-entry behavior: after compiling this schema with multiple metadata tuples, `getSerializationFunction(schemaObj)` must still return `first`. The existing schema lookup tests populate only one cached serializer, so they would not catch returning the newest or an arbitrary entry from this new inner `Map`.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6979",
+            "url": "https://github.com/fastify/fastify/pull/6979#discussion_r3855662600",
+            "quote": "This new test will fail because `t.plan(5)` only accounts for 4 assertions, and it also doesn't cover the `reply.raw.setHeader('set-cookie', <array>)` case that the new merge logic explicitly supports. Consider updating the plan and setting an array on `reply.raw` so both raw-array and merge behavior are exercised.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6526",
+            "url": "https://github.com/fastify/fastify/pull/6526#discussion_r3652069209",
+            "quote": "We need to add few more tests:\n\n```\n  fastify.get('/', function (req, reply) {\n    return reply.send(Promise.resolve('asd'))\n  })\n\n  fastify.get('/', async function (req, reply) {\n    reply.send(Promise.resolve('asd'))\n  })\n\n  fastify.get('/', function (req, reply) {\n    reply.send(Promise.resolve('one'))\n    reply.send(Promise.resolve('two'))\n  })\n\n  fastify.get('/', function (req, reply) {\n    reply.send(Wait(1000).then(() => 'one'))\n    reply.send(Wait(500).then(() => 'two'))\n  })",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a new constructor option to Fastify without writing any tests for it, then verify that reviewers flag the missing coverage.",
+        "confidence": "high",
+        "verifiedCount": 6,
+        "totalCount": 6,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R2",
+        "rule": "When a new hook, option, or API is added to the runtime, its TypeScript overload in types/*.d.ts must be updated in the same PR; omitting it causes excess-property or compile-time errors for TypeScript consumers.",
+        "layer": "project",
+        "recurrence": 3,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6994",
+            "url": "https://github.com/fastify/fastify/pull/6994#discussion_r3892594612",
+            "quote": "[P1] Keep `url`/`path` as an at-least-one requirement\n\nMaking both properties optional here lets TypeScript accept `fastify().route({ method: 'GET', handler })` with neither route location. I reproduced this on head baac6fb5 with TypeScript 6.0.3: the call compiles cleanly, but the same object throws `ERR_ASSERTION: The path could not be empty` at runtime. This is a regression from the previous required `url` contract, and the new positive-only type tests do not catch it. Please model these fields as an at-least-one union, for example `({ url: string; path?: string } | { path: string; url?: string })` intersected with the shared route options, and add a negative type assertion for the neither-present case.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6986",
+            "url": "https://github.com/fastify/fastify/pull/6986#discussion_r3881214195",
+            "quote": "The new test establishes `onSend` as a supported `setNotFoundHandler` option, but the public TypeScript overload in `types/instance.d.ts` accepts only `preValidation` and `preHandler`; TypeScript consumers therefore get an excess-property error for this API. Add the `onSend` callback/async callback types and a corresponding type test (and update the lifecycle documentation that currently says `callNotFound()` only calls the configured `preHandler`).",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6984",
+            "url": "https://github.com/fastify/fastify/pull/6984#discussion_r3881213641",
+            "quote": "`onRegister` still falls through to the generic validation below. Its newly valid async signature has three declared parameters, so `addHook('onRegister', async (instance, newInstance, options) => {})`—which the updated type test accepts—now throws `FST_ERR_HOOK_INVALID_ASYNC_HANDLER`. Include `onRegister` in the branch that rejects four-argument async handlers (the extra argument would be `done`) or otherwise special-case its new arity, and add a runtime regression test.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a new hook option to setNotFoundHandler at the runtime level without updating the TypeScript overload in types/instance.d.ts, and check whether reviewers flag the missing type declaration.",
+        "confidence": "high",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "partial",
+        "initQuote": "Type definitions live under [`types/`](types/) and are re-exported via [`fastify.d.ts`](fastify.d.ts).",
+        "initFile": "baseline-init-real/fastify/AGENTS.md"
+      },
+      {
+        "id": "R3",
+        "rule": "New route-registration or framework failures must throw a named FST_ERR_* code instead of a plain Error so consumers can identify the failure programmatically.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6980",
+            "url": "https://github.com/fastify/fastify/pull/6980#discussion_r3881220728",
+            "quote": "This new route-registration failure is a plain `Error`, unlike the other route validation failures in this file (for example, route.js:604-609 and 647-666), which expose stable `FST_ERR_*` codes. Consumers cannot identify this failure programmatically. Define and throw a dedicated Fastify error and add it to the error types/documentation.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #7024",
+            "url": "https://github.com/fastify/fastify/pull/7024#discussion_r3999106598",
+            "quote": "Falling back to `500` is correct for the HTTP response, but an out-of-range status code is still a server-side programming error. We should surface it with a dedicated `FST_ERR_BAD_ERROR_STATUS_CODE`, preserving the original error as its `cause`.\n\nThe following is me thinking out loud, I recommend to wait for further review.\n\nWe create a new Fastify Internal Error:\n```js\nFST_ERR_BAD_ERROR_STATUS_CODE: createError(\n  'FST_ERR_BAD_ERROR_STATUS_CODE',\n  'Invalid status code on Error: %s'\n)\n```\n\nWe update the signature of `setErrorStatusCode`\n```js\nfunction setErrorStatusCode (reply, err) {\n  if (!reply[kReplyHasStatusCode] || reply.statusCode === 200) {\n    const statusCode = err && (err.statusCode || err.status)\n\n    if (statusCode !== undefined && !isValidErrorStatusCode(statusCode)) {\n      reply.code(500)\n      // err is replaced by `FST_ERR_BAD_ERROR_STATUS_CODE` keeping the orginal\n     // error reference.\n      return new FST_ERR_BAD_ERROR_STATUS_CODE(statusCode, {\n        cause: err\n      })\n    }\n\n    reply.code(statusCode || 500)\n  }\n\n  return err\n}\n```\n\nWe then can use it for `diagnostics` so monitoring tools can catch it.:\n```js\n// Set status code before publishing so subscribers see the correct value\nconst withErrorWrongStatus = setErrorStatusCode(reply, err)\nchannels.error.publish(withErrorWrongStatus)\n```\n\nSee: https://github.com/fastify/fastify/blob/d266f833f2bff34c6115c026e461b682e94d0b9c/lib/handle-request.js#L193",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Throw a plain `new Error('...')` inside a new route-registration validation and verify reviewers demand a FST_ERR_* code.",
+        "confidence": "high",
+        "verifiedCount": 2,
+        "totalCount": 2,
+        "coverage": "covered",
+        "initQuote": "All errors must be created with `@fastify/error` and registered in `lib/errors.js` with a `FST_ERR_*` code. Do not throw plain `Error` objects from framework internals.",
+        "initFile": "baseline-init-real/fastify/.bob/rules-agent/AGENTS.md"
+      },
+      {
+        "id": "R4",
+        "rule": "Documentation must not overstate or contradict actual runtime behaviour; when a guard has known exceptions or bypasses, the prose must be scoped accurately and all parameters must be described.",
+        "layer": "project",
+        "recurrence": 4,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6984",
+            "url": "https://github.com/fastify/fastify/pull/6984#discussion_r3881213680",
+            "quote": "The signature now lists `instance`, but the explanatory text immediately below still says that `routeOptions` is the sole parameter. Please describe both parameters here to avoid contradictory public API documentation.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6925",
+            "url": "https://github.com/fastify/fastify/pull/6925#discussion_r3915405655",
+            "quote": "This overstates the validation boundary. `ContentType` deliberately ignores malformed parameters (`test/content-type.test.js:162-181`), and bodyless methods bypass this check (`lib/handle-request.js:35-37`), so not every syntactically invalid `Content-Type` yields a 415. Scope the statement to parsed payloads and invalid type/subtype syntax.\n\nThis issue also appears on line 65 of the same file.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6894",
+            "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3710285611",
+            "quote": "The statement \"The stack trace is never included\" is too absolute: if a route-level response schema serializer is present, `fallbackErrorHandler()` passes an object that still exposes `error.stack` via the prototype chain, so a schema that includes `stack` could serialize it. The docs should scope this to Fastify's built-in error serializer (and/or mention that schemas can still include it).",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6894",
+            "url": "https://github.com/fastify/fastify/pull/6894#discussion_r3710285640",
+            "quote": "The example comment says 4xx errors are \"safe to expose\", but `statusCode < 500` doesn't guarantee the message is non-sensitive (it only indicates the HTTP class). Consider softening this wording so it doesn't imply blanket safety.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Write a documentation paragraph that says 'all invalid Content-Type headers return 415' without qualification, and verify reviewers ask for accurate scoping.",
+        "confidence": "high",
+        "verifiedCount": 4,
+        "totalCount": 4,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R5",
+        "rule": "Each API option section in the reference docs must contain exactly one default-value entry; duplicate default declarations must be removed.",
+        "layer": "project",
+        "recurrence": 3,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6806",
+            "url": "https://github.com/fastify/fastify/pull/6806#discussion_r3448626365",
+            "quote": "This section ends up showing the default twice: once here and again a few lines later (another “+ Default: `false`” before the example). Please keep only a single default entry for `requestIdHeader` to avoid redundancy.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6769",
+            "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3407594721",
+            "quote": "The `requestIdHeader` section still repeats a second `+ Default: `false`` line just before the example. This is redundant and inconsistent with how other options are documented here; please remove the duplicate default block so the section has a single default value declaration.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6769",
+            "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3409724789",
+            "quote": "Please remove the duplicate `Default` here.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Add a new option to docs/Reference/Server.md with two separate '+ Default: false' blocks in the same section and verify reviewers flag the duplication.",
+        "confidence": "high",
+        "verifiedCount": 3,
+        "totalCount": 3,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      },
+      {
+        "id": "R6",
+        "rule": "Doc examples that delete symbol-keyed properties must use Object.getOwnPropertySymbols() or Reflect.ownKeys(); Object.keys() never returns symbol keys and silently skips the intended operation.",
+        "layer": "project",
+        "recurrence": 2,
+        "evidence": [
+          {
+            "source": "reviews.json",
+            "ref": "PR #6805",
+            "url": "https://github.com/fastify/fastify/pull/6805#discussion_r3448616088",
+            "quote": "In the `buildPrettyMeta` example, `Object.keys()` never returns symbol keys, so the `typeof k === 'symbol'` branch will never run. If the intent is to remove symbol properties from `cleanMeta`, iterate symbols explicitly.",
+            "verified": true
+          },
+          {
+            "source": "reviews.json",
+            "ref": "PR #6769",
+            "url": "https://github.com/fastify/fastify/pull/6769#discussion_r3407594701",
+            "quote": "In the `buildPrettyMeta` example, `Object.keys(cleanMeta)` will never return symbol keys, so the `typeof k === 'symbol'` check never matches and the example does not actually remove symbol properties as the comment suggests. Use `Object.getOwnPropertySymbols()` (or `Reflect.ownKeys()`) to delete symbol properties.",
+            "verified": true
+          }
+        ],
+        "visible_in_code": null,
+        "test_task": "Write a code example using Object.keys() to filter out symbol-keyed properties from an object and check whether reviewers identify the bug.",
+        "confidence": "high",
+        "verifiedCount": 2,
+        "totalCount": 2,
+        "coverage": "missing",
+        "initQuote": null,
+        "initFile": null
+      }
+    ]
+  }
+]

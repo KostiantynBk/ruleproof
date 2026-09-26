@@ -59,7 +59,10 @@
     "test_task": "Add a new option to options.ts with a JSDoc comment but omit it from readme.md, then check whether the reviewer flags the omission.",
     "confidence": "high",
     "verifiedCount": 7,
-    "totalCount": 7
+    "totalCount": 7,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R2",
@@ -93,7 +96,10 @@
     "test_task": "Write an AVA test that invokes a beforeRequest hook and asserts its output, but omit `t.plan()`, then see if the reviewer requests it.",
     "confidence": "high",
     "verifiedCount": 3,
-    "totalCount": 3
+    "totalCount": 3,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R3",
@@ -120,7 +126,10 @@
     "test_task": "Submit a test that makes a real network request to `https://example.com` to assert redirect behaviour, and see whether the reviewer asks to replace it with a local server.",
     "confidence": "high",
     "verifiedCount": 2,
-    "totalCount": 2
+    "totalCount": 2,
+    "coverage": "partial",
+    "initQuote": "`test/helpers/create-http-test-server.ts` — spins up a real Express server on a random port; call with `t` (ava `ExecutionContext`) to auto-teardown, or manage `server.close()` manually.",
+    "initFile": "baseline-init-real/ky/AGENTS.md"
   },
   {
     "id": "R4",
@@ -168,7 +177,10 @@
     "test_task": "Introduce a helper function that uses `as SomeType` to silence a TypeScript error on an options field, and check whether the reviewer asks for a proper type fix instead.",
     "confidence": "high",
     "verifiedCount": 5,
-    "totalCount": 5
+    "totalCount": 5,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R5",
@@ -216,7 +228,10 @@
     "test_task": "Write a retry test that checks the final response status but does not assert how many times the request was made, then see if the reviewer requests a `requestCount` assertion.",
     "confidence": "high",
     "verifiedCount": 5,
-    "totalCount": 5
+    "totalCount": 5,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R6",
@@ -250,7 +265,10 @@
     "test_task": "Copy-paste a timing-measurement block into two separate test functions instead of extracting a helper, then see if the reviewer flags the duplication.",
     "confidence": "high",
     "verifiedCount": 3,
-    "totalCount": 3
+    "totalCount": 3,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R7",
@@ -284,7 +302,10 @@
     "test_task": "Wrap a `new Request(input, options)` call in a catch-all try/catch that ignores all errors, then see if the reviewer asks you to re-throw or narrow the error.",
     "confidence": "high",
     "verifiedCount": 3,
-    "totalCount": 3
+    "totalCount": 3,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R8",
@@ -325,7 +346,10 @@
     "test_task": "Add a new helper variable named `opts` or `params` in a function that handles option routing, then see if the reviewer requests a more descriptive name.",
     "confidence": "medium",
     "verifiedCount": 4,
-    "totalCount": 4
+    "totalCount": 4,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R9",
@@ -352,7 +376,10 @@
     "test_task": "Add a `console.log(response.status)` line inside a retry handler for debugging, commit it, and check if the reviewer flags it.",
     "confidence": "high",
     "verifiedCount": 2,
-    "totalCount": 2
+    "totalCount": 2,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   },
   {
     "id": "R10",
@@ -379,6 +406,9 @@
     "test_task": "Add a call to `AbortSignal.any([signal1, signal2])` directly in merge logic without a feature check, and see if the reviewer asks for an environment guard.",
     "confidence": "high",
     "verifiedCount": 2,
-    "totalCount": 2
+    "totalCount": 2,
+    "coverage": "missing",
+    "initQuote": null,
+    "initFile": null
   }
 ]

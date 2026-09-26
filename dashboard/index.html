@@ -92,6 +92,19 @@
       <div id="real-ky-cards" class="real-ky-cards"></div>
     </section>
 
+    <!-- Repository gallery (populated by app.js if data/gallery.json exists) -->
+    <section id="gallery-section" hidden>
+      <h2 class="section-h2">Try it on real repositories</h2>
+      <p class="gallery-note">Rules mined by Bob from public PR review comments (reviewers anonymized), every quote verified, then compared with what Bob's /init writes for the same repo. Not A/B-tested — the sample above is.</p>
+      <p class="gallery-overall" id="gallery-overall"></p>
+      <!-- Repo selector tabs -->
+      <div class="gallery-tabs" id="gallery-tabs" role="tablist"></div>
+      <!-- Summary tiles for selected repo -->
+      <div class="gallery-summary-tiles" id="gallery-summary-tiles"></div>
+      <!-- Rule cards for selected repo -->
+      <div id="gallery-cards" class="gallery-cards"></div>
+    </section>
+
     <!-- Detail panel -->
     <section id="detail-panel" class="detail-panel" hidden>
       <div class="detail-header">
