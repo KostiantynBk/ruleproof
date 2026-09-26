@@ -31,6 +31,12 @@
     .then(suite => renderSuite(suite))
     .catch(() => { /* suite.json absent — silently skip */ });
 
+  // Load real-ky data opportunistically
+  fetch('data/real-ky.json')
+    .then(r => { if (!r.ok) throw new Error('no real-ky'); return r.json(); })
+    .then(data => renderRealKy(data))
+    .catch(() => { /* real-ky.json absent — silently skip */ });
+
   // ── Summary tiles ────────────────────────────────────────────────
   function renderSummary(data) {
     const rules = data.rules;
@@ -265,6 +271,55 @@
       .filter(l => l.startsWith('+') && !l.startsWith('+++'))
       .map(l => l.slice(1));    // strip leading '+'
     return added.length ? added.join('\n') : '(no added lines)';
+  }
+
+  // ── Real repository section ───────────────────────────────────────
+  function renderRealKy(candidates) {
+    if (!candidates || !candidates.length) return;
+
+    document.getElementById('real-ky-intro').textContent =
+      'Mined from 256 anonymized public PR review comments (60 PRs). ' +
+      'Evidence verified automatically; not A/B tested because this repo has no behavioral checks yet.';
+
+    const cardsEl = document.getElementById('real-ky-cards');
+    cardsEl.innerHTML = candidates.map(c => {
+      // Count distinct PRs in evidence
+      const prRefs = new Set(
+        (c.evidence || []).map(e => e.ref).filter(Boolean)
+      );
+      const distinctPRs = prRefs.size;
+
+      const confCls = 'badge badge-confidence-' + esc(c.confidence || 'medium');
+      const confLabel = c.confidence ? c.confidence.charAt(0).toUpperCase() + c.confidence.slice(1) : '—';
+
+      const evHTML = (c.evidence || []).map(ev => {
+        const verified  = ev.verified !== false; // null treated as verified
+        const unvBadge  = verified ? '' : '<span class="real-ky-ev-unverified-badge">unverified</span>';
+        const linkHTML  = ev.url
+          ? `<a class="real-ky-ev-link" href="${esc(ev.url)}" target="_blank" rel="noopener noreferrer">${esc(ev.ref || ev.url)}</a>`
+          : `<span class="real-ky-ev-link">${esc(ev.ref || '')}</span>`;
+        return `
+          <li class="real-ky-ev-item${verified ? '' : ' ev-unverified'}">
+            <div class="real-ky-ev-quote">"${esc(ev.quote)}"${unvBadge}</div>
+            ${linkHTML}
+          </li>`;
+      }).join('');
+
+      return `
+        <div class="real-ky-card">
+          <div class="real-ky-card-header">
+            <span class="real-ky-rule-id">${esc(c.id)}</span>
+            <span class="real-ky-rule-text">${esc(c.rule)}</span>
+          </div>
+          <div class="real-ky-meta">
+            <span>${esc(String(distinctPRs))} distinct PR${distinctPRs !== 1 ? 's' : ''}</span>
+            <span class="${confCls}">${esc(confLabel)} confidence</span>
+          </div>
+          <ul class="real-ky-evidence">${evHTML}</ul>
+        </div>`;
+    }).join('');
+
+    document.getElementById('real-ky-section').hidden = false;
   }
 
   // ── Close panel ──────────────────────────────────────────────────

@@ -1,0 +1,175 @@
+[
+  {
+    "id": "R1",
+    "rule": "When cancelling or modifying an order, always check order.status === 'shipped' first and throw AppError('ORDER_ALREADY_SHIPPED') before any further logic.",
+    "evidence": [
+      {
+        "quote": "If the order is already shipped you need to throw here — we can't let cancellation go through on a shipped order. Should be `throw new AppError('ORDER_ALREADY_SHIPPED')`.",
+        "ref": "pr:13, src/orders.js:88",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Same issue as PR #13 — you cannot cancel a shipped order. The guard should be at the top of this function: check status, throw `AppError('ORDER_ALREADY_SHIPPED')` immediately.",
+        "ref": "pr:19, src/orders.js:93",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Shipped orders are final. Any attempt to modify or cancel must throw `AppError('ORDER_ALREADY_SHIPPED')` — we've reverted this twice already, please add a test to lock it in.",
+        "ref": "pr:27, src/orders.js:90",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Revert \"Allow cancelling shipped orders\" (#19)",
+        "ref": "commit e8b2209",
+        "url": null,
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 4,
+    "total": 4
+  },
+  {
+    "id": "R2",
+    "rule": "Always call audit.record(eventName, data) — never audit.log(). The data object must include orderId, and eventName must follow the pattern 'order.<verb>'.",
+    "evidence": [
+      {
+        "quote": "We're calling `audit.log(...)` but that method doesn't exist. The module only exposes `audit.record(eventName, data)`. This will blow up at runtime.",
+        "ref": "pr:15, src/orders.js:61",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Still using `audit.log` — this doesn't exist. Switch to `audit.record('order.cancelled', { orderId: order.id })`. Event names are `order.<verb>` and data must include `orderId`.",
+        "ref": "pr:20, src/orders.js:55",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "`audit.record` takes `(eventName, data)` where data must have `orderId`. Something like `audit.record('order.refunded', { orderId: order.id, amountCents })`. There's no `audit.log`.",
+        "ref": "pr:25, src/orders.js:66",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "TypeError: audit.log is not a function",
+        "ref": "run-1412, line 16",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Fix audit calls to use audit.record with correct event names (#25)",
+        "ref": "commit 7c2e841",
+        "url": null,
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 5,
+    "total": 5
+  },
+  {
+    "id": "R3",
+    "rule": "Always use clock.now() for all timestamps — never Date.now(). The clock module is injected specifically to allow time to be frozen in tests.",
+    "evidence": [
+      {
+        "quote": "Use `clock.now()` here instead of `Date.now()`. The whole point of injecting the clock is so tests can freeze time — `Date.now()` breaks that.",
+        "ref": "pr:14, src/orders.js:34",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "`clock.now()` please, not `Date.now()`. We've had this conversation before — see PR #14.",
+        "ref": "pr:18, src/orders.js:29",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Switch remaining Date.now() calls to clock.now() (#18)",
+        "ref": "commit 1c0a347",
+        "url": null,
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 3,
+    "total": 3
+  },
+  {
+    "id": "R4",
+    "rule": "Issue all refunds via payments.refund(order.paymentRef, amountCents). Never read from or write to total_cents directly to perform a refund.",
+    "evidence": [
+      {
+        "quote": "Refunds have to go through `payments.refund(order.paymentRef, amountCents)`. Don't touch `total_cents` directly — invoicing reads that field and any mutation will corrupt the invoice.",
+        "ref": "pr:17, src/orders.js:74",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "You're zeroing out `total_cents` again. Don't do this — invoicing reads it directly. Issue the refund via `payments.refund(order.paymentRef, amountCents)` and leave `total_cents` alone.",
+        "ref": "pr:23, src/orders.js:80",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Revert \"Refund by zeroing total_cents\" - broke invoicing (#23)",
+        "ref": "commit 0db3fa9",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Issue refunds via payments.refund, remove direct total_cents mutation (#17)",
+        "ref": "commit b5e9f61",
+        "url": null,
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 4,
+    "total": 4
+  },
+  {
+    "id": "R5",
+    "rule": "Use Math.floor (not Math.round) when calculating partial refund amounts in cents. Math.round can produce a 1-cent over-refund that causes reconciliation failures.",
+    "evidence": [
+      {
+        "quote": "Be careful with rounding on partial refunds — floating point here can bite you.",
+        "ref": "pr:15, src/orders.js:112",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "To be precise on the rounding: use `Math.floor`, never `Math.round`. Even 1 cent over-refund is a real-money error that will cause reconciliation failures.",
+        "ref": "pr:22, src/orders.js:118",
+        "url": null,
+        "verified": true,
+        "reason": null
+      },
+      {
+        "quote": "Apply Math.floor for partial refund amount calculation (#22)",
+        "ref": "commit 9a1bc55",
+        "url": null,
+        "verified": true,
+        "reason": null
+      }
+    ],
+    "verified": 3,
+    "total": 3
+  }
+]

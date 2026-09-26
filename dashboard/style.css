@@ -508,6 +508,124 @@ td {
 .suite-cell-mid   { color: var(--ineffective-text); background: rgba(154,103,0,.08); }
 .suite-cell-bad   { color: var(--harmful-text);     background: rgba(182,35,36,.08); }
 
+/* ── Real-repo section ──────────────────────────────────────────── */
+#real-ky-section {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+}
+
+.real-ky-intro {
+  font-size: .875rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: .25rem;
+}
+
+.real-ky-cards {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.real-ky-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.real-ky-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.real-ky-rule-id {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.real-ky-rule-text {
+  font-size: .88rem;
+  color: var(--text);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.real-ky-meta {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  flex-wrap: wrap;
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+.badge-confidence-high   { background: var(--keep);        color: #fff; }
+.badge-confidence-medium { background: var(--ineffective);  color: #fff; }
+.badge-confidence-low    { background: var(--redundant);    color: var(--redundant-text); }
+
+.real-ky-evidence {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  padding-top: .25rem;
+  border-top: 1px solid var(--border);
+}
+
+.real-ky-ev-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 5px;
+  padding: .5rem .75rem;
+  font-size: .82rem;
+}
+
+.real-ky-ev-item.ev-unverified {
+  border-left-color: var(--harmful-text);
+}
+
+.real-ky-ev-quote {
+  color: var(--text);
+  line-height: 1.45;
+  margin-bottom: .2rem;
+}
+
+.real-ky-ev-link {
+  font-size: .72rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--mono);
+}
+.real-ky-ev-link:hover { text-decoration: underline; }
+
+.real-ky-ev-unverified-badge {
+  font-size: .68rem;
+  background: var(--rejected);
+  color: var(--rejected-text);
+  border-radius: 3px;
+  padding: .1em .4em;
+  margin-left: .4em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
 /* ── Footer ─────────────────────────────────────────────────────── */
 footer {
   text-align: center;

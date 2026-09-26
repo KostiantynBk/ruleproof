@@ -14,6 +14,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { verifyEvidence as verifyEvidenceShared } from './scripts/verify-evidence.mjs';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Resolve paths
@@ -68,22 +69,28 @@ function loadText(filePath) {
 }
 
 function verifyEvidence(rule) {
-  const unverifiable = [];
+  // Derive the unique source dirs referenced by this rule's evidence.
+  const sourceDirs = [...new Set(
+    (rule.evidence || []).map(ev => {
+      const full = path.join(REPO_ROOT, ev.source);
+      // If the source is a file (e.g. reviews.json or git-log.txt), use its directory.
+      try {
+        const stat = fs.statSync(full);
+        return stat.isDirectory() ? full : path.dirname(full);
+      } catch {
+        return path.dirname(full);
+      }
+    })
+  )];
 
-  for (const ev of rule.evidence) {
-    // ev.source is relative to REPO_ROOT
-    const sourceFile = path.join(REPO_ROOT, ev.source);
-    const text = loadText(sourceFile);
-    if (text === null) {
-      unverifiable.push({ quote: ev.quote, reason: `file not found: ${ev.source}` });
-      continue;
-    }
-    if (!text.includes(ev.quote)) {
-      unverifiable.push({ quote: ev.quote, reason: `quote not found in ${ev.source}` });
-    }
-  }
+  // Use the first dir as historyDir and any second as srcDir (runner only has
+  // REPO_ROOT-relative sources; one dir is the common case).
+  const { results } = verifyEvidenceShared([rule], sourceDirs[0] ?? REPO_ROOT, sourceDirs[1] ?? null);
+  const ruleResult  = results[0];
 
-  return unverifiable;
+  return (ruleResult?.evidence ?? [])
+    .filter(e => !e.verified)
+    .map(e => ({ quote: e.quote, reason: e.reason }));
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

@@ -1,0 +1,384 @@
+[
+  {
+    "id": "R1",
+    "rule": "Keep TypeScript JSDoc comments and the README in sync: every option, parameter, or behaviour documented in one must be mirrored in the other.",
+    "layer": "project",
+    "recurrence": 7,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #454",
+        "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r996409637",
+        "quote": "The docs for TS and readme should be in sync as much as possible. It makes it hard to maintain if they differ significantly.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #454",
+        "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r1008699633",
+        "quote": "This sentence still needs to be added to the readme.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #459",
+        "url": "https://github.com/sindresorhus/ky/pull/459#discussion_r1008700396",
+        "quote": "You also need to document this in the TS doc comment.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #417",
+        "url": "https://github.com/sindresorhus/ky/pull/417#discussion_r805319986",
+        "quote": "Readme and TS docs should be in sync.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #632",
+        "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1759693315",
+        "quote": "The TS doc comments and readme should be in sync.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #611",
+        "url": "https://github.com/sindresorhus/ky/pull/611#discussion_r1682870371",
+        "quote": "It would be nice to include this part in the `.extends` TS doc comment too.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #840",
+        "url": "https://github.com/sindresorhus/ky/pull/840#discussion_r2996771843",
+        "quote": "TS doc comments needs to be updated too.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Add a new option to options.ts with a JSDoc comment but omit it from readme.md, then check whether the reviewer flags the omission.",
+    "confidence": "high",
+    "verifiedCount": 7,
+    "totalCount": 7
+  },
+  {
+    "id": "R2",
+    "rule": "Use `t.plan()` in every AVA test that contains async callbacks or hooks so that missing or skipped assertions are caught as test failures.",
+    "layer": "project",
+    "recurrence": 4,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #671",
+        "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951321300",
+        "quote": "Use `t.plan()` to guarantee that the hook and its assertion runs.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #671",
+        "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951381960",
+        "quote": "Indeed, the test suite is pretty good in general but we've been a bit inconsistent with assertion planning. Feel free to add `t.plan()` to some other tests if you feel motivated to do so, whether in this PR or otherwise.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #772",
+        "url": "https://github.com/sindresorhus/ky/pull/772#discussion_r2447839680",
+        "quote": "I think we should add `t.plan()` to at least this test, if not the others, too, in case the hooks don't run for some reason.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Write an AVA test that invokes a beforeRequest hook and asserts its output, but omit `t.plan()`, then see if the reviewer requests it.",
+    "confidence": "high",
+    "verifiedCount": 3,
+    "totalCount": 3
+  },
+  {
+    "id": "R3",
+    "rule": "Never hit external third-party URLs (e.g. example.com) in tests; use the project's local HTTP test server instead to prevent flaky CI failures.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #858",
+        "url": "https://github.com/sindresorhus/ky/pull/858#discussion_r3071861480",
+        "quote": "These tests reach out to `example.com` but they should probably use a local echo server instead.\n\nTesting against 3rd party services should only be done when necessary, because it causes sporadic test failures when a site is down. Tests can also hit rate limits or IP bans in CI very easily.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #734",
+        "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2341573014",
+        "quote": "These tests are mostly just mimicking the current implementation to test the internal utilities. I would prefer that they use a server and Ky itself, as most of the other tests do, to echo back the de-serialized body length that it receives and maybe also the `Content-Length`, for example, and then run assertions for different body types based on that and the `totalBytes` parameter. Thus making the assertions more realistic and less coupled to the implementation.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Submit a test that makes a real network request to `https://example.com` to assert redirect behaviour, and see whether the reviewer asks to replace it with a local server.",
+    "confidence": "high",
+    "verifiedCount": 2,
+    "totalCount": 2
+  },
+  {
+    "id": "R4",
+    "rule": "Avoid TypeScript `as` casts wherever possible; fix the underlying type instead. Use casts only as a last resort and accompany them with a comment explaining why.",
+    "layer": "project",
+    "recurrence": 5,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #339",
+        "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626639778",
+        "quote": "Sidenote: We should also try to reduce use of `as` as it just overrides the type no matter what.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #339",
+        "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626710880",
+        "quote": "I mean didn't mean to imply that you added it. Was just saying in general, we should try to reduce the `as` whenever possible as they're often as bad as `@user`.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #339",
+        "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r627971443",
+        "quote": "Why is this needed? Is the `options.headers` type not correct?",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #671",
+        "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951342746",
+        "quote": "I am however curious why the type assertions `(this._input as Request)` appear three times in this file. The constructor's signature indicates `input` (which is being assigned to `this._input` immediately) can also be of type `string` or `URL` which would produce an exception at any of these three sites.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #339",
+        "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626643593",
+        "quote": "The real issue is that the `options` parameter doesn't have the correct type.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Introduce a helper function that uses `as SomeType` to silence a TypeScript error on an options field, and check whether the reviewer asks for a proper type fix instead.",
+    "confidence": "high",
+    "verifiedCount": 5,
+    "totalCount": 5
+  },
+  {
+    "id": "R5",
+    "rule": "Ensure every test assertion covers the key side-effect or state change (e.g. assert `requestCount`, not just the response); tests that silently allow regressions are rejected.",
+    "layer": "project",
+    "recurrence": 6,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #598",
+        "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1651983533",
+        "quote": "Missing an assertion for the `requestCount`.\r\n\r\nLooks like some of the other retry tests also have this mistake.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #746",
+        "url": "https://github.com/sindresorhus/ky/pull/746#discussion_r2403340627",
+        "quote": "Same here. Should be an additional assertion.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #845",
+        "url": "https://github.com/sindresorhus/ky/pull/845#discussion_r2990240906",
+        "quote": "This test only asserts about the response. It doesn't really check anything regarding the upload or the progress callback.\n\nI think ideally it would check that the `'hello'` body was received and that the progress callback was not called.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #844",
+        "url": "https://github.com/sindresorhus/ky/pull/844#discussion_r2986609399",
+        "quote": "The `retry.afterStatusCodes` regression test doesn't currently prove replacement semantics: it would still pass even if `afterStatusCodes` were concatenated (429 would still be present, retries would still succeed, and `requestCount` would still be 3).",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #416",
+        "url": "https://github.com/sindresorhus/ky/pull/416#discussion_r780039926",
+        "quote": "Can you also add tests for 202s with a body, one with valid JSON and one with invalid JSON (e.g. plain text)?",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Write a retry test that checks the final response status but does not assert how many times the request was made, then see if the reviewer requests a `requestCount` assertion.",
+    "confidence": "high",
+    "verifiedCount": 5,
+    "totalCount": 5
+  },
+  {
+    "id": "R6",
+    "rule": "Do not duplicate logic: extract shared code into a helper rather than repeating it across multiple call sites or tests.",
+    "layer": "project",
+    "recurrence": 3,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #858",
+        "url": "https://github.com/sindresorhus/ky/pull/858#discussion_r3071880285",
+        "quote": "This seems to be handled twice. Once here and once in the loop. I think only the loop is necessary.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #533",
+        "url": "https://github.com/sindresorhus/ky/pull/533#discussion_r1359861378",
+        "quote": "I feel like the performance mesurement code could be abstracted a bit so we don't have so much duplication between the tests.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #632",
+        "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1747852048",
+        "quote": "Seems to me like we should just rename `DownloadProgress` to `Progress` or `LoadProgress` or something and then reuse it.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Copy-paste a timing-measurement block into two separate test functions instead of extracting a helper, then see if the reviewer flags the duplication.",
+    "confidence": "high",
+    "verifiedCount": 3,
+    "totalCount": 3
+  },
+  {
+    "id": "R7",
+    "rule": "Never silently swallow errors from constructors or hooks; always re-throw or narrow the specific error condition rather than catching all errors.",
+    "layer": "project",
+    "recurrence": 3,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #582",
+        "url": "https://github.com/sindresorhus/ky/pull/582#discussion_r1637355356",
+        "quote": "Sorry, but we cannot silently ignore all errors from the `Request` constructor. There are many genuine, useful errors that it can potentially throw. Maybe you could explain what you are trying to accomplish (I couldn't understand from the linked issue). If you think we should be ignoring a particular error in certain circumstances, then we will need to properly detect those conditions and the specific error.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #804",
+        "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2643962470",
+        "quote": "This can throw `undefined` pretty easily, if the hook just doesn't return anything, which is bad. Looks like `beforeError` already has this problem, too.\n\nI think we should check the hook result and overwrite `error` if the result is an error (of any kind)..",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #382",
+        "url": "https://github.com/sindresorhus/ky/pull/382#discussion_r724243463",
+        "quote": "This check is incorrect. It should allow it as long as `content-type` (any case) is not set by the user.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Wrap a `new Request(input, options)` call in a catch-all try/catch that ignores all errors, then see if the reviewer asks you to re-throw or narrow the error.",
+    "confidence": "high",
+    "verifiedCount": 3,
+    "totalCount": 3
+  },
+  {
+    "id": "R8",
+    "rule": "Choose precise, self-documenting names for variables, types, and parameters; do not submit a PR without considering alternatives when a name is unclear.",
+    "layer": "project",
+    "recurrence": 4,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #706",
+        "url": "https://github.com/sindresorhus/ky/pull/706#discussion_r2259156631",
+        "quote": "Let's change this to `hasSearchParameters`",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #536",
+        "url": "https://github.com/sindresorhus/ky/pull/536#discussion_r1369712694",
+        "quote": "Maybe name this `nonRequestOptions` or `unhandledOptions`?",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #308",
+        "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r553131764",
+        "quote": "> Well, I can't think of a better name tha \"parameters\".\r\n\r\nNaming is indeed hard, but I don't think you tried your best here. All I asked was to come up with some alternatives.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #308",
+        "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r552664983",
+        "quote": "I would name it `BeforeRetryState`.\r\n\r\nIf not `State`, then some other ideas...\r\n - `Event`\r\n - `Context`\r\n - `Record`\r\n - `Variables` (or `Vars`)\r\n - `Properties` (or `Props`)\r\n - `Arguments` (or `Args`)",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Add a new helper variable named `opts` or `params` in a function that handles option routing, then see if the reviewer requests a more descriptive name.",
+    "confidence": "medium",
+    "verifiedCount": 4,
+    "totalCount": 4
+  },
+  {
+    "id": "R9",
+    "rule": "Do not leave `console.log()` or other debug output in submitted code; remove all debug statements before opening a PR.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #598",
+        "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1651970791",
+        "quote": "`console.log()` should be removed",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #632",
+        "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1801316514",
+        "quote": "As a library, it's generally considered bad practice for Ky to output non-errors to the console by default.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Add a `console.log(response.status)` line inside a retry handler for debugging, commit it, and check if the reviewer flags it.",
+    "confidence": "high",
+    "verifiedCount": 2,
+    "totalCount": 2
+  },
+  {
+    "id": "R10",
+    "rule": "Guard new browser-API calls (e.g. `AbortSignal.any`) with the same feature-detection checks already present in the codebase; never introduce an unguarded call that regresses older environments.",
+    "layer": "project",
+    "recurrence": 2,
+    "evidence": [
+      {
+        "source": "reviews.json",
+        "ref": "PR #751",
+        "url": "https://github.com/sindresorhus/ky/pull/751#discussion_r2422773456",
+        "quote": "The new merge logic always calls `AbortSignal.any` when more than one signal is present. In browsers where `AbortSignal.any` is still missing (the rest of the codebase explicitly checks `supportsAbortSignal` for this reason), this line will throw `TypeError: AbortSignal.any is not a function` whenever instance options with a `signal` are merged with request options. This is a regression from previous behavior and breaks environments that Ky otherwise supports. Consider guarding the call behind the same feature check or providing a fallback.",
+        "verified": true
+      },
+      {
+        "source": "reviews.json",
+        "ref": "PR #741",
+        "url": "https://github.com/sindresorhus/ky/pull/741#discussion_r2366226257",
+        "quote": "This should also only be done for Node.js. I don't want to risk some weird behavior in browsers where it's not needed.",
+        "verified": true
+      }
+    ],
+    "visible_in_code": null,
+    "test_task": "Add a call to `AbortSignal.any([signal1, signal2])` directly in merge logic without a feature check, and see if the reviewer asks for an environment guard.",
+    "confidence": "high",
+    "verifiedCount": 2,
+    "totalCount": 2
+  }
+]
