@@ -1,0 +1,2306 @@
+[
+  {
+    "pr": 858,
+    "file": "test/hooks.ts",
+    "line": 118,
+    "date": "2026-04-14",
+    "reviewer": "reviewer_1",
+    "body": "I have added a code comment about it.",
+    "url": "https://github.com/sindresorhus/ky/pull/858#discussion_r3077687295"
+  },
+  {
+    "pr": 858,
+    "file": "source/core/Ky.ts",
+    "line": 162,
+    "date": "2026-04-13",
+    "reviewer": "reviewer_2",
+    "body": "This seems to be handled twice. Once here and once in the loop. I think only the loop is necessary.",
+    "url": "https://github.com/sindresorhus/ky/pull/858#discussion_r3071880285"
+  },
+  {
+    "pr": 858,
+    "file": "test/hooks.ts",
+    "line": 118,
+    "date": "2026-04-13",
+    "reviewer": "reviewer_2",
+    "body": "These tests reach out to `example.com` but they should probably use a local echo server instead.\n\nTesting against 3rd party services should only be done when necessary, because it causes sporadic test failures when a site is down. Tests can also hit rate limits or IP bans in CI very easily.",
+    "url": "https://github.com/sindresorhus/ky/pull/858#discussion_r3071861480"
+  },
+  {
+    "pr": 828,
+    "file": "source/types/ResponsePromise.ts",
+    "line": 45,
+    "date": "2026-04-01",
+    "reviewer": "reviewer_1",
+    "body": "https://github.com/sindresorhus/ky/pull/854",
+    "url": "https://github.com/sindresorhus/ky/pull/828#discussion_r3024556027"
+  },
+  {
+    "pr": 828,
+    "file": "source/types/ResponsePromise.ts",
+    "line": 45,
+    "date": "2026-04-01",
+    "reviewer": "reviewer_2",
+    "body": "@user I've seen about 10 comments on this so far. Seems to be the most common issue people run into with 2.0.",
+    "url": "https://github.com/sindresorhus/ky/pull/828#discussion_r3022289392"
+  },
+  {
+    "pr": 828,
+    "file": "source/types/ResponsePromise.ts",
+    "line": 45,
+    "date": "2026-04-01",
+    "reviewer": "reviewer_3",
+    "body": "Not sure you'll see this since it's merged, but widening to `Promise<J | undefined>` means that we have to guard against it at call sites which I wouldn't expect when explicitly passing in expected return type?\n\n```\nconst response = http.get(`projects/${projectName}/build-number`).json<BuildNumberResponse>();\n\nif (response !== undefined) { ... }\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/828#discussion_r3019869423"
+  },
+  {
+    "pr": 852,
+    "file": "readme.md",
+    "line": 251,
+    "date": "2026-03-31",
+    "reviewer": "reviewer_4",
+    "body": "@user, Sorry, resolved",
+    "url": "https://github.com/sindresorhus/ky/pull/852#discussion_r3014659689"
+  },
+  {
+    "pr": 840,
+    "file": "test/main.ts",
+    "line": 789,
+    "date": "2026-03-28",
+    "reviewer": "reviewer_2",
+    "body": "For each of the tests you've added, pass `t` to `createHttpTestServer()` so that it will close the server automatically at the end of the test. Then you can remove `server.close()` from those tests.",
+    "url": "https://github.com/sindresorhus/ky/pull/840#discussion_r3004792305"
+  },
+  {
+    "pr": 840,
+    "file": "source/core/Ky.ts",
+    "line": 419,
+    "date": "2026-03-28",
+    "reviewer": "reviewer_2",
+    "body": "`toString()` is not necessary here",
+    "url": "https://github.com/sindresorhus/ky/pull/840#discussion_r3004777112"
+  },
+  {
+    "pr": 840,
+    "file": "readme.md",
+    "line": 194,
+    "date": "2026-03-26",
+    "reviewer": "reviewer_1",
+    "body": "TS doc comments needs to be updated too.",
+    "url": "https://github.com/sindresorhus/ky/pull/840#discussion_r2996771843"
+  },
+  {
+    "pr": 845,
+    "file": "test/browser.ts",
+    "line": 375,
+    "date": "2026-03-25",
+    "reviewer": "reviewer_1",
+    "body": "https://github.com/sindresorhus/ky/commit/86b15196b50cf9a9e7e7e17b7261cd671279c790",
+    "url": "https://github.com/sindresorhus/ky/pull/845#discussion_r2990458576"
+  },
+  {
+    "pr": 845,
+    "file": "test/browser.ts",
+    "line": 375,
+    "date": "2026-03-25",
+    "reviewer": "reviewer_2",
+    "body": "This test only asserts about the response. It doesn't really check anything regarding the upload or the progress callback.\n\nI think ideally it would check that the `'hello'` body was received and that the progress callback was not called.",
+    "url": "https://github.com/sindresorhus/ky/pull/845#discussion_r2990240906"
+  },
+  {
+    "pr": 840,
+    "file": "test/main.ts",
+    "line": 838,
+    "date": "2026-03-25",
+    "reviewer": "reviewer_1",
+    "body": "Some more tests:\n\n\n```suggestion\n});\n\ntest('deletes merged search params even when all additions are removed by undefined', async t => {\n\tconst server = await createHttpTestServer(t);\n\n\tserver.get('/', (request, response) => {\n\t\tresponse.end(request.url);\n\t});\n\n\tconst api = ky.create({searchParams: {foo: '1', bar: '2'}});\n\tconst response = await api.get(server.url + '?foo=from-url&bar=from-url&keep=1', {\n\t\tsearchParams: {foo: undefined, bar: undefined},\n\t});\n\n\tconst url = new URL(await response.text(), server.url);\n\tt.false(url.searchParams.has('foo'));\n\tt.false(url.searchParams.has('bar'));\n\tt.is(url.searchParams.get('keep'), '1');\n});\n\ntest('request searchParams undefined removes merged keys but keeps unrelated values', async t => {\n\tconst server = await createHttpTestServer(t);\n\n\tserver.get('/', (request, response) => {\n\t\tresponse.end(request.url);\n\t});\n\n\tconst api = ky.extend({searchParams: {foo: '1', bar: '2'}}).extend({searchParams: {baz: '3'}});\n\n\tconst response = await api.get(server.url + '?bar=from-url&keep=1', {\n\t\tsearchParams: {foo: undefined, extra: '4'},\n\t});\n\n\tconst url = new URL(await response.text(), server.url);\n\tt.false(url.searchParams.has('foo'));\n\tt.is(url.searchParams.get('baz'), '3');\n\tt.is(url.searchParams.get('bar'), 'from-url');\n\tt.is(url.searchParams.get('extra'), '4');\n\tt.is(url.searchParams.get('keep'), '1');\n});\n\ntest('string searchParams merge keeps duplicates across input URL and defaults', async t => {\n\tconst server = await createHttpTestServer(t);\n\n\tserver.get('/', (request, response) => {\n\t\tresponse.end(request.url);\n\t});\n\n\tconst api = ky.create({searchParams: new URLSearchParams({filter: 'active'})});\n\tconst response = await api.get(server.url + '?filter=old&sort=old', {\n\t\tsearchParams: 'filter=recent&sort=new',\n\t});\n\n\tconst url = new URL(await response.text(), server.url);\n\tt.deepEqual(url.searchParams.getAll('filter').sort(), ['active', 'old', 'recent']);\n\tt.deepEqual(url.searchParams.getAll('sort').sort(), ['new', 'old']);\n});\n\ntest('init hook can delete merged search params via undefined', async t => {\n\tconst server = await createHttpTestServer(t);\n\n\tserver.get('/', (request, response) => {\n\t\tresponse.end(request.url);\n\t});\n\n\tconst response = await ky.get(server.url + '?token=from-url', {\n\t\thooks: {\n\t\t\tinit: [\n\t\t\t\toptions => {\n\t\t\t\t\toptions.searchParams = {token: undefined};\n\t\t\t\t},\n\t\t\t],\n\t\t},\n\t});\n\n\tconst url = new URL(await response.text(), server.url);\n\tt.false(url.searchParams.has('token'));\n});\n\ntest('ky.extend() searchParams layer deletion propagates through merged instances', async t => {\n\tconst server = await createHttpTestServer(t);\n\n\tserver.get('/', (request, response) => {\n\t\tresponse.end(request.url);\n\t});\n\n\tconst api = ky.extend({searchParams: {foo: '1'}})\n\t\t.extend({searchParams: {bar: '2'}});\n\tconst response = await api.get(server.url + '?bar=from-url', {\n\t\tsearchParams: {foo: undefined},\n\t});\n\n\tconst url = new URL(await response.text(), server.url);\n\tt.false(url.searchParams.has('foo'));\n\tt.is(url.searchParams.get('bar'), 'from-url');\n});\n\ntest('searchParams option merges with existing query when hash is present', async t => {\n\tt.is(\n\t\tawait ky(fixture + '?old#hash', {\n\t\t\tfetch: customFetch,\n\t\t\tsearchParams: {foo: '1'},\n\t\t}).text(),\n\t\tfixture + '?old&foo=1#hash',\n\t);\n});\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/840#discussion_r2989006982"
+  },
+  {
+    "pr": 844,
+    "file": "test/retry.ts",
+    "line": 1920,
+    "date": "2026-03-25",
+    "reviewer": "reviewer_5",
+    "body": "The `retry.afterStatusCodes` regression test doesn’t currently prove replacement semantics: it would still pass even if `afterStatusCodes` were concatenated (429 would still be present, retries would still succeed, and `requestCount` would still be 3). It also risks adding ~900ms of real backoff delay to the suite if `Retry-After` is correctly ignored.\n\nConsider making the test assert that the `Retry-After` path is NOT taken (for example, supply a custom `retry.delay` that records calls and returns 0, then assert it was called for the retries; when `Retry-After` is used, `delay` is not invoked).",
+    "url": "https://github.com/sindresorhus/ky/pull/844#discussion_r2986609399"
+  },
+  {
+    "pr": 840,
+    "file": "test/main.ts",
+    "line": 465,
+    "date": "2026-03-21",
+    "reviewer": "reviewer_2",
+    "body": "Add another param and an assertion that verifies the string `'undefined'` does _not_ delete it from the input URL.",
+    "url": "https://github.com/sindresorhus/ky/pull/840#discussion_r2968885055"
+  },
+  {
+    "pr": 606,
+    "file": "readme.md",
+    "line": 206,
+    "date": "2026-03-02",
+    "reviewer": "reviewer_2",
+    "body": "I think using either to create niche instances is perfectly valid. But `baseUrl` should be the default, preferred approach. Updated the docs to make that explicit.",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r2871561121"
+  },
+  {
+    "pr": 804,
+    "file": "source/core/Ky.ts",
+    "line": 59,
+    "date": "2026-03-02",
+    "reviewer": "reviewer_6",
+    "body": "@user \r\nThanks — I took the suggestion and opened a small follow-up PR with the defensive guard: #833. Feedback welcome! 😀",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2871325290"
+  },
+  {
+    "pr": 804,
+    "file": "source/core/Ky.ts",
+    "line": 59,
+    "date": "2026-03-02",
+    "reviewer": "reviewer_6",
+    "body": "@user \r\nThanks! I see that #829 resolves the main feature request.\r\nWould you be okay with me opening a small follow-up PR to add a defensive guard so we only overwrite the error when the hook returns a valid Error instance? For example:\r\n\r\n```ts\r\n// change to beforeError (new)\r\nfor (const hook of ky.#options.hooks.beforeError) { \r\n  // eslint-disable-next-line no-await-in-loop\r\n  const result = await hook(error);\r\n\r\n  if (result instanceof Error) {\r\n    error = result;\r\n  }\r\n}\r\n```\r\n",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2870509816"
+  },
+  {
+    "pr": 830,
+    "file": "source/types/standard-schema.ts",
+    "line": 1,
+    "date": "2026-02-24",
+    "reviewer": "reviewer_1",
+    "body": "The official recommendation is to bundle the types. They will not change.",
+    "url": "https://github.com/sindresorhus/ky/pull/830#discussion_r2844398681"
+  },
+  {
+    "pr": 828,
+    "file": "source/core/Ky.ts",
+    "line": 181,
+    "date": "2026-02-22",
+    "reviewer": "reviewer_1",
+    "body": "I'm aware it could be just `return`, but maybe having `undefined` there explicitly makes it slightly more readable.",
+    "url": "https://github.com/sindresorhus/ky/pull/828#discussion_r2838310795"
+  },
+  {
+    "pr": 825,
+    "file": "test/retry.ts",
+    "line": 1212,
+    "date": "2026-02-22",
+    "reviewer": "reviewer_2",
+    "body": "I think this should be a static import.",
+    "url": "https://github.com/sindresorhus/ky/pull/825#discussion_r2837330410"
+  },
+  {
+    "pr": 826,
+    "file": "test/main.ts",
+    "line": 528,
+    "date": "2026-02-21",
+    "reviewer": "reviewer_1",
+    "body": "This test was removed because `throwHttpErrors` is now stripped from the normalized options passed to hooks. The normalized options should only contain standard `RequestInit` properties, not Ky-specific ones. The new test \"Ky-specific options are not included in normalized options passed to hooks\" explicitly verifies that `throwHttpErrors` (among other Ky-specific options) is excluded.",
+    "url": "https://github.com/sindresorhus/ky/pull/826#discussion_r2836520888"
+  },
+  {
+    "pr": 825,
+    "file": "source/core/Ky.ts",
+    "line": 412,
+    "date": "2026-02-20",
+    "reviewer": "reviewer_1",
+    "body": "This is kinda unrelated, but thought I'd fix it while I was touching this code.\n\nhttps://github.com/sindresorhus/ky/pull/825/changes#diff-057f1cac975e0d13462dc0b8af0a28b3435beb1d59652a11b20a180026546b70R409",
+    "url": "https://github.com/sindresorhus/ky/pull/825#discussion_r2835434876"
+  },
+  {
+    "pr": 804,
+    "file": "source/core/Ky.ts",
+    "line": 56,
+    "date": "2025-12-26",
+    "reviewer": "reviewer_1",
+    "body": "```suggestion\n\t\t\t\t\t\ttimeoutError = await hook({error: timeoutError});\n```\n\nshould be an options-object in case we need to add more parameters in the future.",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2648395948"
+  },
+  {
+    "pr": 804,
+    "file": "source/types/hooks.ts",
+    "line": 61,
+    "date": "2025-12-26",
+    "reviewer": "reviewer_1",
+    "body": "Must be exported from index.d.ts too.",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2648395030"
+  },
+  {
+    "pr": 804,
+    "file": "source/core/Ky.ts",
+    "line": 59,
+    "date": "2025-12-24",
+    "reviewer": "reviewer_6",
+    "body": "Regarding the potential undefined issue, I plan to fix it by verifying the hook's return value before assigning it. Here is the implementation:\n\n\n```ts\nfor (const hook of ky.#options.hooks.beforeTimeout) {\n    // eslint-disable-next-line no-await-in-loop\n    const result = await hook(timeoutError);\n    \n    // Only overwrite if the hook returns a valid Error instance\n    if (result instanceof Error) {\n        timeoutError = result;\n    }\n}\n```\n\nDoes this look good to you?",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2644722499"
+  },
+  {
+    "pr": 804,
+    "file": "source/core/Ky.ts",
+    "line": 59,
+    "date": "2025-12-23",
+    "reviewer": "reviewer_2",
+    "body": "This can throw `undefined` pretty easily, if the hook just doesn't return anything, which is bad. Looks like `beforeError` already has this problem, too.\n\nI think we should check the hook result and overwrite `error` if the result is an error (of any kind)..",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2643962470"
+  },
+  {
+    "pr": 804,
+    "file": "source/core/Ky.ts",
+    "line": 57,
+    "date": "2025-12-23",
+    "reviewer": "reviewer_6",
+    "body": "@user \r\nThank you for your response!\r\nYes, you are correct. It works as a pipeline where the output of one hook becomes the input of the next.\r\n\r\nI intentionally implemented it this way to maintain consistency with ky's existing `beforeError` hook logic.\r\nIf you check the `beforeError` implementation in `Ky.ts`, it uses the exact same pattern:\r\n\r\n```ts\r\n// Existing beforeError logic in Ky.ts\r\nfor (const hook of ky.#options.hooks.beforeError) {\r\n    error = await hook(error, {retryCount: ky.#retryCount});\r\n}\r\n```\r\n\r\nI believe applying the same pattern to `beforeTimeout` is the most consistent approach for this library. \r\n\r\nDo you think there is a better approach for this?",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2641905402"
+  },
+  {
+    "pr": 804,
+    "file": "source/core/Ky.ts",
+    "line": 57,
+    "date": "2025-12-22",
+    "reviewer": "reviewer_7",
+    "body": "quick observation. This suggests that timeoutError is continuously overwritten by each subsequent hook in beforeTimeout, and as a result, only the error returned by the last beforeTimeout hook will be thrown.",
+    "url": "https://github.com/sindresorhus/ky/pull/804#discussion_r2641211504"
+  },
+  {
+    "pr": 808,
+    "file": "source/utils/normalize.ts",
+    "line": 52,
+    "date": "2025-12-22",
+    "reviewer": "reviewer_1",
+    "body": "I do realize we lowercase here and then later on uppercase, but it's cheap, and it's easier to keep it separated like this.",
+    "url": "https://github.com/sindresorhus/ky/pull/808#discussion_r2638223657"
+  },
+  {
+    "pr": 806,
+    "file": "source/core/Ky.ts",
+    "line": 123,
+    "date": "2025-12-20",
+    "reviewer": "reviewer_2",
+    "body": "If we're going to ignore errors here, then we don't need `Promise.allSettled()`, nor the `cleanupPromises` array.",
+    "url": "https://github.com/sindresorhus/ky/pull/806#discussion_r2637230801"
+  },
+  {
+    "pr": 789,
+    "file": "source/core/Ky.ts",
+    "line": 319,
+    "date": "2025-11-18",
+    "reviewer": "reviewer_8",
+    "body": "nope, sorry, was removing a typecast and my IDE left the braces",
+    "url": "https://github.com/sindresorhus/ky/pull/789#discussion_r2539184238"
+  },
+  {
+    "pr": 789,
+    "file": "source/core/Ky.ts",
+    "line": 319,
+    "date": "2025-11-18",
+    "reviewer": "reviewer_9",
+    "body": "Was this change meant to be included?",
+    "url": "https://github.com/sindresorhus/ky/pull/789#discussion_r2537830532"
+  },
+  {
+    "pr": 789,
+    "file": "source/types/common.ts",
+    "line": 10,
+    "date": "2025-11-17",
+    "reviewer": "reviewer_8",
+    "body": "Right, I think this is just a tick from some past projects :) I'll move the HttpMethod back to `options.ts`",
+    "url": "https://github.com/sindresorhus/ky/pull/789#discussion_r2534248993"
+  },
+  {
+    "pr": 789,
+    "file": "source/types/common.ts",
+    "line": 10,
+    "date": "2025-11-15",
+    "reviewer": "reviewer_2",
+    "body": "Circular dependencies are fine in ESM.",
+    "url": "https://github.com/sindresorhus/ky/pull/789#discussion_r2529934463"
+  },
+  {
+    "pr": 789,
+    "file": "source/types/common.ts",
+    "line": 10,
+    "date": "2025-11-15",
+    "reviewer": "reviewer_8",
+    "body": "For some reason, in `constants.ts` there is an exported constant containing methods without 'options' and 'trace'\n\n```typescript\n// source/core/constants.ts\n...\nexport const requestMethods = ['get', 'post', 'put', 'patch', 'head', 'delete'] as const;\n\n```\n\nI guess we want to keep split the methods that the user does proactively (rather than the browser doing automatically) and all available methods. \n\nThe default retryMethods however contain also options and trace as a default:\n\n```typescript\n// source/utils/normalize.ts\nconst retryMethods: Array<HttpMethod> = ['get', 'put', 'head', 'delete', 'options', 'trace'];\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/789#discussion_r2529923450"
+  },
+  {
+    "pr": 789,
+    "file": "source/types/common.ts",
+    "line": 10,
+    "date": "2025-11-15",
+    "reviewer": "reviewer_8",
+    "body": "Had to move this to common so that there is not a circular dependency between `retry.ts` and `options.ts`",
+    "url": "https://github.com/sindresorhus/ky/pull/789#discussion_r2529910436"
+  },
+  {
+    "pr": 734,
+    "file": "source/utils/body.ts",
+    "line": 21,
+    "date": "2025-10-22",
+    "reviewer": "reviewer_10",
+    "body": "Another improvement I want to make is use difference calculations instead of hard-coding these strings",
+    "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2450495342"
+  },
+  {
+    "pr": 772,
+    "file": "test/context.ts",
+    "line": 5,
+    "date": "2025-10-21",
+    "reviewer": "reviewer_2",
+    "body": "I think we should add `t.plan()` to at least this test, if not the others, too, in case the hooks don't run for some reason.",
+    "url": "https://github.com/sindresorhus/ky/pull/772#discussion_r2447839680"
+  },
+  {
+    "pr": 764,
+    "file": "readme.md",
+    "line": 753,
+    "date": "2025-10-13",
+    "reviewer": "reviewer_2",
+    "body": "@user I think I agree with the AI. Shouldn't the example preserve the existing headers and simply delete the content type header? The code is simpler, too. Untested, but this is based on [what we do internally](https://github.com/sindresorhus/ky/blob/ec10a6821808fb61d9aca1707b60ee5982ff09e3/source/core/Ky.ts#L228).\r\n\r\n```js\r\n// Delete the existing content type so that Request re-generates it with the correct `boundary`\r\nrequest.headers.delete('Content-Type');\r\nreturn new Request(request, { body : newFormData });\r\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/764#discussion_r2427536973"
+  },
+  {
+    "pr": 764,
+    "file": "readme.md",
+    "line": 753,
+    "date": "2025-10-13",
+    "reviewer": "reviewer_11",
+    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Preserve existing headers when rebuilding `Request`**\n\nThe example constructs a fresh `Request` and explicitly omits the original headers. Returning this `Request` from `beforeRequest` drops any headers configured on the original request (e.g. `Authorization`, custom content types), so authenticated or otherwise customized requests will silently lose those headers. To avoid breaking such requests, clone the existing headers and delete only `content-type` before creating the new `Request`.\n\nUseful? React with 👍 / 👎.",
+    "url": "https://github.com/sindresorhus/ky/pull/764#discussion_r2427067063"
+  },
+  {
+    "pr": 757,
+    "file": "source/core/constants.ts",
+    "line": 3,
+    "date": "2025-10-12",
+    "reviewer": "reviewer_2",
+    "body": "I believe this is the only place that the `RequestInitRegistry` was used. If we really don't need it anymore, then the type itself can also be deleted.\n\nThis has a domino effect on `CombinedRequestInit` and maybe others, too. I didn't check any deeper.",
+    "url": "https://github.com/sindresorhus/ky/pull/757#discussion_r2424741213"
+  },
+  {
+    "pr": 751,
+    "file": "source/utils/merge.ts",
+    "line": 88,
+    "date": "2025-10-11",
+    "reviewer": "reviewer_11",
+    "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Feature-check AbortSignal.any before combining signals**\n\nThe new merge logic always calls `AbortSignal.any` when more than one signal is present. In browsers where `AbortSignal.any` is still missing (the rest of the codebase explicitly checks `supportsAbortSignal` for this reason), this line will throw `TypeError: AbortSignal.any is not a function` whenever instance options with a `signal` are merged with request options. This is a regression from previous behavior and breaks environments that Ky otherwise supports. Consider guarding the call behind the same feature check or providing a fallback.\n\nUseful? React with 👍 / 👎.",
+    "url": "https://github.com/sindresorhus/ky/pull/751#discussion_r2422773456"
+  },
+  {
+    "pr": 746,
+    "file": "test/hooks.ts",
+    "line": 408,
+    "date": "2025-10-03",
+    "reviewer": "reviewer_2",
+    "body": "Same here. Should be an additional assertion.",
+    "url": "https://github.com/sindresorhus/ky/pull/746#discussion_r2403340627"
+  },
+  {
+    "pr": 746,
+    "file": "test/hooks.ts",
+    "line": 486,
+    "date": "2025-10-03",
+    "reviewer": "reviewer_2",
+    "body": "You can add this as an additional assertion, but I would prefer to keep the original.",
+    "url": "https://github.com/sindresorhus/ky/pull/746#discussion_r2403339420"
+  },
+  {
+    "pr": 736,
+    "file": "source/utils/body.ts",
+    "line": 73,
+    "date": "2025-09-26",
+    "reviewer": "reviewer_2",
+    "body": "I left a comment to explain epsilon usage. I had to compare it to using 0.99, which we're not doing, for the comment to make any sense.",
+    "url": "https://github.com/sindresorhus/ky/pull/736#discussion_r2383497418"
+  },
+  {
+    "pr": 741,
+    "file": "source/core/Ky.ts",
+    "line": 92,
+    "date": "2025-09-26",
+    "reviewer": "reviewer_2",
+    "body": "That looks fine to me. Although you could optionally do something like...\r\n\r\n```js\r\nconst cleanupPromises = [\r\n    originalRequest && !originalRequest.bodyUsed && originalRequest.body?.cancel()\r\n    !ky.request.bodyUsed && ky.request.body?.cancel()\r\n];\r\n```\r\n\r\nNot sure if that's easier to read or not, but it's simpler. Either way is fine with me.",
+    "url": "https://github.com/sindresorhus/ky/pull/741#discussion_r2383173052"
+  },
+  {
+    "pr": 741,
+    "file": "source/core/Ky.ts",
+    "line": 92,
+    "date": "2025-09-26",
+    "reviewer": "reviewer_12",
+    "body": "Hi @user,\r\n\r\nThank you for the review and for catching that crucial edge case.\r\n\r\nI hadn't considered the scenario where the original request body is consumed (`originalRequest.bodyUsed` is `true`) but the cloned request for a potential retry is not (`ky.request.bodyUsed` is `false`). My proposed logic with a single combined if condition would indeed fail to clean up the unused cloned stream in that situation, leading to a potential resource leak.\r\n\r\nTo address this, I agree that we should handle the cleanup for each stream independently. I propose updating the logic as follows:\r\n\r\n```ts\r\n.finally(async () => {\r\n    const originalRequest = ky._originalRequest;\r\n    const cleanupPromises = [];\r\n\r\n    // Add the original request's stream to the cleanup list if it was never used.\r\n    if (originalRequest && !originalRequest.bodyUsed) {\r\n        cleanupPromises.push(originalRequest.body?.cancel());\r\n    }\r\n\r\n    // Add the cloned request's stream to the cleanup list if it was never used.\r\n    if (!ky.request.bodyUsed) {\r\n        cleanupPromises.push(ky.request.body?.cancel());\r\n    }\r\n\r\n    // Await all cancellations concurrently.\r\n    if (cleanupPromises.length > 0) {\r\n        await Promise.all(cleanupPromises);\r\n    }\r\n})\r\n```\r\nThis approach ensures that:\r\n\r\n1. If both streams are unused (the original hang issue), they are both canceled together.\r\n2. If only one of the streams remains unused (the memory leak scenario you pointed out), it is still correctly identified and canceled.\r\n\r\nI believe this is a more robust solution that safely covers all cases. What are your thoughts on this updated approach?\r\n\r\nI'll push the changes based on your feedback. Thanks again!",
+    "url": "https://github.com/sindresorhus/ky/pull/741#discussion_r2382950212"
+  },
+  {
+    "pr": 741,
+    "file": "source/core/Ky.ts",
+    "line": 92,
+    "date": "2025-09-26",
+    "reviewer": "reviewer_2",
+    "body": "Is there a situation where one request body _does_ get used but we still need to cancel the other one? Maybe we shouldn't lump these together?\n\nIn fact, the reason why the code here originally only cancelled the clone (`ky.request`) is because our expectation was that the original (`ky._originalRequest`) _would_ be consumed by fetch during the normal course of trying to send the request. So if I'm not mistaken, there will often be a situation where `originalRequest.bodyUsed` is `true` because the request was sent, but `ky.request.bodyUsed` is `false` because a retry was not performed. Don't we still need to call `ky.request.body.cancel()` in that case?",
+    "url": "https://github.com/sindresorhus/ky/pull/741#discussion_r2382925561"
+  },
+  {
+    "pr": 741,
+    "file": "source/core/Ky.ts",
+    "line": 91,
+    "date": "2025-09-21",
+    "reviewer": "reviewer_1",
+    "body": "This should also only be done for Node.js. I don't want to risk some weird behavior in browsers where it's not needed.",
+    "url": "https://github.com/sindresorhus/ky/pull/741#discussion_r2366226257"
+  },
+  {
+    "pr": 741,
+    "file": "source/core/Ky.ts",
+    "line": 91,
+    "date": "2025-09-21",
+    "reviewer": "reviewer_1",
+    "body": "> This is caused by a long-standing bug in Node.js itself, which still exists in recent versions like v24.7.0. The bug is triggered when await request.body.cancel() is called on a request that has been cloned (for retries) but where neither the original nor the cloned stream has been consumed.\r\n\r\nPlease include a link to the open Node.js issue here. If there is none, please post one.",
+    "url": "https://github.com/sindresorhus/ky/pull/741#discussion_r2366226079"
+  },
+  {
+    "pr": 736,
+    "file": "source/utils/body.ts",
+    "line": 73,
+    "date": "2025-09-14",
+    "reviewer": "reviewer_2",
+    "body": "I wrote a comment above the `if` condition that I think explains the purpose pretty well. Did you see that? The choice of `Number.EPSILON` is just a way to achieve that goal. It's merely the largest number that isn't 100%.",
+    "url": "https://github.com/sindresorhus/ky/pull/736#discussion_r2347587679"
+  },
+  {
+    "pr": 736,
+    "file": "source/utils/body.ts",
+    "line": 73,
+    "date": "2025-09-14",
+    "reviewer": "reviewer_1",
+    "body": "Maybe, but I think it needs a clear comment whye we do it like that.",
+    "url": "https://github.com/sindresorhus/ky/pull/736#discussion_r2347558987"
+  },
+  {
+    "pr": 736,
+    "file": "source/utils/body.ts",
+    "line": 73,
+    "date": "2025-09-14",
+    "reviewer": "reviewer_2",
+    "body": "That is only true relative to the other approaches we could've taken here. I think this comment would be confusing when read by someone in the future.",
+    "url": "https://github.com/sindresorhus/ky/pull/736#discussion_r2347522542"
+  },
+  {
+    "pr": 736,
+    "file": "source/utils/body.ts",
+    "line": 70,
+    "date": "2025-09-14",
+    "reviewer": "reviewer_1",
+    "body": "Needs a succinct code comment",
+    "url": "https://github.com/sindresorhus/ky/pull/736#discussion_r2347147011"
+  },
+  {
+    "pr": 734,
+    "file": "source/utils/body.ts",
+    "line": 7,
+    "date": "2025-09-12",
+    "reviewer": "reviewer_2",
+    "body": "I know that we already skip size checks for streams. And you have maintained that with these changes, which is great. But that's why your reply about consuming the body is confusing to me. All non-stream body types are simple objects that are not permanently consumed the way streams are.\n\nIf you mean that you want to avoid extra iterations on the body, as in O(n)  vs O(n*2) performance, I think that's reasonable. But our main problem at the moment is correctness, not performance, and the network is going to be the limiting factor for performance. IMO, if we can leverage `Response` to calculate the size, then we should.\n\nThere are also performance optimizations we could make, like only using `Response` to calculate the size for complex types like `FormData`. We could also re-use the `ArrayBuffer` that it generates in the process.",
+    "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2345401741"
+  },
+  {
+    "pr": 734,
+    "file": "source/utils/body.ts",
+    "line": 7,
+    "date": "2025-09-12",
+    "reviewer": "reviewer_10",
+    "body": "Yes, that's what we already do - ReadableStreams pass right through and return 0.\r\nWhat I'm referring to is ArrayBuffers, or Files/Blobs in FormData, which contain a size property, and are also iterable. The latter is done by `new Response`, the former is what we do.",
+    "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2343356019"
+  },
+  {
+    "pr": 734,
+    "file": "source/utils/body.ts",
+    "line": 7,
+    "date": "2025-09-12",
+    "reviewer": "reviewer_2",
+    "body": "You're right that we don't want to consume the stream if the body is a stream. But we can't get `totalBytes` for a stream anyway. So I was thinking if the body is a stream, short-circuit with a size of 0.",
+    "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2343350357"
+  },
+  {
+    "pr": 734,
+    "file": "source/utils/body.ts",
+    "line": 7,
+    "date": "2025-09-12",
+    "reviewer": "reviewer_10",
+    "body": "Using `Response` to get the size consumes the entire body, as opposed to using size/length properties which we currently do when possible.\r\nWe don't want `ky` to consume the entire request body twice, as opposed to the underlying `fetch` API that doesn't do that. If we had to, and this might not be so bad, is we might as well pass our constructed buffer right on through to the `fetch` request.",
+    "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2343254571"
+  },
+  {
+    "pr": 734,
+    "file": "source/utils/body.ts",
+    "line": 7,
+    "date": "2025-09-11",
+    "reviewer": "reviewer_2",
+    "body": "Could we simplify this whole function by using a temporary response, like you did for forms?\n\n```js\nconst buffer = await new Response(body).arrayBuffer();\nreturn buffer.byteLength;\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2341870467"
+  },
+  {
+    "pr": 734,
+    "file": "test/body-size.ts",
+    "line": 7,
+    "date": "2025-09-11",
+    "reviewer": "reviewer_2",
+    "body": "These tests are mostly just mimicking the current implementation to test the internal utilities. I would prefer that they use a server and Ky itself, as most of the other tests do, to echo back the de-serialized body length that it receives and maybe also the `Content-Length`, for example, and then run assertions for different body types based on that and the `totalBytes` parameter. Thus making the assertions more realistic and less coupled to the implementation.",
+    "url": "https://github.com/sindresorhus/ky/pull/734#discussion_r2341573014"
+  },
+  {
+    "pr": 729,
+    "file": "source/types/options.ts",
+    "line": 9,
+    "date": "2025-09-03",
+    "reviewer": "reviewer_2",
+    "body": "Ok, but I think `as any` will end up being relatively common and the JS/TS API will seem inconsistent.",
+    "url": "https://github.com/sindresorhus/ky/pull/729#discussion_r2317617015"
+  },
+  {
+    "pr": 729,
+    "file": "source/types/options.ts",
+    "line": 9,
+    "date": "2025-09-02",
+    "reviewer": "reviewer_1",
+    "body": "That's intentional. Developers can mistakenly expect `null` to behave like `undefined` then and have it serialized to `\"null\"` without it being intentional. I think it should be an intentional choice as the result may not be the expected behavior.",
+    "url": "https://github.com/sindresorhus/ky/pull/729#discussion_r2317013283"
+  },
+  {
+    "pr": 729,
+    "file": "test/main.ts",
+    "line": 425,
+    "date": "2025-09-02",
+    "reviewer": "reviewer_2",
+    "body": "I don't see much value in requiring users to `as any` every null value. Seems like it would just be cumbersome.",
+    "url": "https://github.com/sindresorhus/ky/pull/729#discussion_r2316588493"
+  },
+  {
+    "pr": 729,
+    "file": "source/types/options.ts",
+    "line": 9,
+    "date": "2025-09-02",
+    "reviewer": "reviewer_2",
+    "body": "Shouldn't we add `null` as an allowed type here?",
+    "url": "https://github.com/sindresorhus/ky/pull/729#discussion_r2316580134"
+  },
+  {
+    "pr": 706,
+    "file": "source/utils/options.ts",
+    "line": 19,
+    "date": "2025-08-07",
+    "reviewer": "reviewer_2",
+    "body": "Let's change this to `hasSearchParameters`",
+    "url": "https://github.com/sindresorhus/ky/pull/706#discussion_r2259156631"
+  },
+  {
+    "pr": 701,
+    "file": "source/utils/abort.ts",
+    "line": 24,
+    "date": "2025-06-05",
+    "reviewer": "reviewer_1",
+    "body": "This is flawed in multiple ways.\r\n\r\n1. Missing a `break`\r\n2. https://gist.github.com/CNSeniorious000/9fc1a72e45358dd7c9e2f16e5d26df5c https://github.com/zloirock/core-js/issues/445#issuecomment-1817361034",
+    "url": "https://github.com/sindresorhus/ky/pull/701#discussion_r2128680260"
+  },
+  {
+    "pr": 606,
+    "file": "readme.md",
+    "line": 176,
+    "date": "2025-05-07",
+    "reviewer": "reviewer_13",
+    "body": "I'm perfectly fine with that.\r\n\r\nMy angle is mainly that I think there might be a lot of (potential) users coming from contexts where all they need is setting some API prefix string (e.g. `'https://my-awesome-site.com/api/v1'`) so that their API client code can be simplified to accept path segments without that prefix (e.g. `'/users'` or `'users'`) to produce a simply joined request URL (e.g. `'https://my-awesome-site.com/api/v1/users'`). For those cases, developers might never think to care about what difference a leading slash on `'/users'` vs no leading slash on `'users'` could make. For them, both are equivalent and should result in the same request URL.\r\n\r\nSince it might never occur to them that there can even be a difference between both cases, they might also just gloss over the documentation for prefix and baseUrl assuming (wrongly) that surely it behaves as expected. A tabular representation of the \"concatenation\" behavior might be a bit of an easier \"catch\" while reading the docs.\r\n\r\nBut again, I'm perfectly fine with not having that explained in a tabular manner.",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r2076869495"
+  },
+  {
+    "pr": 606,
+    "file": "readme.md",
+    "line": 176,
+    "date": "2025-05-06",
+    "reviewer": "reviewer_2",
+    "body": "I was originally going to do that but it felt like a lot of information all at once and made the choices seem complex, which could actually be more confusing than helpful. I went with a simple, explicit recommendation to use `baseUrl` unless you know you need `prefix`. It seems clearer to me overall.\n\nI think we should see what questions come up and then make tweaks based on that. If there ends up being a lot, we could add a full matrix of examples to the FAQ. What do you think?",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r2076259868"
+  },
+  {
+    "pr": 606,
+    "file": "readme.md",
+    "line": 176,
+    "date": "2025-05-06",
+    "reviewer": "reviewer_13",
+    "body": "I think it would be great to have a matrix like you added in the original pull request description for both the baseUrl and prefix sections that goes through the motions of showing most (if not all) relevant permutations of baseUrl (or prefix), input and the resulting request URL.\r\n\r\nThis could help de-mystify what both options do and what might be appropriate for any given use case.\r\n\r\nI think that's especially useful because not all people will know that \"prefix\" and \"base URL\" mean (sometimes subtly) different things (of course these docs make that clear, but still).",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r2075990360"
+  },
+  {
+    "pr": 606,
+    "file": "readme.md",
+    "line": 176,
+    "date": "2025-05-03",
+    "reviewer": "reviewer_1",
+    "body": "We need even clearer docs about the difference between `baseUrl` and `prefix` and when to use each. Maybe with some real-world example use-cases. Otherwise, it's going to be confusing for users and that ends up being a support burden for us.",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r2072456101"
+  },
+  {
+    "pr": 606,
+    "file": "readme.md",
+    "line": 206,
+    "date": "2025-05-03",
+    "reviewer": "reviewer_1",
+    "body": "Is `prefix` still preferred for this or should it be moved to `baseUrl`?",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r2072455927"
+  },
+  {
+    "pr": 651,
+    "file": ".github/workflows/main.yml",
+    "line": 13,
+    "date": "2025-04-05",
+    "reviewer": "reviewer_2",
+    "body": "No. But I should have added 22, instead of replacing 18 here.\n\nWe were experiencing some strange CI failures that I couldn't replicate locally, so I tried updating Node here to see if that had any effect, which it didn't. In the end, it seems that GitHub Actions was just having a bad day, as it resolved itself. I didn't think about adding 18 back to the testing matrix, but that would be a good idea.\n\nNothing has changed in Ky to require users update Node. However, Node 18 is reaching end of life at the end of this month. So we won't be supporting it soon, anyway.",
+    "url": "https://github.com/sindresorhus/ky/pull/651#discussion_r2029705071"
+  },
+  {
+    "pr": 651,
+    "file": ".github/workflows/main.yml",
+    "line": 13,
+    "date": "2025-04-05",
+    "reviewer": "reviewer_14",
+    "body": "Should this have be updated too?\r\nhttps://github.com/sindresorhus/ky/blob/93c02ac7817df1138e97e8971fe5165e30d68097/package.json#L22",
+    "url": "https://github.com/sindresorhus/ky/pull/651#discussion_r2029562751"
+  },
+  {
+    "pr": 671,
+    "file": "source/core/Ky.ts",
+    "line": 138,
+    "date": "2025-02-11",
+    "reviewer": "reviewer_13",
+    "body": "If you want to leave the logic open to something like \"Request-like\" structures, then this probably works well enough indeed. I'm not sure why I thought accessing `method` on either `Request` objects or `string` would throw; of course it doesn't.\r\n\r\nUsing type guards that are agnostic of the exact classes at play (i.e. not `instanceof` checks) would likely be quite cumbersome for very little benefit.",
+    "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951394864"
+  },
+  {
+    "pr": 671,
+    "file": "test/methods.ts",
+    "line": 27,
+    "date": "2025-02-11",
+    "reviewer": "reviewer_2",
+    "body": "Indeed, the test suite is pretty good in general but we've been a bit inconsistent with assertion planning. Feel free to add `t.plan()` to some other tests if you feel motivated to do so, whether in this PR or otherwise.",
+    "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951381960"
+  },
+  {
+    "pr": 671,
+    "file": "source/core/Ky.ts",
+    "line": 138,
+    "date": "2025-02-11",
+    "reviewer": "reviewer_2",
+    "body": "We want to be flexible in what we accept as `input`, because that's what `fetch()` does and it's also just convenient to be able to pass in various kinds of input. The problem is that TypeScript complains if we try to access `input.method` since `URL` (for example) doesn't have `method`. So we use type casting internally to ignore those errors.\n\nNo exception should be thrown, because `url.method` just returns `undefined` and we are okay with `method` being `undefined`.\n\nIn short, TypeScript just isn't smart enough to understand that we want to access `input.method` only if it exists. The slightly more \"correct\" and type safe way to do this would probably be to use some type guards. But I'm not sure it's worth it. Feel free to explore that, though!",
+    "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951369711"
+  },
+  {
+    "pr": 671,
+    "file": "source/core/Ky.ts",
+    "line": 138,
+    "date": "2025-02-11",
+    "reviewer": "reviewer_13",
+    "body": "I've changed this and it works and, as far as I can tell, none of the tooling is unhappy with this – as far as the types are concerned – being seemingly dead code.\r\n\r\nI am however curious why the type assertions `(this._input as Request)` appear three times in this file. The constructor's signature indicates `input` (which is being assigned to `this._input` immediately) can also be of type `string` or `URL` which would produce an exception at any of these three sites.",
+    "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951342746"
+  },
+  {
+    "pr": 671,
+    "file": "test/methods.ts",
+    "line": 27,
+    "date": "2025-02-11",
+    "reviewer": "reviewer_13",
+    "body": "Done.\r\n\r\nI had copied the \"common method is normalized\" test which also doesn't call `t.plan`. I assume that one could also call `t.plan(2)`, but that'd be an unrelated change.",
+    "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951337742"
+  },
+  {
+    "pr": 671,
+    "file": "test/methods.ts",
+    "line": 27,
+    "date": "2025-02-11",
+    "reviewer": "reviewer_2",
+    "body": "Use `t.plan()` to guarantee that the hook and its assertion runs.",
+    "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951321300"
+  },
+  {
+    "pr": 671,
+    "file": "source/core/Ky.ts",
+    "line": 138,
+    "date": "2025-02-11",
+    "reviewer": "reviewer_2",
+    "body": "I think we should continue casting to `Request` instead of using `instanceOf Request` here, it allows `Request`-like objects to be passed and it's shorter, too.\n\nIf that's not possible because the tooling complains that `Request` always has a method, then we can cast to `RequestInit` instead.",
+    "url": "https://github.com/sindresorhus/ky/pull/671#discussion_r1951307519"
+  },
+  {
+    "pr": 606,
+    "file": "source/core/Ky.ts",
+    "line": 164,
+    "date": "2024-10-30",
+    "reviewer": "reviewer_2",
+    "body": "That kind of \"double URL\" construct is useful for reverse proxies. It should be supported.\n\nAlso, you would be surprised how hard URL parsing is. Especially for a library like Ky that supports non-browsers.",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r1823157475"
+  },
+  {
+    "pr": 606,
+    "file": "source/core/Ky.ts",
+    "line": 164,
+    "date": "2024-10-30",
+    "reviewer": "reviewer_15",
+    "body": "I think if `_input` starts with a protocol (or is a valid URL?) then we should ignore `startPath` in order to avoid an URL like `http://foo.com/http://bar.com`\r\n\r\n",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r1822858587"
+  },
+  {
+    "pr": 606,
+    "file": "source/types/options.ts",
+    "line": 101,
+    "date": "2024-10-30",
+    "reviewer": "reviewer_2",
+    "body": "Indeed. As mentioned in the TODOs section, I haven't gotten around to updating the docs yet, other than a simple find & replace. But thank you for the reminder. 🙂",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r1822756632"
+  },
+  {
+    "pr": 606,
+    "file": "source/types/options.ts",
+    "line": 101,
+    "date": "2024-10-30",
+    "reviewer": "reviewer_9",
+    "body": "> Leading slashes in `input` are disallowed when using this option to enforce consistency and avoid confusion [...]\r\n\r\nFrom what I can tell from the changed code, this is no longer the case?\r\n\r\nI personally prefer it that way though and think that we should keep that behaviour",
+    "url": "https://github.com/sindresorhus/ky/pull/606#discussion_r1822727424"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 437,
+    "date": "2024-10-15",
+    "reviewer": "reviewer_2",
+    "body": "As a library, it's generally considered bad practice for Ky to output non-errors to the console by default.",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1801316514"
+  },
+  {
+    "pr": 632,
+    "file": "readme.md",
+    "line": 453,
+    "date": "2024-09-14",
+    "reviewer": "reviewer_1",
+    "body": "The TS doc comments and readme should be in sync.",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1759693315"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 418,
+    "date": "2024-09-13",
+    "reviewer": "reviewer_2",
+    "body": "I haven't had sufficient time to do a proper review or to try it out. And I probably won't for about a week or so. Maybe @user or @user can take a look, otherwise I'll get to it as soon as I can.",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1759284665"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 418,
+    "date": "2024-09-13",
+    "reviewer": "reviewer_16",
+    "body": "Can we merge it @user?",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1759001284"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 210,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_17",
+    "body": "Changed to 'Request streams are not supported in your environment. The `duplex` option for `Request` is not available.'. Would this error message be enough?",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1748804069"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 210,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_2",
+    "body": "No, there is a difference in what causes an environment to lack support for request streams vs response streams. See the implementation of the support constants. In particular, for an environment to support request streams, it needs to have a `Request` option named `duplex`, which we have feature detection for. That option is not relevant to response streams, which are much more widely supported.",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1748677143"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 418,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_17",
+    "body": "Changed to _streamRequest and _streamResponse",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1748048070"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 220,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_17",
+    "body": "No reason. Changed it to \r\n\r\n```ts\r\n\t\t\t\tthis.request\r\n\t\t\t\t\t= new globalThis.Request(this._input, {\r\n\t\t\t\t\t\t...this._options,\r\n\t\t\t\t\t\tbody: this._streamRequest(\r\n\t\t\t\t\t\t\toriginalBody, totalBytes, this._options.onUploadProgress),\r\n\t\t\t\t\t});\r\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1748047920"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 210,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_17",
+    "body": "This is a copy of the message in onDownloadProgress. Should I change that as well?",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1748047715"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 418,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_2",
+    "body": "I think it would make more sense for this function to have a similar signature to `_stream()`, i.e. take two arguments, a request and `onUploadProgress`, and return a request.\n\nWe could rename these functions `_streamRequest()` and `_streamResponse()`.",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1747869378"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 220,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_2",
+    "body": "Most of these properties should be copied over from the previous request automatically and shouldn't need to be set manually like this. Is there a reason this was done?",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1747859940"
+  },
+  {
+    "pr": 632,
+    "file": "source/types/options.ts",
+    "line": 15,
+    "date": "2024-09-07",
+    "reviewer": "reviewer_2",
+    "body": "Seems to me like we should just rename `DownloadProgress` to `Progress` or `LoadProgress` or something and then reuse it.",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1747852048"
+  },
+  {
+    "pr": 632,
+    "file": "source/core/Ky.ts",
+    "line": 210,
+    "date": "2024-09-06",
+    "reviewer": "reviewer_2",
+    "body": "This should instead say something about `request.duplex` not being supported.",
+    "url": "https://github.com/sindresorhus/ky/pull/632#discussion_r1747804541"
+  },
+  {
+    "pr": 618,
+    "file": "source/core/Ky.ts",
+    "line": 228,
+    "date": "2024-08-13",
+    "reviewer": "reviewer_2",
+    "body": "`Retry-After` and `RateLimit-Reset` both use seconds ([except for Mulesoft](https://docs.mulesoft.com/gateway/latest/policies-included-rate-limiting-sla), apparently 😡). However, we [convert them](https://github.com/sindresorhus/ky/blob/a7204c4672d10a144b12ef169c8d38e17db81931/source/core/Ky.ts#L225) both to milliseconds.\r\n\r\nIndeed, `1700000000` seconds is plenty high enough. I could've just added a few more zeros for milliseconds. I just thought `Date.parse('2024-01-01')` (which is `1704067200` seconds) had a certain logic to it. Perfectly happy to change it, though.",
+    "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1715921711"
+  },
+  {
+    "pr": 618,
+    "file": "source/core/Ky.ts",
+    "line": 228,
+    "date": "2024-08-13",
+    "reviewer": "reviewer_18",
+    "body": "> `1700000000` milliseconds is a little less than 20 days\r\n\r\n`Retry-After` uses seconds, not milliseconds. Since this value is meant to differentiate that header from an epoch-based value, this is fine. No server will ask you to retry [in 53 years](https://www.wolframalpha.com/input?i=1700000000+seconds) (unless you're somehow querying [Deep Thought](https://en.wikipedia.org/wiki/List_of_The_Hitchhiker%27s_Guide_to_the_Galaxy_characters#Deep_Thought))\r\n\r\n\r\nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After",
+    "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1715711836"
+  },
+  {
+    "pr": 618,
+    "file": "source/core/Ky.ts",
+    "line": 228,
+    "date": "2024-08-13",
+    "reviewer": "reviewer_2",
+    "body": "It is stupid, yes.\r\n\r\nSee the comment on the next line (the linter would not let me put it above).\r\n\r\nSome `RateLimit-Reset` implementations in the wild use delta seconds, while others use timestamps. Both are integers, with no easy way to disambiguate them other than, essentially, how large the number is. Generally speaking, we would expect delta seconds to be a small number (because it's referring to seconds _from now_) and a timestamp to be a large number (because it's referring to seconds _from epoch_). Ky wants to normalize these values to delta seconds. So we need to detect timestamps and convert them.\r\n\r\nThe most obvious approach might be to check if `after` is close to `Date.now()`, but that is susceptible to clock skew and incorrectly set clocks. Such bugs also have a history of leading to security vulnerabilities. So, we use a constant threshold instead.\r\n\r\nHow large should `after` be for us to consider it a timestamp? That's... very arbitrary. @user suggested we use `1700000000` in this comment: https://github.com/sindresorhus/ky/pull/618#discussion_r1713150598\r\n\r\n`1700000000` milliseconds is a little less than 20 days, which should be fine in the vast majority of cases. But if someone wants to set a 6 month retry delay and hope the computer stays up for that long... who am I to stop them? I figured that `Date.parse('2024-01-01')`, being the beginning of the year in which this feature was implemented, is hopefully more readable, allows for extremely long retry delays, and makes it obvious that the value is arbitrary and not based on some standard (I don't think there _is_ a standard for this).\r\n\r\nI'm very open to improvements here, suggestions welcome! Would be nice to put it in a `const` with a self-documenting name, but I couldn't think of a good name.",
+    "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1715702264"
+  },
+  {
+    "pr": 618,
+    "file": "source/core/Ky.ts",
+    "line": 228,
+    "date": "2024-08-13",
+    "reviewer": "reviewer_19",
+    "body": "Why is this hardcoded to \"2024-01-01\"?",
+    "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1715438070"
+  },
+  {
+    "pr": 618,
+    "file": "source/core/Ky.ts",
+    "line": 222,
+    "date": "2024-08-12",
+    "reviewer": "reviewer_2",
+    "body": "I found this very useful thread regarding header names and semantics:\r\nhttps://github.com/ietf-wg-httpapi/ratelimit-headers/issues/25\r\n\r\nI'll leave it to others to add some of the more obscure formats, if the need arises.",
+    "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1714389859"
+  },
+  {
+    "pr": 618,
+    "file": "source/core/Ky.ts",
+    "line": 222,
+    "date": "2024-08-12",
+    "reviewer": "reviewer_2",
+    "body": "I used the semantics defined by the IETF draft:\r\nhttps://www.ietf.org/archive/id/draft-polli-ratelimit-headers-02.html#name-ratelimit-reset\r\n\r\n> The header value is\r\n>\r\n> ```\r\n> RateLimit-Reset = delta-seconds\r\n> ```\r\n>\r\n> The delta-seconds format is used because:\r\n> -  it does not rely on clock synchronization and is resilient to clock adjustment and clock skew between client and server (see [[RFC7231](https://www.ietf.org/archive/id/draft-polli-ratelimit-headers-02.html#RFC7231)] Section 4.1.1.1);\r\n> - it mitigates the risk related to thundering herd when too many clients are serviced with the same timestamp.\r\n\r\n> An example of RateLimit-Reset use is below.\r\n> ```\r\n> RateLimit-Reset: 50\r\n> ```\r\n\r\nLooks like neither X.com nor GitHub actually follow this proposal.\r\n\r\nI also just noticed that X.com uses a slightly different header name: `x-rate-limit-reset` (note the `-` between `rate` and `limit`)",
+    "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1713907525"
+  },
+  {
+    "pr": 618,
+    "file": "source/core/Ky.ts",
+    "line": 222,
+    "date": "2024-08-12",
+    "reviewer": "reviewer_18",
+    "body": "I don’t think this correct. On mdn I see two formats for `Retry-After` an ISO date or a number of seconds to wait\n\n```\nRetry-After: Wed, 21 Oct 2015 07:28:00 GMT\nRetry-After: 120\n``` \n\nWhile [GitHub's docs](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api?apiVersion=2022-11-28#handle-rate-limit-errors-appropriately) say:\n\n> should not make another request until after the time specified by the x-ratelimit-reset header. The x-ratelimit-reset header is in UTC epoch seconds.\n\nSo this introduces a third type: UTC epoch. I think this is easy to detect though: `if t is number and t > 1700000000`",
+    "url": "https://github.com/sindresorhus/ky/pull/618#discussion_r1713150598"
+  },
+  {
+    "pr": 602,
+    "file": "readme.md",
+    "line": 139,
+    "date": "2024-07-19",
+    "reviewer": "reviewer_2",
+    "body": "I've removed that wording in favor of something that is hopefully more helpful, with specific advice about what mode to use, when, and why, with multiple links.\r\n\r\nWhat do you think?",
+    "url": "https://github.com/sindresorhus/ky/pull/602#discussion_r1684722687"
+  },
+  {
+    "pr": 611,
+    "file": "readme.md",
+    "line": 527,
+    "date": "2024-07-18",
+    "reviewer": "reviewer_1",
+    "body": "It would be nice to include this part in the `.extends` TS doc comment too.",
+    "url": "https://github.com/sindresorhus/ky/pull/611#discussion_r1682870371"
+  },
+  {
+    "pr": 598,
+    "file": "test/retry.ts",
+    "line": 10,
+    "date": "2024-07-03",
+    "reviewer": "reviewer_20",
+    "body": "Yeah, to be honest I had tunnel vision and barely paid attention beyond getting it working with the existing paradigm. Apologies!",
+    "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1663442628"
+  },
+  {
+    "pr": 602,
+    "file": "readme.md",
+    "line": 139,
+    "date": "2024-06-29",
+    "reviewer": "reviewer_1",
+    "body": "We need to be able to defend this choice. A user will wonder why it's confusing and unsafe and we need to either answer that or link to a site that does answer it.",
+    "url": "https://github.com/sindresorhus/ky/pull/602#discussion_r1659848047"
+  },
+  {
+    "pr": 598,
+    "file": "readme.md",
+    "line": 224,
+    "date": "2024-06-26",
+    "reviewer": "reviewer_1",
+    "body": "> retries sent immediately\r\n\r\nThat really depends on the retry configuration, so I would drop this part.",
+    "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1654842186"
+  },
+  {
+    "pr": 598,
+    "file": "test/retry.ts",
+    "line": 216,
+    "date": "2024-06-25",
+    "reviewer": "reviewer_2",
+    "body": "Missing an assertion for the `requestCount`.\r\n\r\nLooks like some of the other retry tests also have this mistake.",
+    "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1651983533"
+  },
+  {
+    "pr": 598,
+    "file": "test/retry.ts",
+    "line": 10,
+    "date": "2024-06-25",
+    "reviewer": "reviewer_2",
+    "body": "I realize you're just being consistent with the other, existing variables here but it seems like these should be local variables within the tests where they are needed.\r\n\r\nIf we had compute-intensive or async setup hooks/macros that were `await`ed before the tests, it could make a big difference as to what the start time is determined to be.",
+    "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1651977089"
+  },
+  {
+    "pr": 598,
+    "file": "test/retry.ts",
+    "line": 174,
+    "date": "2024-06-25",
+    "reviewer": "reviewer_2",
+    "body": "`console.log()` should be removed",
+    "url": "https://github.com/sindresorhus/ky/pull/598#discussion_r1651970791"
+  },
+  {
+    "pr": 582,
+    "file": "source/core/constants.ts",
+    "line": 23,
+    "date": "2024-06-23",
+    "reviewer": "reviewer_21",
+    "body": "Thank you for your response. I have updated my code. 🫰",
+    "url": "https://github.com/sindresorhus/ky/pull/582#discussion_r1650034568"
+  },
+  {
+    "pr": 582,
+    "file": "source/core/constants.ts",
+    "line": 23,
+    "date": "2024-06-23",
+    "reviewer": "reviewer_2",
+    "body": "Okay, thanks. I understand now. I have reopened the PR. Can you please update your code so it re-throws the error if `error.message !== 'unsupported BodyInit type'`?",
+    "url": "https://github.com/sindresorhus/ky/pull/582#discussion_r1649925367"
+  },
+  {
+    "pr": 582,
+    "file": "source/core/constants.ts",
+    "line": 23,
+    "date": "2024-06-13",
+    "reviewer": "reviewer_21",
+    "body": "Based on my understanding, this code is supposed to determine whether the runtime supports streaming requests. However, the [code](https://github.com/edram/issue-ky-581/blob/main/src/main.ts#L14) above throws `Error: unsupported BodyInit type` in the QQ app or QQ browser on iOS. This indicates that these two runtimes do not support streaming requests. The check for support should not throw an error. Given the large number of QQ users, the latest version of ky in my project can use is version 0.31.1.\r\n\r\n![image](https://github.com/sindresorhus/ky/assets/14024542/b42ab36c-f7b9-4d8c-b620-4d5c8a679853)\r\n\r\n",
+    "url": "https://github.com/sindresorhus/ky/pull/582#discussion_r1637373565"
+  },
+  {
+    "pr": 582,
+    "file": "source/core/constants.ts",
+    "line": 23,
+    "date": "2024-06-13",
+    "reviewer": "reviewer_2",
+    "body": "Sorry, but we cannot silently ignore all errors from the `Request` constructor. There are many genuine, useful errors that it can potentially throw. Maybe you could explain what you are trying to accomplish (I couldn't understand from the linked issue). If you think we should be ignoring a particular error in certain circumstances, then we will need to properly detect those conditions and the specific error.",
+    "url": "https://github.com/sindresorhus/ky/pull/582#discussion_r1637355356"
+  },
+  {
+    "pr": 579,
+    "file": "test/main.ts",
+    "line": 753,
+    "date": "2024-04-23",
+    "reviewer": "reviewer_1",
+    "body": "Good point. Still can be simplified slightly though.",
+    "url": "https://github.com/sindresorhus/ky/pull/579#discussion_r1575809136"
+  },
+  {
+    "pr": 579,
+    "file": "test/main.ts",
+    "line": 753,
+    "date": "2024-04-23",
+    "reviewer": "reviewer_22",
+    "body": "No, the `JSON.stringify` here is to add fields to any additional request data, not just the data in the example, so it's not appropriate to unify the two.",
+    "url": "https://github.com/sindresorhus/ky/pull/579#discussion_r1575721749"
+  },
+  {
+    "pr": 579,
+    "file": "test/main.ts",
+    "line": 753,
+    "date": "2024-04-23",
+    "reviewer": "reviewer_1",
+    "body": "I think you misunderstood. The result of `JSON.stringify({\r\n\t\t\tdata,\r\n\t\t\textra: 'extraValue',\r\n\t\t})` should be used both here and in 745.",
+    "url": "https://github.com/sindresorhus/ky/pull/579#discussion_r1575719214"
+  },
+  {
+    "pr": 579,
+    "file": "test/main.ts",
+    "line": 741,
+    "date": "2024-04-23",
+    "reviewer": "reviewer_1",
+    "body": "Just move the `JSON.stringify({\r\n\t\t\tdata,\r\n\t\t\textra: 'extraValue',\r\n\t\t})` part to the top and use it in this check too.",
+    "url": "https://github.com/sindresorhus/ky/pull/579#discussion_r1575693265"
+  },
+  {
+    "pr": 579,
+    "file": "test/main.ts",
+    "line": 741,
+    "date": "2024-04-23",
+    "reviewer": "reviewer_1",
+    "body": "Would be more readable as an object passed to `JSON.stringify`.",
+    "url": "https://github.com/sindresorhus/ky/pull/579#discussion_r1575692636"
+  },
+  {
+    "pr": 561,
+    "file": "package.json",
+    "line": 75,
+    "date": "2024-03-04",
+    "reviewer": "reviewer_23",
+    "body": "I removed the dependency since it is no needed from [v1.2.2](https://github.com/sindresorhus/ky/compare/v1.2.1...v1.2.2).",
+    "url": "https://github.com/sindresorhus/ky/pull/561#discussion_r1511187699"
+  },
+  {
+    "pr": 561,
+    "file": "package.json",
+    "line": 75,
+    "date": "2024-02-26",
+    "reviewer": "reviewer_23",
+    "body": "It is used here: https://github.com/sindresorhus/ky/blob/cb89702ca488717a8b2021522f5ffe05a3c01a99/source/types/request.ts#L1.\r\n\r\nI got a warning about the library not being found.",
+    "url": "https://github.com/sindresorhus/ky/pull/561#discussion_r1502745932"
+  },
+  {
+    "pr": 559,
+    "file": "source/core/Ky.ts",
+    "line": 124,
+    "date": "2024-02-24",
+    "reviewer": "reviewer_18",
+    "body": "I don’t think this is gonna work, `_options.credentials` should not be set at all, according to the error.\r\n\r\nAlso the comment is very outdated and we can probably use:\r\n\r\n```suggestion\r\n\t\t\tcredentials: isCredentialsSupported ? (this._input as Request).credentials : undefined,\r\n```\r\n\r\n… as long as CloudFlare accepts `{credentials: undefined}` and doesn't actually require `{}`\r\n\r\n\r\nby the way this would fix two duplicates:\r\n\r\n- https://github.com/sindresorhus/ky/issues/519\r\n- https://github.com/sindresorhus/ky/issues/366",
+    "url": "https://github.com/sindresorhus/ky/pull/559#discussion_r1501353561"
+  },
+  {
+    "pr": 27,
+    "file": "index.js",
+    "line": 107,
+    "date": "2024-02-01",
+    "reviewer": "reviewer_24",
+    "body": "Believe it or not, this was never fixed before the PR landed so we ran into this memory leak in our application in 2024! :smile: ",
+    "url": "https://github.com/sindresorhus/ky/pull/27#discussion_r1474187530"
+  },
+  {
+    "pr": 543,
+    "file": "source/types/options.ts",
+    "line": 256,
+    "date": "2023-11-12",
+    "reviewer": "reviewer_25",
+    "body": "`exactOptionalPropertyTypes: true` fails on this, as optional properties get resolved as `Foo | undefined`, and that isn't compatible with `RequestInit`.",
+    "url": "https://github.com/sindresorhus/ky/pull/543#discussion_r1390424831"
+  },
+  {
+    "pr": 543,
+    "file": "source/types/options.ts",
+    "line": 180,
+    "date": "2023-11-12",
+    "reviewer": "reviewer_25",
+    "body": "This is breaking, but actually both [`@user/node`](https://github.com/nodejs/undici/blob/91ca13ccd065d50c47279e9fdac0c152464baee9/types/fetch.d.ts#L12) and [`lib.dom.d.ts`](https://github.com/microsoft/TypeScript/blob/ca7a3af5e607a6c8589f5f600d6c4960a8bc07d4/src/lib/dom.generated.d.ts#L25921) define it this way.",
+    "url": "https://github.com/sindresorhus/ky/pull/543#discussion_r1390424682"
+  },
+  {
+    "pr": 543,
+    "file": "source/core/Ky.ts",
+    "line": 178,
+    "date": "2023-11-12",
+    "reviewer": "reviewer_25",
+    "body": "Doesn't appear to be needed?",
+    "url": "https://github.com/sindresorhus/ky/pull/543#discussion_r1390424018"
+  },
+  {
+    "pr": 540,
+    "file": "source/core/constants.ts",
+    "line": 62,
+    "date": "2023-10-29",
+    "reviewer": "reviewer_1",
+    "body": "Yeah, that sounds like a good approach.",
+    "url": "https://github.com/sindresorhus/ky/pull/540#discussion_r1375392118"
+  },
+  {
+    "pr": 540,
+    "file": "source/core/constants.ts",
+    "line": 62,
+    "date": "2023-10-27",
+    "reviewer": "reviewer_26",
+    "body": "So there are two RequestInit interfaces that are relevant here: the one exported from node's `undici-types` and the one exported from Typescript's `lib.dom.d.ts`.\r\n\r\n\r\n### Common fields present in both interfaces:\r\n- `method`\r\n- `keepalive`\r\n- `headers`\r\n- `body`\r\n- `redirect`\r\n- `integrity`\r\n- `signal`\r\n- `credentials`\r\n- `mode`\r\n- `referrer`\r\n- `referrerPolicy`\r\n- `window`\r\n\r\n### Unique to `undici-types`:\r\n- `dispatcher`\r\n- `duplex`\r\n\r\n### Unique to Typescript's `lib.dom.d.ts`:\r\n- `cache`\r\n\r\n\r\n### Standard Request Options [as specified in MDN](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)\r\n\r\n#### Present in both `undici-types` and `lib.dom.d.ts`:\r\n- `method`\r\n- `headers`\r\n- `body`\r\n- `mode`\r\n- `credentials`\r\n- `redirect`\r\n- `referrer`\r\n- `referrerPolicy`\r\n- `integrity`\r\n- `keepalive`\r\n- `signal`\r\n\r\n#### Present only in `lib.dom.d.ts`:\r\n- `cache`\r\n\r\n#### Missing in both `undici-types` and `lib.dom.d.ts`:\r\n- `priority` (⚠️ this field is still considered experimental but it is already supported in Chromium based browsers)\r\n\r\nWith all of this being said, I think we can leave `priority` out and let it be detected as an unknown property since it will still be passed down to fetch.\r\n\r\nPlease let me know what you think of this approach @user and @user.\r\n\r\n",
+    "url": "https://github.com/sindresorhus/ky/pull/540#discussion_r1375044058"
+  },
+  {
+    "pr": 540,
+    "file": "source/core/constants.ts",
+    "line": 62,
+    "date": "2023-10-27",
+    "reviewer": "reviewer_26",
+    "body": "Maybe a similar solution to the `KyOptionsRegistry` can be employed here to defer the list keeping to Typescript and undici. I will try this.",
+    "url": "https://github.com/sindresorhus/ky/pull/540#discussion_r1375013851"
+  },
+  {
+    "pr": 540,
+    "file": "source/core/constants.ts",
+    "line": 62,
+    "date": "2023-10-27",
+    "reviewer": "reviewer_26",
+    "body": "I really want to avoid this too. Let me give it some thought.",
+    "url": "https://github.com/sindresorhus/ky/pull/540#discussion_r1374611899"
+  },
+  {
+    "pr": 540,
+    "file": "source/core/constants.ts",
+    "line": 62,
+    "date": "2023-10-27",
+    "reviewer": "reviewer_1",
+    "body": "Is there any other way than having a hard-coded list here? We'll have to keep this up to date and if we miss something, it could cause problems.",
+    "url": "https://github.com/sindresorhus/ky/pull/540#discussion_r1374559880"
+  },
+  {
+    "pr": 536,
+    "file": "source/core/Ky.ts",
+    "line": 298,
+    "date": "2023-10-24",
+    "reviewer": "reviewer_2",
+    "body": "Maybe name this `nonRequestOptions` or `unhandledOptions`?",
+    "url": "https://github.com/sindresorhus/ky/pull/536#discussion_r1369712694"
+  },
+  {
+    "pr": 533,
+    "file": "test/retry.ts",
+    "line": 519,
+    "date": "2023-10-15",
+    "reviewer": "reviewer_1",
+    "body": "I feel like the performance mesurement code could be abstracted a bit so we don't have so much duplication between the tests.",
+    "url": "https://github.com/sindresorhus/ky/pull/533#discussion_r1359861378"
+  },
+  {
+    "pr": 499,
+    "file": "readme.md",
+    "line": 113,
+    "date": "2023-07-09",
+    "reviewer": "reviewer_2",
+    "body": "At some point, they changed the backend architecture of deno.land so that in order to publish new releases of Ky on there, we have to set up a webhook on our repository, whereas before they had some magic to watch for GitHub releases automatically.\n\nWe just need to set up this webhook and then importing from deno.land will work again.",
+    "url": "https://github.com/sindresorhus/ky/pull/499#discussion_r1257391821"
+  },
+  {
+    "pr": 499,
+    "file": "readme.md",
+    "line": 113,
+    "date": "2023-04-09",
+    "reviewer": "reviewer_27",
+    "body": "ok thanks, it doesn't work. ",
+    "url": "https://github.com/sindresorhus/ky/pull/499#discussion_r1161264829"
+  },
+  {
+    "pr": 499,
+    "file": "readme.md",
+    "line": 113,
+    "date": "2023-04-09",
+    "reviewer": "reviewer_1",
+    "body": "I don't know. I don't use Deno.",
+    "url": "https://github.com/sindresorhus/ky/pull/499#discussion_r1161264128"
+  },
+  {
+    "pr": 499,
+    "file": "readme.md",
+    "line": 113,
+    "date": "2023-04-09",
+    "reviewer": "reviewer_27",
+    "body": "> Did you test that this works?\r\n\r\n😬 sorry about that! does the deno.land publish work at all? couldn't find a working path",
+    "url": "https://github.com/sindresorhus/ky/pull/499#discussion_r1161245428"
+  },
+  {
+    "pr": 499,
+    "file": "readme.md",
+    "line": 113,
+    "date": "2023-04-09",
+    "reviewer": "reviewer_1",
+    "body": "Single-quotes\r\n\r\nI would also prefer to keep the esm.sh example below the new Deno.land one.",
+    "url": "https://github.com/sindresorhus/ky/pull/499#discussion_r1161174421"
+  },
+  {
+    "pr": 454,
+    "file": ".vscode/settings.json",
+    "line": 3,
+    "date": "2022-10-31",
+    "reviewer": "reviewer_28",
+    "body": "Oops, had to ignore the file. Now you know why the formatting issues keep hunting me ;)",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r1009141014"
+  },
+  {
+    "pr": 454,
+    "file": ".vscode/settings.json",
+    "line": 3,
+    "date": "2022-10-31",
+    "reviewer": "reviewer_1",
+    "body": "Don't add unrelated things.",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r1009136229"
+  },
+  {
+    "pr": 459,
+    "file": "readme.md",
+    "line": 99,
+    "date": "2022-10-30",
+    "reviewer": "reviewer_29",
+    "body": "Oh, I'll add the same to the TS doc. thank you for review.",
+    "url": "https://github.com/sindresorhus/ky/pull/459#discussion_r1008837787"
+  },
+  {
+    "pr": 459,
+    "file": "readme.md",
+    "line": 99,
+    "date": "2022-10-29",
+    "reviewer": "reviewer_1",
+    "body": "You also need to document this in the TS doc comment.",
+    "url": "https://github.com/sindresorhus/ky/pull/459#discussion_r1008700396"
+  },
+  {
+    "pr": 454,
+    "file": "source/types/retry.ts",
+    "line": 48,
+    "date": "2022-10-29",
+    "reviewer": "reviewer_1",
+    "body": "Incorrect indentation and I would put it on line 39.",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r1008699659"
+  },
+  {
+    "pr": 454,
+    "file": "source/types/retry.ts",
+    "line": 38,
+    "date": "2022-10-29",
+    "reviewer": "reviewer_1",
+    "body": "This sentence still needs to be added to the readme.",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r1008699633"
+  },
+  {
+    "pr": 462,
+    "file": "readme.md",
+    "line": 501,
+    "date": "2022-10-29",
+    "reviewer": "reviewer_1",
+    "body": "Are you sure we need all of the `?`? Look at the types.",
+    "url": "https://github.com/sindresorhus/ky/pull/462#discussion_r1008679425"
+  },
+  {
+    "pr": 454,
+    "file": "source/types/retry.ts",
+    "line": 51,
+    "date": "2022-10-20",
+    "reviewer": "reviewer_28",
+    "body": "In TS each option is documented separately. In the readme all options are documented altogether. That makes it a bit hard to keep in sync.\r\n\r\nThe same in Got by the way, but inversed. `backoffLimit` is [documented separately](https://github.com/sindresorhus/got/blob/main/documentation/7-retry.md#backofflimit) in the readme, but in TS the options are [documented altogether](https://github.com/sindresorhus/got/blob/main/source/core/options.ts#L390).\r\n\r\nI rewrote both texts to be pretty much in sync with eachother.",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r1000235198"
+  },
+  {
+    "pr": 454,
+    "file": "source/types/retry.ts",
+    "line": 51,
+    "date": "2022-10-16",
+    "reviewer": "reviewer_1",
+    "body": "The docs for TS and readme should be in sync as much as possible. It makes it hard to maintain if they differ significantly.",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r996409637"
+  },
+  {
+    "pr": 454,
+    "file": "readme.md",
+    "line": 180,
+    "date": "2022-10-16",
+    "reviewer": "reviewer_1",
+    "body": "I don't think \"maximise\" is the correct term here. Maybe \"clamp\".",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r996409505"
+  },
+  {
+    "pr": 454,
+    "file": "source/types/retry.ts",
+    "line": 38,
+    "date": "2022-09-23",
+    "reviewer": "reviewer_28",
+    "body": "I copied from `got` a bit too literally as there is no `computedValue` field in the `RetryOptions` type, while in [got there is one](https://github.com/sindresorhus/got/blob/f6d1fb71b5e107ef4a6e3b5d5dfa2a80ec3f30a5/documentation/7-retry.md#calculatedelay).\r\n\r\nI now rephrashed the comment.",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r978559132"
+  },
+  {
+    "pr": 454,
+    "file": "source/types/retry.ts",
+    "line": 38,
+    "date": "2022-09-22",
+    "reviewer": "reviewer_1",
+    "body": "This should describe the option in simpler higher-level terms without mentioning `computedValue`.",
+    "url": "https://github.com/sindresorhus/ky/pull/454#discussion_r977485304"
+  },
+  {
+    "pr": 433,
+    "file": "source/errors/DOMException.ts",
+    "line": 3,
+    "date": "2022-03-30",
+    "reviewer": "reviewer_10",
+    "body": "The other files export a class but this time it isn't actually used outside of this file. Not sure if the function name is specific enough either. What do you think?",
+    "url": "https://github.com/sindresorhus/ky/pull/433#discussion_r839018347"
+  },
+  {
+    "pr": 429,
+    "file": "source/core/Ky.ts",
+    "line": 1,
+    "date": "2022-03-02",
+    "reviewer": "reviewer_2",
+    "body": "I'm unclear on whether we should keep these. ESLint was complaining about them before I even made any changes.",
+    "url": "https://github.com/sindresorhus/ky/pull/429#discussion_r817386122"
+  },
+  {
+    "pr": 417,
+    "file": "source/types/hooks.ts",
+    "line": 1,
+    "date": "2022-02-13",
+    "reviewer": "reviewer_1",
+    "body": "Readme and TS docs should be in sync.",
+    "url": "https://github.com/sindresorhus/ky/pull/417#discussion_r805319986"
+  },
+  {
+    "pr": 416,
+    "file": "test/main.ts",
+    "line": 1,
+    "date": "2022-01-07",
+    "reviewer": "reviewer_2",
+    "body": "Can you also add tests for 202s with a body, one with valid JSON and one with invalid JSON (e.g. plain text)?",
+    "url": "https://github.com/sindresorhus/ky/pull/416#discussion_r780039926"
+  },
+  {
+    "pr": 416,
+    "file": "source/core/Ky.ts",
+    "line": 1,
+    "date": "2022-01-07",
+    "reviewer": "reviewer_2",
+    "body": "If I'm not mistaken, in the case of a 202 response, this will work as expected if the response does not contain a body, but it will drop the body if one is present. That would probably surprise the user.",
+    "url": "https://github.com/sindresorhus/ky/pull/416#discussion_r780039408"
+  },
+  {
+    "pr": 404,
+    "file": "readme.md",
+    "line": 1,
+    "date": "2021-12-15",
+    "reviewer": "reviewer_1",
+    "body": "I think this should be merged with the above paragraph.",
+    "url": "https://github.com/sindresorhus/ky/pull/404#discussion_r769555603"
+  },
+  {
+    "pr": 384,
+    "file": "source/types/hooks.ts",
+    "line": 1,
+    "date": "2021-10-12",
+    "reviewer": "reviewer_1",
+    "body": "I don't think this is correct. Here, we control the thrown error, which means it can only be an `Error`.",
+    "url": "https://github.com/sindresorhus/ky/pull/384#discussion_r727120641"
+  },
+  {
+    "pr": 382,
+    "file": "source/core/Ky.ts",
+    "line": 1,
+    "date": "2021-10-08",
+    "reviewer": "reviewer_2",
+    "body": "I fixed the logic. Still needs tests, etc.",
+    "url": "https://github.com/sindresorhus/ky/pull/382#discussion_r724749645"
+  },
+  {
+    "pr": 382,
+    "file": "source/core/Ky.ts",
+    "line": 1,
+    "date": "2021-10-07",
+    "reviewer": "reviewer_1",
+    "body": "This check is incorrect. It should allow it as long as `content-type` (any case) is not set by the user.",
+    "url": "https://github.com/sindresorhus/ky/pull/382#discussion_r724243463"
+  },
+  {
+    "pr": 358,
+    "file": "readme.md",
+    "line": 1,
+    "date": "2021-06-08",
+    "reviewer": "reviewer_1",
+    "body": "I don't think `ES module` is commonly used. How about this?\r\n\r\n```suggestion\r\nMake sure your code is running as a JavaScript module (ESM), for example by using a `<script type=\"module\">` tag in your HTML document. Then Ky can be imported directly by that module without a bundler or other tools.\r\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/358#discussion_r647174816"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 1,
+    "date": "2021-06-04",
+    "reviewer": "reviewer_30",
+    "body": "Good, I will update the PR on the weekend, should be fine 🔥",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r645422451"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 152,
+    "date": "2021-06-04",
+    "reviewer": "reviewer_31",
+    "body": "Sorry to give you merge conflicts. I added `entry as [keyof typeof responseTypes, string]` in \r\nhttps://github.com/sindresorhus/ky/pull/355/commits/3e75d74d7b0eb6385d19d6ff1d080eb0f0e7834a#diff-1d28e040cea335f5a22aa9c3f678f5d00b353e3ce966dc0978a91fe56f240b04R151-L152",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r645248430"
+  },
+  {
+    "pr": 351,
+    "file": "source/core/Ky.ts",
+    "line": 154,
+    "date": "2021-05-27",
+    "reviewer": "reviewer_32",
+    "body": "I'm not sure if Chrome replaces `0` with `1` or no. In that case it wouldn't matter.",
+    "url": "https://github.com/sindresorhus/ky/pull/351#discussion_r640605814"
+  },
+  {
+    "pr": 351,
+    "file": "source/core/Ky.ts",
+    "line": 154,
+    "date": "2021-05-27",
+    "reviewer": "reviewer_32",
+    "body": "@user https://github.com/sindresorhus/ky/pull/118",
+    "url": "https://github.com/sindresorhus/ky/pull/351#discussion_r640602679"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 344,
+    "date": "2021-05-27",
+    "reviewer": "reviewer_1",
+    "body": "I think `NormalizedOptions` needs to ensure headers are only `Headers`. We should present simple unified types to the user.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r640261388"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 150,
+    "date": "2021-05-26",
+    "reviewer": "reviewer_30",
+    "body": "This way it removes one `@user` so that's better than before\r\n\r\nI will keep it ✅",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r640046095"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-26",
+    "reviewer": "reviewer_30",
+    "body": "Okay, let's try it in the future if interested",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r640025700"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 344,
+    "date": "2021-05-26",
+    "reviewer": "reviewer_30",
+    "body": "@user \r\n\r\nYou need to narrow the type to work with it\r\n\r\n`options.headers` here can be either of union type element: `Headers | string[][] | Record<string, string>;`\r\n\r\nBut `set` function exists only in `Headers`, that's why I cast it here",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r640019359"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-25",
+    "reviewer": "reviewer_1",
+    "body": "I think:\r\n\r\n> Instead of ky.get(...).json<IncomingHttpHeaders>() we will have ky.get<IncomingHttpHeaders>(...).json()\r\n\r\nis a good idea, but making it extend a JSON type is problematic for many reasons. TS is just not good enough to make it workable. https://github.com/sindresorhus/ky/pull/133#discussion_r282433150",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r638797659"
+  },
+  {
+    "pr": 351,
+    "file": "source/core/Ky.ts",
+    "line": 154,
+    "date": "2021-05-25",
+    "reviewer": "reviewer_1",
+    "body": "If `0` is fine, we can just remove the argument altogether.",
+    "url": "https://github.com/sindresorhus/ky/pull/351#discussion_r638793155"
+  },
+  {
+    "pr": 351,
+    "file": "source/core/Ky.ts",
+    "line": 154,
+    "date": "2021-05-25",
+    "reviewer": "reviewer_1",
+    "body": "I don't remember why it's `1` and not `0`.\r\n\r\n@user Do you?",
+    "url": "https://github.com/sindresorhus/ky/pull/351#discussion_r638792908"
+  },
+  {
+    "pr": 351,
+    "file": "source/core/Ky.ts",
+    "line": 109,
+    "date": "2021-05-25",
+    "reviewer": "reviewer_1",
+    "body": "Not sure what you mean by \"parallel promise\". Would be great if you could be more specific.",
+    "url": "https://github.com/sindresorhus/ky/pull/351#discussion_r638790544"
+  },
+  {
+    "pr": 351,
+    "file": "source/core/Ky.ts",
+    "line": 110,
+    "date": "2021-05-25",
+    "reviewer": "reviewer_33",
+    "body": "The major change is just remove the `delay(1)` and perform the delay by a setTimeout. ",
+    "url": "https://github.com/sindresorhus/ky/pull/351#discussion_r638714074"
+  },
+  {
+    "pr": 351,
+    "file": "source/core/Ky.ts",
+    "line": 154,
+    "date": "2021-05-25",
+    "reviewer": "reviewer_33",
+    "body": "Didn't change 1 to 0, though 0 looks also work",
+    "url": "https://github.com/sindresorhus/ky/pull/351#discussion_r638712913"
+  },
+  {
+    "pr": 344,
+    "file": "source/types/options.ts",
+    "line": 6,
+    "date": "2021-05-14",
+    "reviewer": "reviewer_34",
+    "body": "Haven't found it: https://github.com/microsoft/TypeScript/blob/master/lib/lib.dom.d.ts#L16108",
+    "url": "https://github.com/sindresorhus/ky/pull/344#discussion_r632453909"
+  },
+  {
+    "pr": 344,
+    "file": "source/types/options.ts",
+    "line": 104,
+    "date": "2021-05-14",
+    "reviewer": "reviewer_1",
+    "body": "The whole type here should be exported as a named type `SearchParamsOption`.",
+    "url": "https://github.com/sindresorhus/ky/pull/344#discussion_r632329088"
+  },
+  {
+    "pr": 344,
+    "file": "source/types/options.ts",
+    "line": 6,
+    "date": "2021-05-14",
+    "reviewer": "reviewer_1",
+    "body": "Isn't this type already available in the DOM lib?",
+    "url": "https://github.com/sindresorhus/ky/pull/344#discussion_r632328899"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-07",
+    "reviewer": "reviewer_30",
+    "body": "Do you think MR with Generic type in https://github.com/Beraliv/ky/pull/1 will be too much?",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r628001450"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 344,
+    "date": "2021-05-07",
+    "reviewer": "reviewer_1",
+    "body": "Why is this needed? Is the `options.headers` type not correct?",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r627971443"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-07",
+    "reviewer": "reviewer_1",
+    "body": "I think `...options.json as Record<string, unknown>` would be fine here. We know it's an object, so it's fine to force cast.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r627970999"
+  },
+  {
+    "pr": 339,
+    "file": "source/types/options.ts",
+    "line": 74,
+    "date": "2021-05-07",
+    "reviewer": "reviewer_1",
+    "body": "> So would it be ok to have Primitive | Record<string, unknown>?\r\n\r\nNo, it used to be that, but it caused problems with `interface`s. `git blame` it and you'll find the relevant thread.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r627969670"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "@user I can suggest these changes regarding more stricter mapping of `Json` and the types in hooks and `json`\r\n\r\nYou can have a look at the changes (I didn't finish it, but you can already see the possible way) – https://github.com/Beraliv/ky/pull/1\r\n\r\nwdyt?",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626904481"
+  },
+  {
+    "pr": 339,
+    "file": "source/types/options.ts",
+    "line": 74,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "Btw, what is the expected value after calling `.json()` if you pass primitives?\r\n\r\nHere in test case I see that it's string instead of `boolean`:\r\n\r\n```ts\r\ntest('POST JSON with falsey value', async t => {\r\n\t// #222\r\n\tconst server = await createHttpTestServer({bodyParser: false});\r\n\tserver.post('/', async (request, response) => {\r\n\t\tresponse.json(await parseRawBody(request));\r\n\t});\r\n\r\n\tconst json = false;\r\n\tconst responseJson = await ky.post(server.url, {json}).json();\r\n\r\n\tt.deepEqual(responseJson, json.toString());\r\n\r\n\tawait server.close();\r\n});\r\n```\r\n\r\nCan you please describe the rules so I will be on the same page?",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626898571"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "Also, should it be connected to the `json`  we have in test?\r\n\r\nIn this case we need to have Generic type:\r\n\r\nIt will be `Options<Json extends BasicJson = BasicJson>` instead of `Options`\r\n\r\nWhat do you think?",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626858813"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 150,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "Okay, I understand that 👍\r\n\r\nLet me check if I can change that",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626831164"
+  },
+  {
+    "pr": 339,
+    "file": "source/utils/Mutable.ts",
+    "line": 1,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "yeah, that's working for me\r\n\r\nDone ✅",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626830426"
+  },
+  {
+    "pr": 339,
+    "file": "source/utils/Mutable.ts",
+    "line": 1,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_1",
+    "body": "The file should be named `types.ts`. I don't want a separate file for each simple type utility.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626777847"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 150,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_1",
+    "body": "I mean didn't mean to imply that you added it. Was just saying in general, we should try to reduce the `as` whenever possible as they're often as bad as `@user`.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626710880"
+  },
+  {
+    "pr": 339,
+    "file": "source/types/options.ts",
+    "line": 74,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "So would it be ok to have `Primitive | Record<string, unknown>`?\r\n\r\n```ts\r\nexport type Primitive = null | undefined | string | number | boolean | symbol | bigint;\r\n```",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626710707"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "What is the expected type here?\r\n\r\nI see it's `NormalizedOptions` now",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626709559"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 150,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "You anyway do that below, so I moved it here\r\n\r\nIt was here before – https://github.com/sindresorhus/ky/pull/339/files#diff-1d28e040cea335f5a22aa9c3f678f5d00b353e3ce966dc0978a91fe56f240b04L173\r\n\r\nIs it alright?",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626709127"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 159,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_30",
+    "body": "No idea here, somehow `npm run test` throws an error here",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626708551"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 159,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_1",
+    "body": "Why are you silencing the listing? If it's valid, it would be useful with a code comment about why.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626645481"
+  },
+  {
+    "pr": 339,
+    "file": "test/http-error.ts",
+    "line": 4,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_1",
+    "body": "You can move the type utilities to a `types` file in https://github.com/sindresorhus/ky/tree/main/source/utils",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626644627"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_1",
+    "body": "The real issue is that the `options` parameter doesn't have the correct type.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626643593"
+  },
+  {
+    "pr": 339,
+    "file": "source/types/options.ts",
+    "line": 74,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_1",
+    "body": "JSON can have top-level array or primitive value.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626642405"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 150,
+    "date": "2021-05-05",
+    "reviewer": "reviewer_1",
+    "body": "Sidenote: We should also try to reduce use of `as` as it just overrides the type no matter what.",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626639778"
+  },
+  {
+    "pr": 339,
+    "file": "test/http-error.ts",
+    "line": 4,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "Let me know if I can move it to some place to reuse it (was used twice in the codebase)",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626106931"
+  },
+  {
+    "pr": 339,
+    "file": "test/http-error.ts",
+    "line": 8,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "There are 2 problems here:\r\n\r\n1. it is `readonly`\r\n2. it doesn't accept `undefined` ",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626106692"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 286,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "should return something in other branches",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626105853"
+  },
+  {
+    "pr": 339,
+    "file": "test/hooks.ts",
+    "line": 280,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "we cannot use spread here if it's not an object\r\n\r\nif it's valid only in test, let's cast it here",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626105754"
+  },
+  {
+    "pr": 339,
+    "file": "source/types/options.ts",
+    "line": 74,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "Correct me if it can be not only an object",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626105488"
+  },
+  {
+    "pr": 339,
+    "file": "test/fetch.ts",
+    "line": 9,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "it's validated with `throw` so it's narrowed the `object` now",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626105077"
+  },
+  {
+    "pr": 339,
+    "file": "test/browser.ts",
+    "line": 163,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "it's validated with `throw` so it's narrowed the `object` now",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626104961"
+  },
+  {
+    "pr": 339,
+    "file": "package.json",
+    "line": 54,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "is needed for `Expect` and `Equal`\r\n\r\nhowever, I can define it without dependency",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626082218"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/Ky.ts",
+    "line": 152,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "the problem here is that `Object.entries` has incorrect `ReturnType`\r\n\r\nSo what I do:\r\n\r\n1. I created `ObjectEntries` helper to infer it (however, it's possible to redefine it globally)\r\n2. `result` as `ResponsePromise` now has all the methods for `type` so we can call it without issues",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626078660"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/constants.ts",
+    "line": 21,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "this is needed to infer key and values for `Object.entries` later",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626075895"
+  },
+  {
+    "pr": 339,
+    "file": "source/core/constants.ts",
+    "line": 12,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "instead of declaring `requestMethods` as `readonly HTTPMethod[]`, you make it readonly as is\r\n\r\nand then check here in `cases` that values are exactly the same",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626075644"
+  },
+  {
+    "pr": 339,
+    "file": "source/index.ts",
+    "line": 11,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "It's needed for `KyInterface` as it has `readonly stop` which needs to make mutable below (to be able to assign the value)",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626073895"
+  },
+  {
+    "pr": 339,
+    "file": "source/index.ts",
+    "line": 12,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "So inside we declare it mutable and optional\r\n\r\nSo we can assign it later",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626073285"
+  },
+  {
+    "pr": 339,
+    "file": "source/types/hooks.ts",
+    "line": 11,
+    "date": "2021-05-04",
+    "reviewer": "reviewer_30",
+    "body": "I'm not sure if response is needed\r\n\r\nIn docs it's not mentioned, in tests I didn't find a usage too",
+    "url": "https://github.com/sindresorhus/ky/pull/339#discussion_r626072887"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 16,
+    "date": "2021-04-09",
+    "reviewer": "reviewer_34",
+    "body": "good idea, however since it's a breaking change (breaks unit tests too), I think it might be wiser to postpone this change in an upcoming release to reduce the scope of potential issues with the migration release.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r610755495"
+  },
+  {
+    "pr": 330,
+    "file": "tsconfig.lib.json",
+    "line": 6,
+    "date": "2021-04-09",
+    "reviewer": "reviewer_1",
+    "body": "I would prefer the output directory to be called `distribution`.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r610483911"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 176,
+    "date": "2021-04-09",
+    "reviewer": "reviewer_1",
+    "body": "This should be marked as protected. Same with the other internal methods.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r610480619"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 13,
+    "date": "2021-04-09",
+    "reviewer": "reviewer_1",
+    "body": "I don't think we want to make this public.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r610479915"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 19,
+    "date": "2021-04-09",
+    "reviewer": "reviewer_1",
+    "body": "This is moot. It's already set.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r610475156"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 16,
+    "date": "2021-04-09",
+    "reviewer": "reviewer_1",
+    "body": "Can we use JS private class fields here?",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r610475051"
+  },
+  {
+    "pr": 330,
+    "file": ".gitignore",
+    "line": 4,
+    "date": "2021-04-09",
+    "reviewer": "reviewer_1",
+    "body": "Doesn't seem like this is used.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r610473668"
+  },
+  {
+    "pr": 330,
+    "file": "tsconfig.json",
+    "line": 12,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_34",
+    "body": "it feels a bit strange to remove key fields like `target` or `module` and somewhat less safe (but we could pin the version). Looks like `allowSyntheticDefaultImports` could be an easy drop though.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r608210273"
+  },
+  {
+    "pr": 330,
+    "file": "tsconfig.lib.json",
+    "line": 2,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_34",
+    "body": "We need one to properly typecheck both source and tests & the other leverage the `rootDir` option to produce the actual esm build.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r608209878"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 70,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_34",
+    "body": "Indeed not sure how it ended up there, not required.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r608207659"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 68,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_34",
+    "body": "Some of them were required to have working types that were missing in previous versions. I think it's ok/fair to switch to the most up-to-date versions for such a big breaking change and considering it's only dev deps.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r608207019"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 64,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_34",
+    "body": "Did not want to have an external blocker on such a big PR. It's a great idea but I think it can be done after the merge to avoid any slowdowns.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r608205978"
+  },
+  {
+    "pr": 330,
+    "file": "tsconfig.lib.json",
+    "line": 2,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_2",
+    "body": "I don't understand why we have two TS configs here. Seems like there should only be one.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r607867717"
+  },
+  {
+    "pr": 330,
+    "file": "tsconfig.json",
+    "line": 12,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_2",
+    "body": "Looks like `@user/tsconfig` has been updated recently to include most of this stuff by default.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r607859462"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 68,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_2",
+    "body": "Updating dependencies and stuff makes it harder to know what's strictly necessary vs an unrelated improvement. Would be nice to do it in a separate issue/PR, for clarity's sake.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r607852342"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 70,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_2",
+    "body": "I can't tell what this is being used for. Also, RequireJS is legacy tech and unmaintained. It hasn't been updated in 3 years.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r607848249"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 64,
+    "date": "2021-04-06",
+    "reviewer": "reviewer_2",
+    "body": "From what I can tell, the reason you're using Express directly is so that you can add types to the server. But why not just add types to the `create-test-server` package? Then the whole community can more easily benefit from that work and we don't have to maintain it in Ky.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r607844419"
+  },
+  {
+    "pr": 330,
+    "file": "tsconfig.json",
+    "line": 12,
+    "date": "2021-03-28",
+    "reviewer": "reviewer_1",
+    "body": "I don't think we need this now that the package is ESM.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r602859976"
+  },
+  {
+    "pr": 330,
+    "file": "source/index.ts",
+    "line": 1,
+    "date": "2021-03-28",
+    "reviewer": "reviewer_1",
+    "body": "Disable it inline when needed instead of for the whole file.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r602859736"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 53,
+    "date": "2021-03-28",
+    "reviewer": "reviewer_1",
+    "body": "I think this is unused now.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r602859653"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 14,
+    "date": "2021-03-28",
+    "reviewer": "reviewer_1",
+    "body": "This is moot. `exports` replaces `main`.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r602859562"
+  },
+  {
+    "pr": 330,
+    "file": ".gitignore",
+    "line": 4,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_34",
+    "body": "Done, just `.nyc_output` is from `nyc`.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597243013"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 83,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_34",
+    "body": "Done for `quotes`, have to keep `dot-notation` off as typescript forbids dot notation in quite a few header-related cases (due to specific type) and disabling by line would be tedious/verbose.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597242681"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 86,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_34",
+    "body": "Done, issue was about `searchParams` and disabled rule locally.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597241980"
+  },
+  {
+    "pr": 330,
+    "file": "source/utils/merge.ts",
+    "line": 19,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_34",
+    "body": "Unfortunately typescript won't let me use a for-of loop in that case, getting `Type 'Headers' must have a '[Symbol.iterator]()' method that returns an iterator.` and no `entries()` method declared.\r\n\r\n`edit`: fixed by adding missing \"DOM.Iterable\" to tsconfig.json lib.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597241453"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 1,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_34",
+    "body": "Indeed, just initially wanted to prevent any breaking changes for the rewrite but in that case it is indeed a welcome fix.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597238968"
+  },
+  {
+    "pr": 330,
+    "file": "package.json",
+    "line": 86,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_1",
+    "body": "Generally don't disable this. If it has false-positives, add inline `// eslint-disable..` comments.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597128940"
+  },
+  {
+    "pr": 330,
+    "file": ".gitignore",
+    "line": 4,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_1",
+    "body": "These are not project-related and should be in your own global gitignore file.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597124810"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 1,
+    "date": "2021-03-18",
+    "reviewer": "reviewer_1",
+    "body": "Don't disable it for the whole file. Disable it where it needs to be, but keep in mind that most cases, the rule is correct.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r597124010"
+  },
+  {
+    "pr": 330,
+    "file": "source/index.ts",
+    "line": 16,
+    "date": "2021-03-05",
+    "reviewer": "reviewer_34",
+    "body": "Here is one of the two `@user` that I haven't figured it out if I can properly dynamically type this in TS. One possible fix is to drop the loop and set every method manually.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r588537156"
+  },
+  {
+    "pr": 330,
+    "file": "source/core/Ky.ts",
+    "line": 150,
+    "date": "2021-03-05",
+    "reviewer": "reviewer_34",
+    "body": "Here is one of the two `@user` that I haven't figured it out if I can properly dynamically type this in TS. One possible fix is to drop the loop and set every contentType manually.",
+    "url": "https://github.com/sindresorhus/ky/pull/330#discussion_r588536017"
+  },
+  {
+    "pr": 319,
+    "file": "index.js",
+    "line": 3,
+    "date": "2021-01-17",
+    "reviewer": "reviewer_2",
+    "body": "Sure, done. I find it a bit lengthy and strange to look at. Maybe I just need to get used to it.",
+    "url": "https://github.com/sindresorhus/ky/pull/319#discussion_r559221213"
+  },
+  {
+    "pr": 319,
+    "file": "index.js",
+    "line": 3,
+    "date": "2021-01-17",
+    "reviewer": "reviewer_1",
+    "body": "Can we drop this too and just use `globalThis` directly everywhere?",
+    "url": "https://github.com/sindresorhus/ky/pull/319#discussion_r559090654"
+  },
+  {
+    "pr": 308,
+    "file": "index.d.ts",
+    "line": 14,
+    "date": "2021-01-08",
+    "reviewer": "reviewer_35",
+    "body": "> Naming is indeed hard, but I don't think you tried your best here.\r\n\r\nWell, sorry for not doing my best for someone else's library. I'll change it to `State`",
+    "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r553718127"
+  },
+  {
+    "pr": 308,
+    "file": "index.d.ts",
+    "line": 14,
+    "date": "2021-01-07",
+    "reviewer": "reviewer_1",
+    "body": "I prefer `Context`, but `State` would work too.",
+    "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r553132064"
+  },
+  {
+    "pr": 308,
+    "file": "index.d.ts",
+    "line": 14,
+    "date": "2021-01-07",
+    "reviewer": "reviewer_1",
+    "body": "> Well, I can't think of a better name tha \"parameters\".\r\n\r\nNaming is indeed hard, but I don't think you tried your best here. All I asked was to come up with some alternatives.",
+    "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r553131764"
+  },
+  {
+    "pr": 315,
+    "file": "test/browser.js",
+    "line": 18,
+    "date": "2021-01-06",
+    "reviewer": "reviewer_1",
+    "body": "I managed to solve it. Really weird that the `import` call didn't throw though.",
+    "url": "https://github.com/sindresorhus/ky/pull/315#discussion_r552794633"
+  },
+  {
+    "pr": 315,
+    "file": "index.js",
+    "line": 5,
+    "date": "2021-01-06",
+    "reviewer": "reviewer_1",
+    "body": "Let's try and see. I would prefer for us to not have to have lots of workarounds for weird use-cases.",
+    "url": "https://github.com/sindresorhus/ky/pull/315#discussion_r552793471"
+  },
+  {
+    "pr": 315,
+    "file": "test/browser.js",
+    "line": 327,
+    "date": "2021-01-06",
+    "reviewer": "reviewer_1",
+    "body": "Just forgot to remove it after testing something.",
+    "url": "https://github.com/sindresorhus/ky/pull/315#discussion_r552793143"
+  },
+  {
+    "pr": 308,
+    "file": "index.d.ts",
+    "line": 14,
+    "date": "2021-01-06",
+    "reviewer": "reviewer_2",
+    "body": "I would name it `BeforeRetryState`.\r\n\r\nIf not `State`, then some other ideas...\r\n - `Event`\r\n - `Context`\r\n - `Record`\r\n - `Variables` (or `Vars`)\r\n - `Properties` (or `Props`)\r\n - `Arguments` (or `Args`)",
+    "url": "https://github.com/sindresorhus/ky/pull/308#discussion_r552664983"
+  },
+  {
+    "pr": 315,
+    "file": "index.js",
+    "line": 5,
+    "date": "2021-01-06",
+    "reviewer": "reviewer_2",
+    "body": "This could break some edge cases, including the scenario from https://github.com/sindresorhus/ky/pull/203 and https://github.com/sindresorhus/ky/issues/202. Basically, I've seen cases where some of the globals we rely on were actually defined on different objects (i.e. not true globals), particularly in mocked test environments.\r\n\r\nThat said, we're less reliant on these globals since the last time I had any issues and now that Node.js actually has `globalThis` and I can do `globalThis.window = globalThis`... maybe it won't be a problem? I'm not entirely sure. I'm 👍 on simplifying this, but let's definitely mark it as a breaking change.",
+    "url": "https://github.com/sindresorhus/ky/pull/315#discussion_r552652490"
+  },
+  {
+    "pr": 315,
+    "file": "test/browser.js",
+    "line": 327,
+    "date": "2021-01-06",
+    "reviewer": "reviewer_2",
+    "body": "Almost didn't notice this. Why do we need to bypass CSP?",
+    "url": "https://github.com/sindresorhus/ky/pull/315#discussion_r552631663"
+  }
+]
