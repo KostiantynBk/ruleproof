@@ -1,0 +1,54 @@
+{
+  "repo": "fastify",
+  "initChars": 7604,
+  "rules": [
+    {
+      "id": "R1",
+      "rule": "Every new code path or opt-in feature must be accompanied by a dedicated regression or coverage test that would fail if the feature were removed.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "The /init files describe how to run tests and mention t.plan() accuracy, but never state that every new code path or opt-in feature requires a dedicated test that would fail if the feature were removed."
+    },
+    {
+      "id": "R2",
+      "rule": "When a new hook, option, or API is added to the runtime, its TypeScript overload in types/*.d.ts must be updated in the same PR; omitting it causes excess-property or compile-time errors for TypeScript consumers.",
+      "coverage": "partial",
+      "initFile": "baseline-init-real/fastify/AGENTS.md",
+      "initQuote": "Type definitions live under [`types/`](types/) and are re-exported via [`fastify.d.ts`](fastify.d.ts).",
+      "reason": "The init file locates the type definitions and mentions type tests, but never states that runtime additions must be accompanied by a types/*.d.ts update in the same PR."
+    },
+    {
+      "id": "R3",
+      "rule": "New route-registration or framework failures must throw a named FST_ERR_* code instead of a plain Error so consumers can identify the failure programmatically.",
+      "coverage": "covered",
+      "initFile": "baseline-init-real/fastify/.bob/rules-agent/AGENTS.md",
+      "initQuote": "All errors must be created with `@fastify/error` and registered in `lib/errors.js` with a `FST_ERR_*` code. Do not throw plain `Error` objects from framework internals.",
+      "reason": "The rules-agent file explicitly forbids plain Error objects from framework internals and requires FST_ERR_* codes, directly covering the rule."
+    },
+    {
+      "id": "R4",
+      "rule": "Documentation must not overstate or contradict actual runtime behaviour; when a guard has known exceptions or bypasses, the prose must be scoped accurately and all parameters must be described.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention accuracy requirements for documentation or the need to scope prose to actual runtime behaviour."
+    },
+    {
+      "id": "R5",
+      "rule": "Each API option section in the reference docs must contain exactly one default-value entry; duplicate default declarations must be removed.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention documentation formatting rules or prohibit duplicate default-value declarations."
+    },
+    {
+      "id": "R6",
+      "rule": "Doc examples that delete symbol-keyed properties must use Object.getOwnPropertySymbols() or Reflect.ownKeys(); Object.keys() never returns symbol keys and silently skips the intended operation.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention the limitation of Object.keys() with symbol keys or require the use of Object.getOwnPropertySymbols() in doc examples."
+    }
+  ]
+}

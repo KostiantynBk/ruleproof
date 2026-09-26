@@ -1,0 +1,86 @@
+    {
+  "repo": "ky",
+  "initChars": 5606,
+  "rules": [
+    {
+      "id": "R1",
+      "rule": "Keep TypeScript JSDoc comments and the README in sync: every option, parameter, or behaviour documented in one must be mirrored in the other.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention the requirement to keep TS JSDoc comments and README in sync."
+    },
+    {
+      "id": "R2",
+      "rule": "Use `t.plan()` in every AVA test that contains async callbacks or hooks so that missing or skipped assertions are caught as test failures.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention t.plan() or assertion planning in AVA tests."
+    },
+    {
+      "id": "R3",
+      "rule": "Never hit external third-party URLs (e.g. example.com) in tests; use the project's local HTTP test server instead to prevent flaky CI failures.",
+      "coverage": "partial",
+      "initFile": "baseline-init-real/ky/AGENTS.md",
+      "initQuote": "`test/helpers/create-http-test-server.ts` — spins up a real Express server on a random port; call with `t` (ava `ExecutionContext`) to auto-teardown, or manage `server.close()` manually.",
+      "reason": "The init file documents the local test-server helper but never says external URLs are forbidden or that tests must use it instead of real network endpoints."
+    },
+    {
+      "id": "R4",
+      "rule": "Avoid TypeScript `as` casts wherever possible; fix the underlying type instead. Use casts only as a last resort and accompany them with a comment explaining why.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention avoiding TypeScript `as` casts or fixing the underlying type."
+    },
+    {
+      "id": "R5",
+      "rule": "Ensure every test assertion covers the key side-effect or state change (e.g. assert `requestCount`, not just the response); tests that silently allow regressions are rejected.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files require assertions on side-effects like requestCount or any specific observable state beyond the response."
+    },
+    {
+      "id": "R6",
+      "rule": "Do not duplicate logic: extract shared code into a helper rather than repeating it across multiple call sites or tests.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention DRY principles or the requirement to extract shared helpers."
+    },
+    {
+      "id": "R7",
+      "rule": "Never silently swallow errors from constructors or hooks; always re-throw or narrow the specific error condition rather than catching all errors.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files address error handling patterns in constructors or hooks."
+    },
+    {
+      "id": "R8",
+      "rule": "Choose precise, self-documenting names for variables, types, and parameters; do not submit a PR without considering alternatives when a name is unclear.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "The /init files mention xo enforces style and lists disabled naming rules, but never require reviewing or proposing alternative names before submitting."
+    },
+    {
+      "id": "R9",
+      "rule": "Do not leave `console.log()` or other debug output in submitted code; remove all debug statements before opening a PR.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention removing console.log or debug output before submitting a PR."
+    },
+    {
+      "id": "R10",
+      "rule": "Guard new browser-API calls (e.g. `AbortSignal.any`) with the same feature-detection checks already present in the codebase; never introduce an unguarded call that regresses older environments.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "The plan rules note that signal uses AbortSignal.any but do not mention the feature-detection guard requirement or the risk of regressions in older environments."
+    }
+  ]
+}

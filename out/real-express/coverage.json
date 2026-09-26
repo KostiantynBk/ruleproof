@@ -1,0 +1,62 @@
+{
+  "repo": "express",
+  "initChars": 4900,
+  "rules": [
+    {
+      "id": "R1",
+      "rule": "Tests must assert the actual observable behaviour (concrete values, structures, or emitted events), not merely exercise a code path; tautological assertions that pass regardless of the change under test are rejected.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention the requirement to assert concrete values or the rejection of tautological assertions."
+    },
+    {
+      "id": "R2",
+      "rule": "Do not include changes unrelated to the PR's stated goal; every modified file must trace directly to the PR's purpose.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention keeping PRs focused or prohibiting unrelated changes."
+    },
+    {
+      "id": "R3",
+      "rule": "Do not add verbose or redundant inline comments; if the JSDoc already documents intent, omit the inline comment. Comments that no longer apply to the surrounding code block must be removed or relocated.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention rules about inline comment verbosity or stale comments."
+    },
+    {
+      "id": "R4",
+      "rule": "Use `after(n, done)` (or equivalent latch) when a Mocha test waits for multiple async callbacks to complete; never hand-roll a counter with a shared `done` variable.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention `after(n, done)` or how to synchronise multiple async callbacks in Mocha."
+    },
+    {
+      "id": "R5",
+      "rule": "Use `^` (caret) version ranges for dependencies in package.json instead of exact pins; exact pins must be justified explicitly and agreed by the team.",
+      "coverage": "partial",
+      "initFile": "baseline-init-real/express/.bob/rules-plan/AGENTS.md",
+      "initQuote": "The package does **not** use a lock file (`package-lock=false`) — dependency versions are governed by semver ranges in `package.json`.",
+      "reason": "The init file notes that semver ranges govern dependency versions, hinting at a preference for range specifiers, but never explicitly requires caret (`^`) ranges or prohibits exact pins."
+    },
+    {
+      "id": "R6",
+      "rule": "Never use `pull_request_target` in GitHub Actions workflows that check out or execute PR contributor code; use `pull_request` instead to prevent privilege escalation via script injection.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention GitHub Actions security or the `pull_request_target` trigger."
+    },
+    {
+      "id": "R7",
+      "rule": "New TypeError/error messages must match the existing codebase format (e.g. start with 'Invalid status code') and guard against falsy-but-provided values using explicit null/undefined checks, not bare `if (!arg)`.",
+      "coverage": "missing",
+      "initFile": null,
+      "initQuote": null,
+      "reason": "None of the /init files mention error message format conventions or the requirement to use explicit null/undefined checks instead of bare falsy guards."
+    }
+  ]
+}
