@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RuleProof — cover</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; width: 1920px; height: 1080px; background: #0d1117; color: #e6edf3; font-family: "Segoe UI", system-ui, sans-serif; display: flex; overflow: hidden; position: relative; }
+  .left { flex: 1.1; padding: 150px 0 0 140px; }
+  .tag { display: inline-block; font-size: 26px; padding: 8px 20px; border-radius: 999px; background: #21262d; color: #8b949e; }
+  h1 { font-size: 150px; margin: 40px 0 10px; letter-spacing: -3px; }
+  .sub { font-size: 52px; color: #c9d1d9; margin: 0; }
+  .sub span { color: #3fb950; }
+  .desc { font-size: 32px; color: #8b949e; margin-top: 50px; line-height: 1.45; max-width: 900px; }
+  .right { flex: 0.9; padding: 170px 140px 0 40px; display: flex; flex-direction: column; gap: 28px; }
+  .card { background: #161b22; border: 2px solid #30363d; border-radius: 22px; padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; }
+  .card .lbl { font-size: 30px; color: #8b949e; text-transform: uppercase; letter-spacing: 2px; }
+  .card .big { font-size: 96px; font-weight: 700; }
+  .win { border-color: #238636; }
+  .foot { position: absolute; bottom: 60px; left: 140px; right: 140px; display: flex; justify-content: space-between; font-size: 28px; color: #6e7681; }
+</style>
+</head>
+<body>
+  <div class="left">
+    <span class="tag">IBM Bob 2.0 Hackathon</span>
+    <h1>RuleProof</h1>
+    <p class="sub">Agent rules — <span>measured, not guessed.</span></p>
+    <p class="desc">Mines your team's review history into rules for IBM Bob, A/B-tests every rule with Bob, and keeps only the ones that prevent mistakes.</p>
+  </div>
+  <div class="right">
+    <div class="card"><span class="lbl">No rules</span><span class="big" style="color:#8b949e">20%</span></div>
+    <div class="card"><span class="lbl">Bob /init</span><span class="big" style="color:#58a6ff">33%</span></div>
+    <div class="card win"><span class="lbl">RuleProof</span><span class="big" style="color:#3fb950">100%</span></div>
+    <p style="font-size:24px;color:#6e7681;margin:4px 0 0">Task pass rate · 5 tasks × 3 Bob runs each</p>
+  </div>
+  <div class="foot"><span>ruleproof.vercel.app</span><span>github.com/KostiantynBk/ruleproof</span></div>
+</body>
+</html>

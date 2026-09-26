@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RuleProof — slides</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0d1117; color: #e6edf3; font-family: "Segoe UI", system-ui, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { width: 1280px; height: 720px; padding: 64px 80px; page-break-after: always; position: relative; overflow: hidden; background: #0d1117; }
+  .slide:last-child { page-break-after: auto; }
+  h1 { font-size: 64px; margin: 0 0 12px; letter-spacing: -1px; }
+  h2 { font-size: 40px; margin: 0 0 28px; }
+  p, li { font-size: 24px; line-height: 1.45; color: #c9d1d9; }
+  ul { padding-left: 28px; margin: 0; }
+  li { margin-bottom: 14px; }
+  code { font-family: Consolas, monospace; font-size: 0.92em; color: #e6edf3; }
+  .muted { color: #8b949e; }
+  .accent { color: #3fb950; }
+  .blue { color: #58a6ff; }
+  .red { color: #f85149; }
+  .tag { display: inline-block; font-size: 16px; padding: 4px 12px; border-radius: 999px; background: #21262d; color: #8b949e; margin-right: 8px; }
+  .foot { position: absolute; bottom: 28px; left: 80px; right: 80px; display: flex; justify-content: space-between; font-size: 16px; color: #6e7681; }
+  .cards { display: flex; gap: 24px; margin-top: 12px; }
+  .card { flex: 1; background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 26px 28px; }
+  .card .big { font-size: 64px; font-weight: 700; }
+  .card .lbl { font-size: 18px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; }
+  .card .row { display: flex; justify-content: space-between; font-size: 20px; margin-top: 10px; color: #c9d1d9; }
+  .steps { display: flex; gap: 14px; margin-top: 24px; }
+  .step { flex: 1; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; }
+  .step b { display: block; font-size: 26px; margin-bottom: 8px; color: #58a6ff; }
+  .step span { font-size: 18px; color: #c9d1d9; line-height: 1.4; }
+  pre { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 18px 20px; font-family: Consolas, monospace; font-size: 17px; line-height: 1.45; margin: 0; white-space: pre-wrap; color: #e6edf3; }
+  .cols { display: flex; gap: 24px; }
+  .cols > div { flex: 1; }
+  .badge { font-weight: 700; font-size: 18px; padding: 3px 10px; border-radius: 6px; color: #fff; }
+  .keep { background: #238636; }
+  .red-b { background: #da3633; }
+  .grey-b { background: #30363d; color: #c9d1d9; }
+  table { border-collapse: collapse; width: 100%; font-size: 21px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #30363d; color: #c9d1d9; }
+  th { color: #8b949e; font-weight: 600; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; }
+  .quote { border-left: 4px solid #58a6ff; padding: 8px 16px; margin: 10px 0; background: #161b22; font-size: 20px; color: #c9d1d9; }
+  .quote small { display: block; color: #8b949e; font-size: 15px; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- 1. Title -->
+<section class="slide">
+  <div style="margin-top:150px">
+    <span class="tag">IBM Bob 2.0 Hackathon</span><span class="tag">Developer onboarding &amp; maintenance</span>
+    <h1 style="margin-top:28px">RuleProof</h1>
+    <p style="font-size:34px;color:#e6edf3;margin:0">Rules for AI coding agents — <span class="accent">measured, not guessed.</span></p>
+    <p class="muted" style="margin-top:28px">Mines your team's history into rules for IBM Bob, A/B-tests each rule with Bob,<br>and keeps only the rules that measurably prevent mistakes.</p>
+  </div>
+  <div class="foot"><span>ruleproof.vercel.app</span><span>github.com/KostiantynBk/ruleproof</span></div>
+</section>
+
+<!-- 2. Problem -->
+<section class="slide">
+  <h2>The problem: agents repeat your team's mistakes</h2>
+  <ul>
+    <li>Coding agents don't know a team's <b>unwritten rules</b> — reviewers catch the same mistakes again and again.</li>
+    <li>The fix today is a rules file (AGENTS.md, <code>.bob/rules</code>) — written by hand or generated with <code>/init</code>. <b>Both are guesswork.</b></li>
+    <li>Nobody measures which rules change behaviour, and <b>every rule costs tokens</b> on every task.</li>
+    <li>ETH Zurich (AGENTbench, 2026): LLM-generated context files <b>did not improve success</b> but added <b>&gt;20&nbsp;% cost</b>.</li>
+  </ul>
+  <p class="blue" style="margin-top:28px;font-size:28px">The knowledge that matters is in the history — review comments, reverts, red CI runs. No agent reads it.</p>
+  <div class="foot"><span>RuleProof</span><span>2</span></div>
+</section>
+
+<!-- 3. How it works -->
+<section class="slide">
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step"><b>1 · Mine</b><span>Custom Bob IDE mode <code>rule-miner</code> + parallel explore subagents read reviews, git log, CI logs. Only recurring issues, with exact quotes.</span></div>
+    <div class="step"><b>2 · Verify</b><span>Deterministic checker: every quote must appear verbatim in the sources. Invented evidence is rejected.</span></div>
+    <div class="step"><b>3 · Test</b><span>Bob Shell (headless) does the same task on throwaway repo copies, with and without the rule, 3×. Behavioural checks score it.</span></div>
+    <div class="step"><b>4 · Decide</b><span>KEEP only if the pass rate rises. REDUNDANT if Bob already does it. INEFFECTIVE / HARMFUL otherwise.</span></div>
+    <div class="step"><b>5 · Ship</b><span>KEEP rules exported for <code>.bob/rules/</code>. Public dashboard with evidence and Bob's code with/without each rule.</span></div>
+  </div>
+  <p class="muted" style="margin-top:36px">Built with Bob IDE (13 tasks) · measured with Bob Shell (75 A/B runs) · all on the hackathon account</p>
+  <div class="foot"><span>RuleProof</span><span>3</span></div>
+</section>
+
+<!-- 4. Demo moment -->
+<section class="slide">
+  <h2>What a proven rule changes</h2>
+  <p style="margin-top:-12px">Task: <i>"Add markDelivered(order) … record the delivery time."</i> Reviewers had flagged the audit convention 3× and CI failed on it.</p>
+  <div class="cols">
+    <div>
+      <p><span class="badge red-b">Bob without rule ✗</span></p>
+<pre>function markDelivered(order) {
+  if (order.status !== 'shipped') throw …
+  return { ...order, status: 'delivered',
+           deliveredAt: clock.now() };
+}
+<span class="red">// no audit.record — check fails
+// (other runs: audit.log() → TypeError)</span></pre>
+    </div>
+    <div>
+      <p><span class="badge keep">Bob with rule R2 ✓</span></p>
+<pre>function markDelivered(order) {
+  if (order.status !== 'shipped') throw …
+  const updated = { ...order, status: 'delivered',
+                    deliveredAt: clock.now() };
+  <span class="accent">audit.record('order.delivered',
+               { orderId: order.id });</span>
+  return updated;
+}</pre>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:22px">Rule R2 (mined): <i>"Always call audit.record(eventName, data) — never audit.log(). Data must include orderId; eventName follows 'order.&lt;verb&gt;'."</i> — without 0/3 → with 3/3</p>
+  <div class="foot"><span>RuleProof</span><span>4</span></div>
+</section>
+
+<!-- 5. Per-rule results -->
+<section class="slide">
+  <h2>Per-rule A/B results <span class="muted" style="font-size:22px">(30 Bob runs, 1.88 Bobcoins)</span></h2>
+  <table>
+    <tr><th>Rule (mined from history)</th><th>Without</th><th>With</th><th>Verdict</th></tr>
+    <tr><td>R1 · Shipped orders are final (<code>ORDER_ALREADY_SHIPPED</code>)</td><td class="red">0/3</td><td class="accent">3/3</td><td><span class="badge keep">KEEP</span></td></tr>
+    <tr><td>R2 · <code>audit.record</code>, never <code>audit.log</code></td><td class="red">0/3</td><td class="accent">3/3</td><td><span class="badge keep">KEEP</span></td></tr>
+    <tr><td>R3 · <code>clock.now()</code> for timestamps</td><td class="accent">3/3</td><td class="accent">3/3</td><td><span class="badge grey-b">REDUNDANT</span></td></tr>
+    <tr><td>R4 · Refunds via <code>payments.refund()</code></td><td>2/3</td><td class="accent">3/3</td><td><span class="badge grey-b">REDUNDANT</span></td></tr>
+    <tr><td>R5 · Partial refunds round down (<code>Math.floor</code>)</td><td class="red">0/3</td><td class="accent">3/3</td><td><span class="badge keep">KEEP</span></td></tr>
+  </table>
+  <p class="blue" style="margin-top:26px;font-size:26px">2 of 5 plausible rules add nothing — Bob already infers them from the code. RuleProof drops them.</p>
+  <div class="foot"><span>RuleProof</span><span>5</span></div>
+</section>
+
+<!-- 6. Head-to-head -->
+<section class="slide">
+  <h2>Head-to-head: five tasks, three runs each <span class="muted" style="font-size:22px">(45 Bob runs)</span></h2>
+  <div class="cards">
+    <div class="card"><div class="lbl">No rules</div><div class="big" style="color:#8b949e">20%</div>
+      <div class="row"><span>Avg cost / run</span><span>0.061</span></div><div class="row"><span>Rules size</span><span>0 chars</span></div></div>
+    <div class="card"><div class="lbl">Bob /init</div><div class="big blue">33%</div>
+      <div class="row"><span>Avg cost / run</span><span>0.100</span></div><div class="row"><span>Rules size</span><span>3,510 chars</span></div></div>
+    <div class="card" style="border-color:#238636"><div class="lbl">RuleProof</div><div class="big accent">100%</div>
+      <div class="row"><span>Avg cost / run</span><span>0.070</span></div><div class="row"><span>Rules size</span><span>481 chars</span></div></div>
+  </div>
+  <ul style="margin-top:30px">
+    <li>A rule file <b>7× smaller</b> than <code>/init</code>'s, at <b>~30&nbsp;% lower cost per run</b> than <code>/init</code>.</li>
+    <li><code>/init</code> captured only <code>clock.now()</code> — the one rule our A/B test had marked REDUNDANT.</li>
+  </ul>
+  <div class="foot"><span>RuleProof · costs in Bobcoins</span><span>6</span></div>
+</section>
+
+<!-- 7. Real repository -->
+<section class="slide">
+  <h2>Works on a real repository: <span class="blue">sindresorhus/ky</span></h2>
+  <p style="margin-top:-12px">256 anonymized public PR review comments (60 PRs) → <b>10 project-specific rules</b>, each raised in 2–6 PRs, <b>36/36 quotes verified</b>.</p>
+  <div class="quote">Keep TypeScript JSDoc comments and the README in sync.<small>7 comments across 6 PRs — e.g. "Readme and TS docs should be in sync." (PR #417)</small></div>
+  <div class="quote">Never hit external URLs like example.com in tests; use the local test server.<small>2 PRs — e.g. "These tests reach out to `example.com` but they should probably use a local echo server instead." (PR #858)</small></div>
+  <div class="quote">Use <code>t.plan()</code> in AVA tests with async callbacks or hooks.<small>3 comments across 2 PRs (#671, #772)</small></div>
+  <p class="muted">Mined and verified; not A/B-tested (that repo has no behavioural checks yet).</p>
+  <div class="foot"><span>RuleProof · data sources in DATA_SOURCES.md</span><span>7</span></div>
+</section>
+
+<!-- 8. Bob usage + value -->
+<section class="slide">
+  <h2>Built with Bob, for Bob</h2>
+  <div class="cols">
+    <div>
+      <p class="blue" style="margin:0 0 10px"><b>How Bob is used</b></p>
+      <ul>
+        <li>Bob IDE Agent mode built every component (13 tasks, screenshots in <code>bob_sessions/</code>)</li>
+        <li>Custom mode <code>rule-miner</code> + parallel explore subagents</li>
+        <li>Bob rule layers <code>.bob/rules</code> as output; <code>/init</code> as baseline</li>
+        <li>Headless Bob Shell as the A/B measurement engine</li>
+      </ul>
+    </div>
+    <div>
+      <p class="accent" style="margin:0 0 10px"><b>Why it matters</b></p>
+      <ul>
+        <li>Onboard a repo to Bob with rules that are <b>proven</b>, not guessed</li>
+        <li>Fewer repeated review comments, less rework</li>
+        <li>Small rule files — every rule has earned its tokens</li>
+        <li>Next: CI integration, real-repo A/B, per-mode rule tests</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>ruleproof.vercel.app</span><span>github.com/KostiantynBk/ruleproof</span></div>
+</section>
+
+</body>
+</html>
