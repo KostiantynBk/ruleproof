@@ -42,6 +42,7 @@
   th { color: #8b949e; font-weight: 600; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; }
   .quote { border-left: 4px solid #58a6ff; padding: 8px 16px; margin: 10px 0; background: #161b22; font-size: 20px; color: #c9d1d9; }
   .quote small { display: block; color: #8b949e; font-size: 15px; margin-top: 4px; }
+  ul.tight li { font-size: 19px; line-height: 1.35; margin-bottom: 7px; }
 </style>
 </head>
 <body>
@@ -141,7 +142,8 @@
     <div class="card" style="border-color:#238636"><div class="lbl">RuleProof</div><div class="big accent">100%</div>
       <div class="row"><span>Avg cost / run</span><span>0.070</span></div><div class="row"><span>Rules size</span><span>481 chars</span></div></div>
   </div>
-  <ul style="margin-top:30px">
+  <ul style="margin-top:26px">
+    <li><b>Not luck:</b> 95&nbsp;% confidence intervals — no rules 7–45&nbsp;%, <code>/init</code> 15–58&nbsp;%, RuleProof <b>80–100&nbsp;%</b>. No overlap.</li>
     <li>A rule file <b>7× smaller</b> than <code>/init</code>'s, at <b>~30&nbsp;% lower cost per run</b> than <code>/init</code>.</li>
     <li><code>/init</code> captured only <code>clock.now()</code> — the one rule our A/B test had marked REDUNDANT.</li>
   </ul>
@@ -169,11 +171,13 @@
   <div class="cols">
     <div>
       <p class="blue" style="margin:0 0 10px"><b>How Bob is used</b></p>
-      <ul>
-        <li>Bob IDE Agent mode built every component (13 tasks, screenshots in <code>bob_sessions/</code>)</li>
-        <li>Custom mode <code>rule-miner</code> + parallel explore subagents</li>
-        <li>Bob rule layers <code>.bob/rules</code> as output; <code>/init</code> as baseline</li>
-        <li>Headless Bob Shell as the A/B measurement engine</li>
+      <ul class="tight">
+        <li><b>Agent mode:</b> built every component — 20 IDE tasks, screenshots in <code>bob_sessions/</code></li>
+        <li><b>Custom mode:</b> <code>rule-miner</code> (role, permissions, workflow)</li>
+        <li><b>Parallel tasks &amp; subagents:</b> explore subagents mine history slices in parallel</li>
+        <li><b>Document understanding:</b> Bob reads PR review threads, commit messages and CI logs → testable rules</li>
+        <li><b>Headless Bob Shell:</b> 75 A/B runs; Bob's own rule layers and <code>/init</code> as baseline</li>
+        <li>≈33 of 40 event Bobcoins</li>
       </ul>
     </div>
     <div>

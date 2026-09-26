@@ -62,6 +62,8 @@ All numbers come from `results/results.json` and `results/suite.json` — nothin
 | Bob `/init` | 33 % | 0.100 | 3 510 chars |
 | **RuleProof** | **100 %** | **0.070** | **481 chars** |
 
+**Is it luck?** With 15 runs per condition, the 95 % Wilson confidence intervals are: no rules 3/15 → 7–45 %, Bob `/init` 5/15 → 15–58 %, RuleProof 15/15 → **80–100 %**. The intervals do not overlap: even RuleProof's pessimistic bound is above `/init`'s optimistic one.
+
 Five tasks × three repeats per condition. RuleProof reaches a **100 %** pass rate with a rule file **7× smaller** than Bob's `/init` output (481 vs 3 510 chars) and **~30 % lower cost per run** than `/init` (0.070 vs 0.100 Bobcoins). `/init` captured only the `clock.now()` convention — the one rule A/B testing had already marked REDUNDANT.
 
 ---
